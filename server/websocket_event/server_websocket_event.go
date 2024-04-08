@@ -24,8 +24,6 @@ func (e *ServerWebSocketEvent) OnMessage(message model.WebsocketMessage) {
 	fmt.Println("ServerWebSocketEvent OnMessage", e.conn.RemoteAddr(), message)
 
 	if message.MessageType == model.MessageTypeInit {
-		clientId := "2333"
-
 		initMessage := model.WebsocketMessageInit{}
 
 		err := coverMessage(message.Message, &initMessage)
@@ -34,7 +32,14 @@ func (e *ServerWebSocketEvent) OnMessage(message model.WebsocketMessage) {
 			fmt.Println("转换json失败", e.conn.RemoteAddr())
 			return
 		}
-		e.service = service.NewServerWebSocketService(clientId, e.conn)
+
+		var clientId string
+		e.service, clientId, err = service.NewServerWebSocketService(initMessage.Key, e.conn)
+		if err != nil {
+			_ = e.conn.Close()
+			fmt.Println("服务器不存在", initMessage.Key, e.conn.RemoteAddr())
+			return
+		}
 
 		if e.service.CheckExistById(clientId) {
 			clientConn := e.service.GetClient(clientId)
@@ -44,6 +49,7 @@ func (e *ServerWebSocketEvent) OnMessage(message model.WebsocketMessage) {
 		e.service.AddClient(clientId, e.conn)
 		e.service.SendMessage(model.MessageTypeInit, nil)
 		e.service.SaveServerInfo(initMessage.ServerInfo)
+		e.service.CheckFault()
 	} else if !e.service.CheckExist(e.conn) {
 		_ = e.conn.Close()
 		fmt.Println("客户端未初始化成功，关闭连接", e.conn.RemoteAddr())
@@ -62,7 +68,10 @@ func (e *ServerWebSocketEvent) OnMessage(message model.WebsocketMessage) {
 
 func (e *ServerWebSocketEvent) OnClose() {
 	fmt.Println("ServerWebSocketEvent OnClose", e.conn.RemoteAddr())
-	e.service.RemoveClient(e.conn)
+	if e.service != nil {
+		e.service.AddFault()
+		e.service.RemoveClient(e.conn)
+	}
 }
 
 func coverMessage(message any, data any) error {

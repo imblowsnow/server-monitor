@@ -2,6 +2,7 @@ package boot
 
 import (
 	"github.com/gin-gonic/gin"
+	_ "server/lib"
 	"server/websocket_event"
 	"strconv"
 )
