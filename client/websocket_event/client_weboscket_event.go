@@ -1,7 +1,6 @@
 package websocket_event
 
 import (
-	"client/service"
 	"common/model"
 	"common/websocket"
 	"fmt"
@@ -11,13 +10,13 @@ import websocket2 "github.com/gorilla/websocket"
 type ClientWebSocketEvent struct {
 	websocket.IWebSocketEvent
 	conn    *websocket2.Conn
-	service *service.WebsocketService
+	service *ClientWebsocketHandle
 }
 
 func (e *ClientWebSocketEvent) OnConnect(conn *websocket2.Conn) {
 	e.conn = conn
 	fmt.Println("ClientWebSocketEvent OnConnect")
-	e.service = service.NewWebsocketService(conn)
+	e.service = NewClientWebsocketHandle(conn)
 	// 发送初始化
 	e.service.SendInit()
 }

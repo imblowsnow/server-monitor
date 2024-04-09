@@ -1,12 +1,12 @@
-package service
+package websocket_event
 
 import "github.com/gorilla/websocket"
 
-type CacheWebsocketService struct {
+type CacheWebsocketHandle struct {
 	clientMap map[string]*websocket.Conn
 }
 
-func (s *CacheWebsocketService) GetClientId(conn *websocket.Conn) string {
+func (s *CacheWebsocketHandle) GetClientId(conn *websocket.Conn) string {
 	if s.clientMap == nil {
 		return ""
 	}
@@ -17,20 +17,20 @@ func (s *CacheWebsocketService) GetClientId(conn *websocket.Conn) string {
 	}
 	return ""
 }
-func (s *CacheWebsocketService) GetClient(clientId string) *websocket.Conn {
+func (s *CacheWebsocketHandle) GetClient(clientId string) *websocket.Conn {
 	if s.clientMap == nil {
 		return nil
 	}
 	return s.clientMap[clientId]
 }
-func (s *CacheWebsocketService) AddClient(clientId string, conn *websocket.Conn) {
+func (s *CacheWebsocketHandle) AddClient(clientId string, conn *websocket.Conn) {
 	if s.clientMap == nil {
 		s.clientMap = make(map[string]*websocket.Conn)
 	}
 	s.clientMap[clientId] = conn
 }
 
-func (s *CacheWebsocketService) RemoveClient(conn *websocket.Conn) {
+func (s *CacheWebsocketHandle) RemoveClient(conn *websocket.Conn) {
 	if s.clientMap == nil {
 		s.clientMap = make(map[string]*websocket.Conn)
 	}
@@ -40,7 +40,7 @@ func (s *CacheWebsocketService) RemoveClient(conn *websocket.Conn) {
 }
 
 // 检查是否授权了
-func (s *CacheWebsocketService) CheckExist(conn *websocket.Conn) bool {
+func (s *CacheWebsocketHandle) CheckExist(conn *websocket.Conn) bool {
 	if s.clientMap == nil {
 		return false
 	}
@@ -48,7 +48,7 @@ func (s *CacheWebsocketService) CheckExist(conn *websocket.Conn) bool {
 	return clientId != ""
 }
 
-func (s *CacheWebsocketService) CheckExistById(clientId string) bool {
+func (s *CacheWebsocketHandle) CheckExistById(clientId string) bool {
 	if s.clientMap == nil {
 		return false
 	}

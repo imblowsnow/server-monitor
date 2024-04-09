@@ -115,6 +115,10 @@ func (s *ServerService) GetServerFaultTotal() []bo.ServerFaultTotalBO {
 	return total
 }
 
+func (s *ServerService) GetServerByKey(key string) (do.Server, error) {
+	return serverDao.GetServerByKey(key)
+}
+
 // 获取两个时间段的交集时间段
 func intersection(start1, end1, start2, end2 time.Time) (time.Time, time.Time) {
 	// 找到最晚的开始时间

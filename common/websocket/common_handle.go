@@ -7,11 +7,11 @@ import (
 	"time"
 )
 
-type CommonWebsocketService struct {
+type CommonWebsocketHandle struct {
 	Conn *websocket.Conn
 }
 
-func (s *CommonWebsocketService) SendMessage(messageType int, data any) error {
+func (s *CommonWebsocketHandle) SendMessage(messageType int, data any) error {
 	return s.Conn.WriteJSON(model.WebsocketMessage{
 		Id:          uuid.New().String(),
 		MessageType: messageType,

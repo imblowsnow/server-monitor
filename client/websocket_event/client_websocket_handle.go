@@ -1,4 +1,4 @@
-package service
+package websocket_event
 
 import (
 	"client/utils"
@@ -8,20 +8,20 @@ import (
 	"time"
 )
 
-type WebsocketService struct {
-	*websocket.CommonWebsocketService
+type ClientWebsocketHandle struct {
+	*websocket.CommonWebsocketHandle
 }
 
-func NewWebsocketService(conn *websocket2.Conn) *WebsocketService {
-	return &WebsocketService{
-		CommonWebsocketService: &websocket.CommonWebsocketService{
+func NewClientWebsocketHandle(conn *websocket2.Conn) *ClientWebsocketHandle {
+	return &ClientWebsocketHandle{
+		CommonWebsocketHandle: &websocket.CommonWebsocketHandle{
 			Conn: conn,
 		},
 	}
 }
 
 // 开始定时发送服务器状态
-func (s *WebsocketService) StartServerStateTicker(seconds time.Duration) {
+func (s *ClientWebsocketHandle) StartServerStateTicker(seconds time.Duration) {
 	go func() {
 		// 立刻发送一次服务器状态
 		s.sendServerState()
@@ -37,7 +37,7 @@ func (s *WebsocketService) StartServerStateTicker(seconds time.Duration) {
 }
 
 // 发送初始化信息包
-func (s *WebsocketService) SendInit() {
+func (s *ClientWebsocketHandle) SendInit() {
 	s.SendMessage(model.MessageTypeInit, model.WebsocketMessageInit{
 		Key:        "1234444",
 		ServerInfo: utils.GetServerInfo(),
@@ -45,6 +45,6 @@ func (s *WebsocketService) SendInit() {
 }
 
 // 发送服务器状态
-func (s *WebsocketService) sendServerState() {
+func (s *ClientWebsocketHandle) sendServerState() {
 	s.SendMessage(model.MessageTypeState, utils.GetServerState())
 }

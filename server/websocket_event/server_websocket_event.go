@@ -2,17 +2,16 @@ package websocket_event
 
 import (
 	"common/model"
-	websocket "common/websocket"
+	"common/websocket"
 	"encoding/json"
 	"fmt"
 	websocket2 "github.com/gorilla/websocket"
-	"server/service"
 )
 
 type ServerWebSocketEvent struct {
 	websocket.IWebSocketEvent
 	conn    *websocket2.Conn
-	service *service.ServerWebSocketService
+	service *ServerWebSocketHandle
 }
 
 func (e *ServerWebSocketEvent) OnConnect(conn *websocket2.Conn) {
@@ -34,7 +33,7 @@ func (e *ServerWebSocketEvent) OnMessage(message model.WebsocketMessage) {
 		}
 
 		var clientId string
-		e.service, clientId, err = service.NewServerWebSocketService(initMessage.Key, e.conn)
+		e.service, clientId, err = NewServerWebSocketHandle(initMessage.Key, e.conn)
 		if err != nil {
 			_ = e.conn.Close()
 			fmt.Println("服务器不存在", initMessage.Key, e.conn.RemoteAddr())
