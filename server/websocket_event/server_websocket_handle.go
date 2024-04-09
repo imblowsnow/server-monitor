@@ -63,7 +63,7 @@ func (s *ServerWebSocketHandle) SaveServerInfo(info model.ServerInfo) {
 func (s *ServerWebSocketHandle) AddFault() {
 	serverFaultDao.AddServerFault(&do.ServerFault{
 		ServerID:  s.serverId,
-		StartTime: time.Now(),
+		StartTime: time.Now().Unix(),
 	})
 }
 
@@ -73,11 +73,12 @@ func (s *ServerWebSocketHandle) CheckFault() {
 	if serverFault.ServerID == 0 {
 		return
 	}
-	if time.Now().Sub(serverFault.StartTime) < 5*time.Minute {
+
+	startTime := time.Unix(serverFault.StartTime, 0)
+	if time.Now().Sub(startTime) < 5*time.Minute {
 		serverFaultDao.ClearServerFault(s.serverId)
 		return
 	}
-	serverFault.EndTime = time.Now()
-	serverFault.Duration = int(serverFault.EndTime.Sub(serverFault.StartTime).Seconds())
+	serverFault.EndTime = time.Now().Unix()
 	serverFaultDao.UpdateServerFault(&serverFault)
 }

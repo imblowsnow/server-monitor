@@ -2,7 +2,6 @@ package bo
 
 import (
 	"server/entity/do"
-	"time"
 )
 
 type ServerBO struct {
@@ -18,9 +17,9 @@ type ServerBO struct {
 	// 排序
 	Index int `json:"index" gorm:"type:int(10);default:0"`
 	// 创建时间
-	CreatedTime time.Time `json:"created_time" gorm:"autoCreateTime"`
+	CreatedTime int64 `json:"created_time" gorm:"autoCreateTime"`
 	// 更新时间
-	UpdatedTime time.Time `json:"updated_time" gorm:"autoUpdateTime"`
+	UpdatedTime int64 `json:"updated_time" gorm:"autoUpdateTime"`
 	// 服务器详细信息
 	Info *do.ServerInfo `json:"info"`
 	// 服务器最后状态信息

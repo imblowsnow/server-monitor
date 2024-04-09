@@ -17,7 +17,8 @@ func Run(host string, port int) error {
 		return err
 	}
 
-	websocket.LoopWebsocketEvent(conn, &websocket_event.ClientWebSocketEvent{})
+	// 开始 websocket 事件循环
+	websocket.LoopWebsocketEvent(conn, websocket_event.NewClientWebSocketEvent("1234444"))
 
 	return nil
 }

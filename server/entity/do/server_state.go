@@ -2,7 +2,6 @@ package do
 
 import (
 	"common/model"
-	"time"
 )
 
 type ServerState struct {
@@ -12,7 +11,7 @@ type ServerState struct {
 	// 关联服务器信息
 	State model.ServerState `json:"state" gorm:"embedded"`
 	// 创建时间
-	CreatedTime time.Time `json:"created_time" gorm:"autoCreateTime"`
+	CreatedTime int64 `json:"created_time" gorm:"autoCreateTime"`
 	// 更新时间
-	UpdatedTime time.Time `json:"updated_time" gorm:"autoUpdateTime"`
+	UpdatedTime int64 `json:"updated_time" gorm:"autoUpdateTime"`
 }

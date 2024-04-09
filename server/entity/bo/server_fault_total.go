@@ -1,7 +1,6 @@
 package bo
 
 import (
-	"server/entity/do"
 	"time"
 )
 
@@ -25,7 +24,4 @@ type ServerFaultTotalItemBO struct {
 	FaultTime time.Duration `json:"fault_time"`
 	// 故障率
 	FaultRate float64 `json:"fault_rate"`
-
-	// 故障列表 前10条
-	FaultList []do.ServerFault `json:"fault_list"`
 }

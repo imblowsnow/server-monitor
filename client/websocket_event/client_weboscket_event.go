@@ -11,12 +11,18 @@ type ClientWebSocketEvent struct {
 	websocket.IWebSocketEvent
 	conn    *websocket2.Conn
 	service *ClientWebsocketHandle
+	key     string
 }
 
+func NewClientWebSocketEvent(key string) *ClientWebSocketEvent {
+	return &ClientWebSocketEvent{
+		key: key,
+	}
+}
 func (e *ClientWebSocketEvent) OnConnect(conn *websocket2.Conn) {
 	e.conn = conn
 	fmt.Println("ClientWebSocketEvent OnConnect")
-	e.service = NewClientWebsocketHandle(conn)
+	e.service = NewClientWebsocketHandle(e.key, conn)
 	// 发送初始化
 	e.service.SendInit()
 }

@@ -10,10 +10,12 @@ import (
 
 type ClientWebsocketHandle struct {
 	*websocket.CommonWebsocketHandle
+	key string
 }
 
-func NewClientWebsocketHandle(conn *websocket2.Conn) *ClientWebsocketHandle {
+func NewClientWebsocketHandle(key string, conn *websocket2.Conn) *ClientWebsocketHandle {
 	return &ClientWebsocketHandle{
+		key: key,
 		CommonWebsocketHandle: &websocket.CommonWebsocketHandle{
 			Conn: conn,
 		},
@@ -39,7 +41,7 @@ func (s *ClientWebsocketHandle) StartServerStateTicker(seconds time.Duration) {
 // 发送初始化信息包
 func (s *ClientWebsocketHandle) SendInit() {
 	s.SendMessage(model.MessageTypeInit, model.WebsocketMessageInit{
-		Key:        "1234444",
+		Key:        s.key,
 		ServerInfo: utils.GetServerInfo(),
 	})
 }

@@ -4,6 +4,7 @@ import (
 	"server/dao"
 	"server/entity/bo"
 	"server/entity/do"
+	"server/utils"
 	"time"
 )
 
@@ -38,29 +39,33 @@ func (s *ServerService) GetIndexServerList() []bo.ServerBO {
 }
 
 // 获取服务每分钟统计状态
-// func (s *ServerService) GetServerStatistics() map[string]interface{} {
-// }
+// timeType 1 分钟 2 小时 3 天 4 月
+//func (s *ServerService) GetServerStatistics(timeType int) map[string]interface{} {
+//	times := []string{}
 //
+//}
+
 // 获取服务故障率 按天
 func (s *ServerService) GetServerFaultTotal() []bo.ServerFaultTotalBO {
 	// 获取前30天
 	today := time.Now()
 
 	times := []string{}
-	minDate := today.AddDate(0, 0, -30).Format("2006-01-02")
-	maxDate := today.AddDate(0, 0, 1).Format("2006-01-02")
+	minDate := today.AddDate(0, 0, -30).Unix()
+	maxDate := today.AddDate(0, 0, 1).Unix()
 	// 使用循环获取前30天的日期
 	for i := 0; i <= 30; i++ {
 		// 计算前i天的日期
 		previousDate := today.AddDate(0, 0, -i)
 		// 格式化日期为字符串
 		date := previousDate.Format("2006-01-02")
-		times = append(times, date)
+		times = append(times, date+" 00:00")
 	}
 
 	total := make([]bo.ServerFaultTotalBO, 0)
 	// 获取服务器列表
 	serverList := serverDao.GetServerList(true)
+	dateLayout := "2006-01-02 15:04:05"
 	for _, server := range serverList {
 		serverFaultTotal := bo.ServerFaultTotalBO{
 			ServerID: server.ID,
@@ -71,41 +76,43 @@ func (s *ServerService) GetServerFaultTotal() []bo.ServerFaultTotalBO {
 		serverFaultList := serverFaultDao.GetServerFaultListByTime(server.ID, minDate, maxDate)
 
 		for _, startDate := range times {
-			startDateTime, _ := time.Parse("2006-01-02", startDate)
-			endDate := startDateTime.AddDate(0, 0, 1).Format("2006-01-02")
-			endDateTime, _ := time.Parse("2006-01-02", endDate)
+			startDateTime, _ := time.ParseInLocation(dateLayout, startDate, time.Local)
+			endDate := startDateTime.AddDate(0, 0, 1).Format(dateLayout)
+			endDateTime, _ := time.ParseInLocation(dateLayout, endDate, time.Local)
 
-			totalTime := 24 * time.Hour
+			if endDateTime.After(time.Now()) {
+				endDateTime = time.Now()
+			}
+			totalTime := endDateTime.Sub(startDateTime)
 			faultTime := time.Duration(0)
 
 			tmpServerFaultList := make([]do.ServerFault, 0)
 			for _, fault := range serverFaultList {
 				// 获取交集时间段
-				faultStartTime, _ := time.Parse("2006-01-02", fault.StartTime.Format("2006-01-02"))
+				faultStartTime, _ := time.ParseInLocation(dateLayout, time.Unix(fault.StartTime, 0).Format(dateLayout), time.Local)
 				var faultEndTime time.Time
-				if fault.EndTime.IsZero() {
+				if fault.EndTime == 0 {
 					faultEndTime = time.Now()
 				} else {
-					faultEndTime, _ = time.Parse("2006-01-02", fault.EndTime.Format("2006-01-02"))
+					faultEndTime, _ = time.ParseInLocation(dateLayout, time.Unix(fault.EndTime, 0).Format(dateLayout), time.Local)
 				}
 
 				// 获取交集时间段
-				intersectionStart, intersectionEnd := intersection(startDateTime, endDateTime, faultStartTime, faultEndTime)
+				intersectionStart, intersectionEnd := utils.Intersection(startDateTime, endDateTime, faultStartTime, faultEndTime)
 
 				if intersectionStart.IsZero() || intersectionEnd.IsZero() {
 					continue
 				}
 
-				faultTime += time.Duration(fault.Duration) * time.Second
+				faultTime += intersectionEnd.Sub(intersectionStart)
 				tmpServerFaultList = append(tmpServerFaultList, fault)
 			}
 
 			serverFaultTotal.Items = append(serverFaultTotal.Items, &bo.ServerFaultTotalItemBO{
-				Time:      startDate,
+				Time:      startDateTime.Format("2006-01-02"),
 				TotalTime: totalTime,
 				FaultTime: faultTime,
-				FaultRate: float64(faultTime / totalTime),
-				FaultList: tmpServerFaultList,
+				FaultRate: faultTime.Seconds() / totalTime.Seconds() * 100,
 			})
 		}
 
@@ -117,26 +124,4 @@ func (s *ServerService) GetServerFaultTotal() []bo.ServerFaultTotalBO {
 
 func (s *ServerService) GetServerByKey(key string) (do.Server, error) {
 	return serverDao.GetServerByKey(key)
-}
-
-// 获取两个时间段的交集时间段
-func intersection(start1, end1, start2, end2 time.Time) (time.Time, time.Time) {
-	// 找到最晚的开始时间
-	start := start1
-	if start2.After(start1) {
-		start = start2
-	}
-
-	// 找到最早的结束时间
-	end := end1
-	if end2.Before(end1) {
-		end = end2
-	}
-
-	// 检查是否存在交集
-	if start.After(end) {
-		return time.Time{}, time.Time{} // 不存在交集
-	}
-
-	return start, end
 }

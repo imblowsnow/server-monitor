@@ -43,7 +43,7 @@ func (s *ServerFaultDao) UpdateServerFault(serverFault *do.ServerFault) {
 }
 
 // 时间段查询故障列表
-func (s *ServerFaultDao) GetServerFaultListByTime(serverId uint, startTime, endTime string) []do.ServerFault {
+func (s *ServerFaultDao) GetServerFaultListByTime(serverId uint, startTime, endTime int64) []do.ServerFault {
 
 	serverFaultList := make([]do.ServerFault, 0)
 
