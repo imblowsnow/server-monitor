@@ -1,10 +1,12 @@
 package service
 
 import (
+	"server/config"
 	"server/dao"
 	"server/entity/bo"
 	"server/entity/do"
 	"server/utils"
+	"strconv"
 	"time"
 )
 
@@ -16,12 +18,20 @@ var serverFaultDao = dao.ServerFaultDao{}
 type ServerService struct {
 }
 
+// 更新服务器ip
+func (s ServerService) UpdateServer(server do.Server) {
+	serverDao.UpdateServer(server)
+}
+
 // 获取服务器列表（首页展示）
 func (s *ServerService) GetIndexServerList() []bo.ServerBO {
 	serverList := serverDao.GetServerList(true)
 	var serverBOList []bo.ServerBO
 	for _, server := range serverList {
-		serverBOList = append(serverBOList, bo.ServerBO{
+		serverInfoDO := serverInfoDao.GetServerInfoByServerID(server.ID)
+		serverStateDO := serverStateDao.GetLastServerStateByServerID(server.ID)
+
+		serverBO := bo.ServerBO{
 			ID:          server.ID,
 			Name:        server.Name,
 			Group:       server.Group,
@@ -30,12 +40,47 @@ func (s *ServerService) GetIndexServerList() []bo.ServerBO {
 			Index:       server.Index,
 			CreatedTime: server.CreatedTime,
 			UpdatedTime: server.UpdatedTime,
-			Info:        serverInfoDao.GetServerInfoByServerID(server.ID),
-			State:       serverStateDao.GetServerStateByServerID(server.ID),
-		})
+			Live:        config.SocketClients.CheckExistByKey(strconv.Itoa(int(server.ID))),
+		}
+		if serverInfoDO != nil {
+			serverBO.Info = &serverInfoDO.Info
+		}
+		if serverStateDO != nil {
+			serverBO.State = &serverStateDO.State
+		}
+		serverBOList = append(serverBOList, serverBO)
 	}
 
 	return serverBOList
+}
+
+func (s *ServerService) GetServerInfo(serverId uint) *bo.ServerBO {
+	server, err := serverDao.GetServerById(serverId)
+	if err != nil {
+		return nil
+	}
+
+	serverInfoDO := serverInfoDao.GetServerInfoByServerID(server.ID)
+	serverStateDO := serverStateDao.GetLastServerStateByServerID(server.ID)
+
+	serverBO := bo.ServerBO{
+		ID:          server.ID,
+		Name:        server.Name,
+		Group:       server.Group,
+		Version:     server.Version,
+		Hide:        server.Hide,
+		Index:       server.Index,
+		CreatedTime: server.CreatedTime,
+		UpdatedTime: server.UpdatedTime,
+		Live:        config.SocketClients.CheckExistByKey(strconv.Itoa(int(server.ID))),
+	}
+	if serverInfoDO != nil {
+		serverBO.Info = &serverInfoDO.Info
+	}
+	if serverStateDO != nil {
+		serverBO.State = &serverStateDO.State
+	}
+	return &serverBO
 }
 
 // 获取服务每分钟统计状态
@@ -59,7 +104,7 @@ func (s *ServerService) GetServerFaultTotal() []bo.ServerFaultTotalBO {
 		previousDate := today.AddDate(0, 0, -i)
 		// 格式化日期为字符串
 		date := previousDate.Format("2006-01-02")
-		times = append(times, date+" 00:00")
+		times = append(times, date+" 00:00:00")
 	}
 
 	total := make([]bo.ServerFaultTotalBO, 0)
@@ -110,8 +155,8 @@ func (s *ServerService) GetServerFaultTotal() []bo.ServerFaultTotalBO {
 
 			serverFaultTotal.Items = append(serverFaultTotal.Items, &bo.ServerFaultTotalItemBO{
 				Time:      startDateTime.Format("2006-01-02"),
-				TotalTime: totalTime,
-				FaultTime: faultTime,
+				TotalTime: totalTime.Seconds(),
+				FaultTime: faultTime.Seconds(),
 				FaultRate: faultTime.Seconds() / totalTime.Seconds() * 100,
 			})
 		}

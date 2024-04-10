@@ -1,9 +1,5 @@
 package bo
 
-import (
-	"time"
-)
-
 type ServerFaultTotalBO struct {
 	ServerID uint `json:"server_id" gorm:"primarykey"`
 	// 名称
@@ -19,9 +15,9 @@ type ServerFaultTotalItemBO struct {
 	// 时间
 	Time string `json:"time"`
 	// 服务器总运行时间 单位 秒
-	TotalTime time.Duration `json:"total_time"`
+	TotalTime float64 `json:"total_time"`
 	// 服务器故障时间 单位 秒
-	FaultTime time.Duration `json:"fault_time"`
+	FaultTime float64 `json:"fault_time"`
 	// 故障率
 	FaultRate float64 `json:"fault_rate"`
 }

@@ -1,7 +1,7 @@
 package bo
 
 import (
-	"server/entity/do"
+	"common/model"
 )
 
 type ServerBO struct {
@@ -21,7 +21,10 @@ type ServerBO struct {
 	// 更新时间
 	UpdatedTime int64 `json:"updated_time" gorm:"autoUpdateTime"`
 	// 服务器详细信息
-	Info *do.ServerInfo `json:"info"`
+	Info *model.ServerInfo `json:"info"`
 	// 服务器最后状态信息
-	State *do.ServerState `json:"state"`
+	State *model.ServerState `json:"state"`
+
+	// 是否存活
+	Live bool `json:"live"`
 }

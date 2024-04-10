@@ -29,3 +29,11 @@ func (s ServerStateDao) GetServerStateByServerID(id uint) *do.ServerState {
 	}
 	return &serverState
 }
+func (s ServerStateDao) GetLastServerStateByServerID(id uint) *do.ServerState {
+	serverState := do.ServerState{}
+	result := config.Db.Where("server_id = ?", id).Order("created_time desc").Limit(1).Find(&serverState)
+	if result.Error != nil {
+		return nil
+	}
+	return &serverState
+}

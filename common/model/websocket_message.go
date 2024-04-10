@@ -5,8 +5,16 @@ import "time"
 // 定义常量作为枚举
 const (
 	// 初始化消息
-	MessageTypeInit  = 100
-	MessageTypeState = 200
+	MessageTypeInit  = 1000
+	MessageTypeState = 1001
+
+	// webmessage
+	// 服务登录
+	FrontMessageServerLogin = 2000
+	// 服务退出
+	FrontMessageServerLogout = 2001
+	// 服务状态
+	FrontMessageServerState = 2002
 )
 
 type WebsocketMessage struct {

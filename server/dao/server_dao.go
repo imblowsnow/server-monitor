@@ -52,7 +52,7 @@ func (s *ServerDao) DeleteServer(id uint) error {
 
 // 更新服务器信息
 func (s *ServerDao) UpdateServer(server do.Server) {
-	config.Db.Save(&server)
+	config.Db.Updates(server)
 }
 
 // 通过排序获取服务器列表

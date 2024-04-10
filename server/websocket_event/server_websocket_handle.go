@@ -11,14 +11,12 @@ import (
 	"time"
 )
 
-var cacheServerWebSocketHandle = &CacheWebsocketHandle{}
 var serverService = service.ServerService{}
 var serverStateService = service.ServerStateService{}
 var serverInfoService = service.ServerInfoService{}
 var serverFaultDao = dao.ServerFaultDao{}
 
 type ServerWebSocketHandle struct {
-	*CacheWebsocketHandle
 	*websocket.CommonWebsocketHandle
 	serverId uint
 }
@@ -37,7 +35,6 @@ func NewServerWebSocketHandle(key string, conn *websocket2.Conn) (*ServerWebSock
 		CommonWebsocketHandle: &websocket.CommonWebsocketHandle{
 			Conn: conn,
 		},
-		CacheWebsocketHandle: cacheServerWebSocketHandle,
 	}, serverId, nil
 }
 
@@ -57,6 +54,11 @@ func (s *ServerWebSocketHandle) SaveServerInfo(info model.ServerInfo) {
 		ServerID: s.serverId,
 		Info:     info,
 	})
+	serverService.UpdateServer(do.Server{
+		ID:      s.serverId,
+		Host:    s.Conn.RemoteAddr().String(),
+		Version: "1.0.0",
+	})
 }
 
 // 新增故障 离线后调用
@@ -67,7 +69,7 @@ func (s *ServerWebSocketHandle) AddFault() {
 	})
 }
 
-// 检查故障，更新故障时间，如果故障小于5分钟，不处理
+// 检查故障，更新故障时间，如果故障小于n分钟，不处理
 func (s *ServerWebSocketHandle) CheckFault() {
 	serverFault := serverFaultDao.GetUndoServerFaultByServerID(s.serverId)
 	if serverFault.ServerID == 0 {
@@ -75,6 +77,8 @@ func (s *ServerWebSocketHandle) CheckFault() {
 	}
 
 	startTime := time.Unix(serverFault.StartTime, 0)
+
+	// todo 故障容错时间 配置项
 	if time.Now().Sub(startTime) < 5*time.Minute {
 		serverFaultDao.ClearServerFault(s.serverId)
 		return

@@ -10,7 +10,7 @@ import (
 func Run(host string, port int) error {
 	// 链接 websocket 服务
 	// format ws://%s:%d/client
-	url := fmt.Sprintf("ws://%s:%d/client", host, port)
+	url := fmt.Sprintf("ws://%s:%d/ws/client", host, port)
 
 	conn, _, err := websocket2.DefaultDialer.Dial(url, nil)
 	if err != nil {
