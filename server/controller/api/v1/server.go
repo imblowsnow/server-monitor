@@ -19,3 +19,8 @@ func GetServerStatus(c *gin.Context) {
 	data := serverService.GetServerStatus()
 	c.JSON(200, result.Success(data))
 }
+
+func GetGroups(c *gin.Context) {
+	data := serverService.GetGroups()
+	c.JSON(200, result.Success(data))
+}

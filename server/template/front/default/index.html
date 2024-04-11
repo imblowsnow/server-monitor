@@ -1,176 +1,206 @@
 
 
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="zh-CN">
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta content="telephone=no" name="format-detection">
     <title>监控</title>
-    <link rel="shortcut icon" type="image/png" href="/static/logo.svg?v20210804" />
-
-
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-    <meta http-equiv="Content-Language" content="zh" />
-
-
-    <link rel="stylesheet" type="text/css" href="https://cdn.staticfile.org/semantic-ui/2.4.1/semantic.min.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.staticfile.org/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.staticfile.org/semantic-ui/2.4.1/semantic.min.css">
+    <link href="https://cdn.staticfile.org/font-logos/0.17/font-logos.min.css" type="text/css"
+          rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="/static/semantic-ui-alerts.min.css">
-    <link rel="stylesheet" href="/static/theme-hotaru/css/core.css?v202012121912" type="text/css">
-    <link rel="stylesheet" href="/static/theme-hotaru/css/main.css?v202101171153" type="text/css">
-    <link rel="stylesheet" href="/static/theme-hotaru/css/darkmode.css?v202103021121" type="text/css">
-
-    <script>
-
-        window.onload = function(){
-            $('#sun').click();
-        }
-    </script>
-
+    <link rel="stylesheet" type="text/css" href="/static/main.css?v2022042314">
+    <link rel="shortcut icon" type="image/png" href="/static/logo.svg?v20210804" />
 </head>
-
 <body>
-<section class="hotaru-cover">
-    <div class="container" style="text-align: center;">
-        <h1 style="line-height: 8rem;">
-            <strong>监控</strong>
-        </h1>
-    </div>
-</section>
 
-<div id="app">
-    <div class="container">
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>状态</th>
-                <th>名称</th>
-                <th>系统</th>
-                <th>地区</th>
-                <th>在线</th>
-                <th>网络(B/s) ↓|↑</th>
-                <th>流量(B) ↓|↑</th>
-                <th>CPU</th>
-                <th>RAM</th>
-                <th>硬盘</th>
-            </tr>
-            </thead>
-            <tbody id="servers" style="text-align:center;">
-            <tr v-for='server in servers' :id="server.id">
-                <td>
-                    <div class="progress">
-                        <div :class="'state-'+ (server.live?'online':'offline')">
-                            <small>{{server.live?'运行中':'已离线'}}</small>
-                        </div>
-                    </div>
-                </td>
-                <td>{{server.name}}</td>
-                <td>{{server.info?server.info.platform:'-'}}</td>
-                <td>{{server.info?server.info.CountryCode:'-'}}</td>
-                <td>{{server.state?window.utils.secondToDate(server.state.uptime):'-'}}</td>
-                <td>{{server.state?window.utils.readableBytes(server.state.net_in_speed)+'/s|'+window.utils.readableBytes(server.state.net_out_speed)+'/s':'-'}}
-                </td>
-                <td>{{server.state?window.utils.readableBytes(server.state.net_in_transfer)+'|'+window.utils.readableBytes(server.state.net_out_transfer):'-'}}
-                </td>
-                <td>
-                    <div v-if="server.state" :class="formatPercent(server.live,server.state.cpu, 100).class">
-                        <div class="bar" :style="formatPercent(server.live,server.state.cpu, 100).style">
-                            <small>{{formatPercent(server.live,server.state.cpu,100).percent}}%</small>
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <div v-if="server.state"
-                         :class="formatPercent(server.live,server.state.mem_used, server.info.mem_total).class">
-                        <div class="bar"
-                             :style="formatPercent(server.live,server.state.mem_used, server.info.mem_total).style">
-                            <small>{{parseInt(server.state?server.state.mem_used/server.info.mem_total*100:0)}}%</small>
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <div v-if="server.state"
-                         :class="formatPercent(server.live,server.state.disk_used, server.info.disk_total).class">
-                        <div class="bar"
-                             :style="formatPercent(server.live,server.state.disk_used, server.info.disk_total).style">
-                            <small>{{parseInt(server.state?server.state.disk_used/server.info.disk_total*100:0)}}%</small>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
 
-    <div class="page-section">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-4 col-md-4 col-sm-4" v-for='server in servers' :id="server.id">
-                    <div class="panel panel-block panel-block-sm panel-location">
-                        <div class="location-header">
-                            <h3 class="h4">
-                                &nbsp;{{server.name}}</h3>
-                            <i class="zmdi zmdi-check-circle text-success"></i>
-                        </div>
-                        <div class="location-progress">
-                            <div
-                                    :class="formatPercent(server.live,window.utils.mergeUsage(server.state, server.info),100).class">
-                                <div class="bar"
-                                     :style="formatPercent(server.live,window.utils.mergeUsage(server.state, server.info),100).style">
+<div class="ui large top fixed menu nb-menu">
+    <div class="ui container">
+        <a class="item" href="/">
+            <img src="/static/logo.svg?v20210804">
+        </a>
+
+        <a class='item active' href="/"><i class="home icon"></i>首页</a>
+        <a class='item' href="/status.html"><i class="rss icon"></i>状态</a>
+
+        <div class="right menu">
+            <div class="item">
+
+                <div class="ui simple dropdown">
+                    <div class="text">
+                        <img class="ui avatar image" src="https://avatars.githubusercontent.com/u/74449531?v=4"> imblowsnow
+                    </div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+
+                        <a class="item" href="/server">
+                            <i class="terminal icon"></i>管理后台
+                        </a>
+
+                        <button class="item" onclick="showConfirm('确认注销？','注销后您必须重新登录才能使用',logout, 74449531 )">
+                            <i class="logout icon"></i>注销登录
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="ui mini confirm modal transition hidden">
+    <div class="header"></div>
+    <div class="content">
+    </div>
+    <div class="actions">
+        <div class="ui negative button">取消</div>
+        <button class="ui positive nezha-primary-btn right labeled icon button">确认<i class="checkmark icon"></i>
+        </button>
+    </div>
+</div>
+
+
+<div class="nb-container">
+    <div class="ui container">
+        <div id="app">
+            <div class="ui styled fluid accordion" v-for="group in groups">
+                <div class="active title">
+                    <i class="dropdown icon"></i>
+                    {{(group!==''?group:'默认')}}
+                </div>
+                <div class="active content">
+                    <div class="ui four stackable status cards">
+                        <div v-for="server in servers" :id="server.id" class="ui card" v-if="server.group === group">
+                            <div class="content" v-if="server.info" style="margin-top: 10px; padding-bottom: 5px">
+                                <div class="header">
+                                    <i :class="server.country_code + ' flag'"></i>&nbsp;
+
+                                    <i v-if='server.info.platform == "darwin"' class="apple icon"></i>
+                                    <i v-else-if='isWindowsPlatform(server.info.platform)' class="windows icon"></i>
+                                    <i v-else :class="'fl-' + getFontLogoClass(server.info.platform)"></i>
+
+                                    {{server.name + (server.live?'':'[已离线]')}}
+                                    <i class="nezha-secondary-font info circle icon" style="height: 28px"></i>
+                                    <div class="ui content popup" style="margin-bottom: 0">
+                                        系统: {{server.info.platform}}-{{server.info.platform_version}}
+                                        [<span
+                                            v-if="server.info.virtualization">{{server.info.virtualization}}:</span>{{server.info.arch}}]<br />
+                                        CPU: {{server.info.cpu}}<br />
+                                        硬盘:
+                                        {{window.utils.formatByteSize(server.state.disk_used)}}/{{window.utils.formatByteSize(server.info.disk_total)}}<br />
+                                        内存:
+                                        {{window.utils.formatByteSize(server.state.mem_used)}}/{{window.utils.formatByteSize(server.info.mem_total)}}<br />
+                                        交换:
+                                        {{window.utils.formatByteSize(server.state.swap_used)}}/{{window.utils.formatByteSize(server.info.swap_total)}}<br />
+                                        流量: <i
+                                            class="arrow alternate circle down outline icon"></i>{{window.utils.formatByteSize(server.state.net_in_transfer)}}<i
+                                            class="arrow alternate circle up outline icon"></i>{{window.utils.formatByteSize(server.state.net_out_transfer)}}<br />
+                                        负载: {{ server.state.load1.toFixed(2) }}/{{ server.state.load5.toFixed(2) }}/{{ server.state.load15.toFixed(2) }}<br />
+                                        进程数: {{ server.state.process_count }}<br />
+                                        连接数: TCP {{ server.state.tcp_conn_count }} / UDP {{ server.state.udp_conn_count }}<br />
+                                        启动: {{ window.utils.formatTimestamp(server.info.boot_time) }}<br />
+<!--                                        活动: {{ new Date(server.last_active).toLocaleString() }}<br />-->
+                                        版本: {{server.info.version}}<br />
+                                    </div>
+                                    <div class="ui divider" style="margin-bottom: 5px"></div>
+                                </div>
+                                <div class="description">
+                                    <div class="ui grid">
+                                        <div class="three wide column">CPU</div>
+                                        <div class="thirteen wide column">
+                                            <div :class="formatPercent(server.live,server.state.cpu, 100).class">
+                                                <div class="bar" :style="formatPercent(server.live,server.state.cpu, 100).style">
+                                                    <small>{{formatPercent(server.live,server.state.cpu,100).percent}}%</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="three wide column">内存</div>
+                                        <div class="thirteen wide column">
+                                            <div :class="formatPercent(server.live,server.state.mem_used, server.info.mem_total).class">
+                                                <div class="bar"
+                                                     :style="formatPercent(server.live,server.state.mem_used, server.info.mem_total).style">
+                                                    <small>{{parseInt(server.state?server.state.mem_used/server.info.mem_total*100:0)}}%</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="three wide column">交换</div>
+                                        <div class="thirteen wide column">
+                                            <div :class="formatPercent(server.live,server.state.swap_used, server.info.swap_total).class">
+                                                <div class="bar"
+                                                     :style="formatPercent(server.live,server.state.swap_used, server.info.swap_total).style">
+                                                    <small>{{parseInt(server.state?server.state.swap_used/server.info.swap_total*100:0)}}%</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="three wide column">网络</div>
+                                        <div class="thirteen wide column">
+                                            <i class="arrow alternate circle down outline icon"></i>
+                                            {{window.utils.formatByteSize(server.state.net_in_speed)}}/s
+                                            <i class="arrow alternate circle up outline icon"></i>
+                                            {{window.utils.formatByteSize(server.state.net_out_speed)}}/s
+                                        </div>
+                                        <div class="three wide column">硬盘</div>
+                                        <div class="thirteen wide column">
+                                            <div :class="formatPercent(server.live,server.state.disk_used, server.info.disk_total).class">
+                                                <div class="bar"
+                                                     :style="formatPercent(server.live,server.state.disk_used, server.info.disk_total).style">
+                                                    <small>{{parseInt(server.state?server.state.disk_used/server.info.disk_total*100:0)}}%</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="three wide column">在线</div>
+                                        <div class="thirteen wide column">
+                                            <i class="clock icon"></i>{{window.utils.secondToDate(server.state.uptime)}}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                            <div class="content" v-else>
+                                <p>{{server.name}}</p>
+                                <p>节点已离线</p>
+                            </div>
                         </div>
-                        <ul class="location-info list-styled">
-                            <li><span class="list-label">网络:</span>
-                                {{server.state?window.utils.formatByteSize(server.state.net_in_speed)+'/s|'+window.utils.formatByteSize(server.state.net_out_speed)+'/s':'-'}}
-                            </li>
-                        </ul>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<div class="sidebar-container">
-    <ul>
-        <li id='sun'><i class="fas fa-sun" title='白昼模式'></i><span>白昼模式</span></li>
-        <li id='moon'><i class="fas fa-moon" title='暗黑模式'></i><span>暗黑模式</span></li>
-    </ul>
+
+<div class="ui inverted vertical footer segment">
+    <div class="ui center aligned is-size-7 container">
+        <b>&copy; <a style="color: white;" href="/">监控</a></b> | <small>Powered by <a
+            href="https://github.com/naiba/nezha" style="color: white;" target="_blank">哪吒监控</a>
+        v0.14.7</small>
+    </div>
 </div>
-<footer>
-    <p style="text-align:center;padding: 15px;">Powered by <a href="https://github.com/naiba/nezha">哪吒监控</a> build ·
-        v0.14.7
-        <a href="/service">服务</a>
-        <a href="/server">管理后台</a>
-    </p>
-</footer>
 <script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdn.staticfile.org/semantic-ui/2.4.1/semantic.min.js"></script>
 <script src="/static/semantic-ui-alerts.min.js"></script>
-<script src="/static/utils.js"></script>
 <script src="https://cdn.staticfile.org/vue/2.6.14/vue.min.js"></script>
+<script src="/static/main.js?v20220930"></script>
+<script src="/static/utils.js?v20220930"></script>
 <script>
-    $(function(){
-        $('#sun').click(function(){
-            $('body').removeClass('dark');
-        });
-        $('#moon').click(function(){
-            $('body').addClass('dark');
-        })
-    })
-
-
-
+    window.onload = function(){
+        $('#sun').click();
+    }
     var statusCards = new Vue({
         el: '#app',
         // delimiters: ['{{', '}}'],
         data: {
+            groups: [],
             servers: [],
             cache: [],
         },
         mounted() {
+            this.getGroups()
             this.getServerList()
             this.troggleDarkMode();
         },
@@ -212,10 +242,82 @@
                     document.body.classList.add('dark');
                 }
             },
+            isWindowsPlatform(str) {
+                return str.includes('Windows')
+            },
+            getFontLogoClass(str) {
+                if (["almalinux",
+                        "alpine",
+                        "aosc",
+                        "apple",
+                        "archlinux",
+                        "archlabs",
+                        "artix",
+                        "budgie",
+                        "centos",
+                        "coreos",
+                        "debian",
+                        "deepin",
+                        "devuan",
+                        "docker",
+                        "elementary",
+                        "fedora",
+                        "ferris",
+                        "flathub",
+                        "freebsd",
+                        "gentoo",
+                        "gnu-guix",
+                        "illumos",
+                        "kali-linux",
+                        "linuxmint",
+                        "mageia",
+                        "mandriva",
+                        "manjaro",
+                        "nixos",
+                        "openbsd",
+                        "opensuse",
+                        "pop-os",
+                        "raspberry-pi",
+                        "redhat",
+                        "rocky-linux",
+                        "sabayon",
+                        "slackware",
+                        "snappy",
+                        "solus",
+                        "tux",
+                        "ubuntu",
+                        "void",
+                        "zorin"].indexOf(str)
+                    > -1) {
+                    return str;
+                }
+                if (['openwrt','linux'].indexOf(str) > -1) {
+                    return 'tux';
+                }
+                if (str == 'amazon') {
+                    return 'redhat';
+                }
+                if (str == 'arch') {
+                    return 'archlinux';
+                }
+                return '';
+            },
 
+            getGroups(){
+                fetch("/api/v1/server/groups").then(res => res.json()).then(res => {
+                    this.groups = res.data
+                })
+            },
             getServerList(){
                 fetch("/api/v1/server").then(res => res.json()).then(res => {
                     this.servers = res.data
+                    this.$nextTick(() => {
+                        $('.ui.accordion').accordion({ "exclusive": false });
+                        $('.nezha-secondary-font.info.icon').popup({
+                            popup: '.ui.content.popup',
+                            exclusive: true,
+                        });
+                    })
                 })
             },
 
@@ -311,3 +413,4 @@
 </body>
 
 </html>
+

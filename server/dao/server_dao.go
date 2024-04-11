@@ -65,3 +65,13 @@ func (s *ServerDao) GetServerList(hideIndex bool) []do.Server {
 	config.Db.Where(whers).Order("`index` desc").Find(&list)
 	return list
 }
+
+func (s *ServerDao) GetGroups() []string {
+	var servers []do.Server
+	config.Db.Raw("select `group` from server group by `group` order by `index` desc").Scan(&servers)
+	var list []string
+	for _, server := range servers {
+		list = append(list, server.Group)
+	}
+	return list
+}

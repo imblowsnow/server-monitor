@@ -166,3 +166,7 @@ func (s *ServerService) GetServerStatus() []bo.ServerFaultTotalBO {
 func (s *ServerService) GetServerByKey(key string) (do.Server, error) {
 	return serverDao.GetServerByKey(key)
 }
+
+func (s *ServerService) GetGroups() []string {
+	return serverDao.GetGroups()
+}

@@ -9,6 +9,7 @@ func InitRoute(r *gin.Engine) {
 	v1Group := r.Group("/api/v1")
 	v1Group.GET("/server", v1.GetServerInfo)
 	v1Group.GET("/server/status", v1.GetServerStatus)
+	v1Group.GET("/server/groups", v1.GetGroups)
 
 	adminGroup := r.Group("/api/admin")
 	adminGroup.GET("/server", v1.GetServerInfo)
