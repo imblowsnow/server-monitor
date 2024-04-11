@@ -16,7 +16,7 @@ type FrontNotifyEvent struct {
 }
 
 func (e *FrontNotifyEvent) OnServerLogin(id uint, info model.ServerInfo) {
-	serverInfo := serverService.GetServerInfo(id)
+	serverInfo := serverService.GetServerInfoById(id)
 	if serverInfo == nil {
 		fmt.Println("服务器不存在", id)
 		return

@@ -37,3 +37,12 @@ func (s ServerStateDao) GetLastServerStateByServerID(id uint) *do.ServerState {
 	}
 	return &serverState
 }
+
+func (s ServerStateDao) GetServerStateListByTime(id uint, date int64, date2 int64) []do.ServerState {
+	serverState := []do.ServerState{}
+	result := config.Db.Where("server_id = ? and created_time >= ? and created_time <= ?", id, date, date2).Find(&serverState)
+	if result.Error != nil {
+		return nil
+	}
+	return serverState
+}

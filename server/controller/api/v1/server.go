@@ -14,8 +14,8 @@ func GetServerInfo(c *gin.Context) {
 	c.JSON(200, result.Success(data))
 }
 
-// 获取服务器故障统计
-func GetServerFaultTotal(c *gin.Context) {
-	data := serverService.GetServerFaultTotal()
+// 获取服务器统计
+func GetServerStatus(c *gin.Context) {
+	data := serverService.GetServerStatus()
 	c.JSON(200, result.Success(data))
 }

@@ -8,7 +8,7 @@ import (
 
 func TestServerService_GetServerFaultTotal(t *testing.T) {
 	serverService := ServerService{}
-	total := serverService.GetServerFaultTotal()
+	total := serverService.GetServerStatus()
 
 	fmt.Println(total)
 }

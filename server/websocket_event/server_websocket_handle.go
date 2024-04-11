@@ -8,6 +8,7 @@ import (
 	"server/dao"
 	"server/entity/do"
 	"server/service"
+	"strings"
 	"time"
 )
 
@@ -15,6 +16,7 @@ var serverService = service.ServerService{}
 var serverStateService = service.ServerStateService{}
 var serverInfoService = service.ServerInfoService{}
 var serverFaultDao = dao.ServerFaultDao{}
+var ipService = service.IpService{}
 
 type ServerWebSocketHandle struct {
 	*websocket.CommonWebsocketHandle
@@ -48,16 +50,22 @@ func (s *ServerWebSocketHandle) SaveServerState(state model.ServerState) {
 }
 
 // 保存服务器信息
-func (s *ServerWebSocketHandle) SaveServerInfo(info model.ServerInfo) {
+func (s *ServerWebSocketHandle) SaveServerInfo(info model.ServerInfo, version string) {
 	fmt.Println("SaveServerInfo", info)
+	addr := s.Conn.RemoteAddr().String()
+	// 切割为ip和端口
+	addrArry := strings.Split(addr, ":")
+	ip := addrArry[0]
+
 	serverInfoService.SaveServerInfo(do.ServerInfo{
 		ServerID: s.serverId,
 		Info:     info,
 	})
 	serverService.UpdateServer(do.Server{
-		ID:      s.serverId,
-		Host:    s.Conn.RemoteAddr().String(),
-		Version: "1.0.0",
+		ID:          s.serverId,
+		Host:        ip,
+		CountryCode: ipService.QueryIp(ip).CountryCode,
+		Version:     version,
 	})
 }
 

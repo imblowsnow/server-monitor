@@ -69,10 +69,10 @@
                 <td>{{server.name}}</td>
                 <td>{{server.info?server.info.platform:'-'}}</td>
                 <td>{{server.info?server.info.CountryCode:'-'}}</td>
-                <td>{{server.state?secondToDate(server.state.uptime):'-'}}</td>
-                <td>{{server.state?readableBytes(server.state.net_in_speed)+'/s|'+readableBytes(server.state.net_out_speed)+'/s':'-'}}
+                <td>{{server.state?window.utils.secondToDate(server.state.uptime):'-'}}</td>
+                <td>{{server.state?window.utils.readableBytes(server.state.net_in_speed)+'/s|'+window.utils.readableBytes(server.state.net_out_speed)+'/s':'-'}}
                 </td>
-                <td>{{server.state?readableBytes(server.state.net_in_transfer)+'|'+readableBytes(server.state.net_out_transfer):'-'}}
+                <td>{{server.state?window.utils.readableBytes(server.state.net_in_transfer)+'|'+window.utils.readableBytes(server.state.net_out_transfer):'-'}}
                 </td>
                 <td>
                     <div v-if="server.state" :class="formatPercent(server.live,server.state.cpu, 100).class">
@@ -116,15 +116,15 @@
                         </div>
                         <div class="location-progress">
                             <div
-                                    :class="formatPercent(server.live,mergeUsage(server.state, server.info),100).class">
+                                    :class="formatPercent(server.live,window.utils.mergeUsage(server.state, server.info),100).class">
                                 <div class="bar"
-                                     :style="formatPercent(server.live,mergeUsage(server.state, server.info),100).style">
+                                     :style="formatPercent(server.live,window.utils.mergeUsage(server.state, server.info),100).style">
                                 </div>
                             </div>
                         </div>
                         <ul class="location-info list-styled">
                             <li><span class="list-label">网络:</span>
-                                {{server.state?formatByteSize(server.state.net_in_speed)+'/s|'+formatByteSize(server.state.net_out_speed)+'/s':'-'}}
+                                {{server.state?window.utils.formatByteSize(server.state.net_in_speed)+'/s|'+window.utils.formatByteSize(server.state.net_out_speed)+'/s':'-'}}
                             </li>
                         </ul>
                     </div>
@@ -149,6 +149,7 @@
 <script src="https://cdn.staticfile.org/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdn.staticfile.org/semantic-ui/2.4.1/semantic.min.js"></script>
 <script src="/static/semantic-ui-alerts.min.js"></script>
+<script src="/static/utils.js"></script>
 <script src="https://cdn.staticfile.org/vue/2.6.14/vue.min.js"></script>
 <script>
     $(function(){
@@ -161,175 +162,151 @@
     })
 
 
-    fetch("/api/v1/server").then(res => res.json()).then(res => {
-        var initData = res.data
-        console.log("initData", res);
-        var statusCards = new Vue({
-            el: '#app',
-            // delimiters: ['{{', '}}'],
-            data: {
-                servers: initData,
-                cache: [],
-            },
-            mounted() {
-                this.troggleDarkMode();
-            },
-            methods: {
-                mergeUsage(state, host) {
-                    if (!state) {
-                        return 0
-                    }
-                    if (!host) {
-                        return state.CPU
-                    }
-                    return (state.CPU + (state.MemUsed / host.MemTotal * 100) + (state.DiskUsed / host.DiskTotal * 100)) / 3
-                },
-                formatPercent(live, used, total) {
-                    const percent = live ? (parseInt(used / total * 100) || 0) : -1
-                    if (!this.cache[percent]) {
-                        this.cache[percent] = {
-                            class: {
-                                ui: true,
-                                progress: true,
-                            },
-                            style: {
-                                'transition-duration': '300ms',
-                                'min-width': 'unset',
-                                width: percent + '% !important',
-                            },
-                            percent,
-                        }
-                        if (percent < 0) {
-                            this.cache[percent].style['background-color'] = 'slategray'
-                            this.cache[percent].class.offline = true
-                        } else if (percent < 51) {
-                            this.cache[percent].style['background-color'] = '#0a94f2'
-                            this.cache[percent].class.fine = true
-                        } else if (percent < 81) {
-                            this.cache[percent].style['background-color'] = 'orange'
-                            this.cache[percent].class.warning = true
-                        } else {
-                            this.cache[percent].style['background-color'] = 'crimson'
-                            this.cache[percent].class.error = true
-                        }
-                    }
-                    return this.cache[percent]
-                },
-                readableBytes(bytes) {
-                    if (!bytes) {
-                        return '0B'
-                    }
-                    var i = Math.floor(Math.log(bytes) / Math.log(1024)),
-                        sizes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-                    return parseFloat((bytes / Math.pow(1024, i)).toFixed(2)) + sizes[i];
-                },
-                formatByteSize(bs) {
-                    const x = this.readableBytes(bs)
-                    return x != "NaN undefined" ? x : '0B'
-                },
-                troggleDarkMode() {
-                    const hour = new Date(Date.now()).getHours()
-                    if (hour > 17 || hour < 4) {
-                        document.body.classList.add('dark');
-                    }
-                },
-                secondToDate(s) {
-                    var d = Math.floor(s / 3600 / 24);
-                    if (d > 0) {
-                        return d + " 天"
-                    }
-                    var h = Math.floor(s / 3600 % 24);
-                    var m = Math.floor(s / 60 % 60);
-                    var s = Math.floor(s % 60);
-                    return h + ":" + ("0" + m).slice(-2) + ":" + ("0" + s).slice(-2);
-                },
-                formatTimestamp(t) {
-                    return new Date(t * 1000).toLocaleString()
-                },
 
-
-                addServer(server){
-                    let exitsServer = this.getServer(server.id);
-                    if (exitsServer){
-                        exitsServer = {
-                            ...exitsServer,
-                            ...server
-                        }
-                    }else{
-                        this.servers.push(server)
+    var statusCards = new Vue({
+        el: '#app',
+        // delimiters: ['{{', '}}'],
+        data: {
+            servers: [],
+            cache: [],
+        },
+        mounted() {
+            this.getServerList()
+            this.troggleDarkMode();
+        },
+        methods: {
+            formatPercent(live, used, total) {
+                const percent = live ? (parseInt(used / total * 100) || 0) : -1
+                if (!this.cache[percent]) {
+                    this.cache[percent] = {
+                        class: {
+                            ui: true,
+                            progress: true,
+                        },
+                        style: {
+                            'transition-duration': '300ms',
+                            'min-width': 'unset',
+                            width: percent + '% !important',
+                        },
+                        percent,
                     }
-                },
-                offlineServer(serverId){
-                    let server = this.getServer(serverId);
-                    server.live = false
-                },
-                updateServer(serverId,state){
-                    let server = this.getServer(serverId);
-                    if (!server) return;
-                    server.state = state
-                },
-                getServer(serverId){
-                    for (const server of this.servers) {
-                        if (server.id == serverId){
-                            return server;
-                        }
+                    if (percent < 0) {
+                        this.cache[percent].style['background-color'] = 'slategray'
+                        this.cache[percent].class.offline = true
+                    } else if (percent < 51) {
+                        this.cache[percent].style['background-color'] = '#0a94f2'
+                        this.cache[percent].class.fine = true
+                    } else if (percent < 81) {
+                        this.cache[percent].style['background-color'] = 'orange'
+                        this.cache[percent].class.warning = true
+                    } else {
+                        this.cache[percent].style['background-color'] = 'crimson'
+                        this.cache[percent].class.error = true
                     }
-                    return null;
                 }
+                return this.cache[percent]
+            },
+            troggleDarkMode() {
+                const hour = new Date(Date.now()).getHours()
+                if (hour > 17 || hour < 4) {
+                    document.body.classList.add('dark');
+                }
+            },
+
+            getServerList(){
+                fetch("/api/v1/server").then(res => res.json()).then(res => {
+                    this.servers = res.data
+                })
+            },
+
+            addServer(server){
+                let serverIndex = null;
+                for (let i = 0; i < this.servers.length; i++) {
+                    if (server.id == this.servers[i].id){
+                        serverIndex = i
+                    }
+                }
+                if (serverIndex != null){
+                    let serverData = {
+                        ...this.servers[serverIndex],
+                        ...server
+                    }
+                    this.$set(this.servers, serverIndex, serverData)
+                    console.log("addServer", serverIndex, serverData);
+                }else{
+                    this.servers.push(server)
+                }
+            },
+            offlineServer(serverId){
+                let server = this.getServer(serverId);
+                server.live = false
+            },
+            updateServer(serverId,state){
+                let server = this.getServer(serverId);
+                if (!server) return;
+                server.state = state
+            },
+            getServer(serverId){
+                for (const server of this.servers) {
+                    if (server.id == serverId){
+                        return server;
+                    }
+                }
+                return null;
             }
-        })
+        }
+    })
 
-        console.log(statusCards);
+    console.log(statusCards);
 
 
-        const wsProtocol = window.location.protocol == "https:" ? "wss" : "ws"
-        let canShowError = true;
-        function connect() {
-            const ws = new WebSocket(wsProtocol + '://' + window.location.host + '/ws/web');
-            ws.onopen = function (evt) {
-                canShowError = true;
+    const wsProtocol = window.location.protocol == "https:" ? "wss" : "ws"
+    let canShowError = true;
+    function connect() {
+        const ws = new WebSocket(wsProtocol + '://' + window.location.host + '/ws/web');
+        ws.onopen = function (evt) {
+            canShowError = true;
+            $.suiAlert({
+                title: '实时通道建立',
+                description: '可以实时获取最新监控数据啦',
+                type: 'success',
+                time: '2',
+                position: 'top-center',
+            });
+        }
+        ws.onmessage = function (evt) {
+            const data = JSON.parse(evt.data)
+            // 有服务上线
+            if (data.message_type === 2000){
+                statusCards.addServer(data.message)
+            }else if (data.message_type === 2001){
+                // 服务离线
+                statusCards.offlineServer(data.message)
+            }else if (data.message_type === 2002){
+                // 服务离线
+                statusCards.updateServer(data.message.id, data.message.state)
+            }
+        }
+        ws.onclose = function () {
+            if (canShowError) {
+                canShowError = false;
                 $.suiAlert({
-                    title: '实时通道建立',
-                    description: '可以实时获取最新监控数据啦',
-                    type: 'success',
+                    title: '实时通道断开',
+                    description: '无法实时获取最新监控数据咯',
+                    type: 'warning',
                     time: '2',
                     position: 'top-center',
                 });
             }
-            ws.onmessage = function (evt) {
-                const data = JSON.parse(evt.data)
-                // 有服务上线
-                if (data.message_type === 2000){
-                    statusCards.addServer(data.message)
-                }else if (data.message_type === 2001){
-                    // 服务离线
-                    statusCards.offlineServer(data.message)
-                }else if (data.message_type === 2002){
-                    // 服务离线
-                    statusCards.updateServer(data.message.id, data.message.state)
-                }
-            }
-            ws.onclose = function () {
-                if (canShowError) {
-                    canShowError = false;
-                    $.suiAlert({
-                        title: '实时通道断开',
-                        description: '无法实时获取最新监控数据咯',
-                        type: 'warning',
-                        time: '2',
-                        position: 'top-center',
-                    });
-                }
-                setTimeout(function () {
-                    connect()
-                }, 3000);
-            }
-            ws.onerror = function () {
-                ws.close()
-            }
+            setTimeout(function () {
+                connect()
+            }, 3000);
         }
-        connect()
-    })
+        ws.onerror = function () {
+            ws.close()
+        }
+    }
+    connect()
 </script>
 </body>
 

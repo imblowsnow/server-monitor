@@ -9,6 +9,8 @@ type ServerFaultTotalBO struct {
 
 	// 统计数据
 	Items []*ServerFaultTotalItemBO `json:"items"`
+	// 总在线率
+	TotalOnlineRate float64 `json:"total_online_rate"`
 }
 
 type ServerFaultTotalItemBO struct {
@@ -20,4 +22,8 @@ type ServerFaultTotalItemBO struct {
 	FaultTime float64 `json:"fault_time"`
 	// 故障率
 	FaultRate float64 `json:"fault_rate"`
+	// 在线率
+	OnlineRate float64 `json:"online_rate"`
+	// 是否在线
+	Online bool `json:"online"`
 }

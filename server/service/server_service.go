@@ -5,7 +5,6 @@ import (
 	"server/dao"
 	"server/entity/bo"
 	"server/entity/do"
-	"server/utils"
 	"strconv"
 	"time"
 )
@@ -24,42 +23,29 @@ func (s ServerService) UpdateServer(server do.Server) {
 }
 
 // 获取服务器列表（首页展示）
-func (s *ServerService) GetIndexServerList() []bo.ServerBO {
+func (s *ServerService) GetIndexServerList() []*bo.ServerBO {
 	serverList := serverDao.GetServerList(true)
-	var serverBOList []bo.ServerBO
+	var serverBOList []*bo.ServerBO
 	for _, server := range serverList {
-		serverInfoDO := serverInfoDao.GetServerInfoByServerID(server.ID)
-		serverStateDO := serverStateDao.GetLastServerStateByServerID(server.ID)
-
-		serverBO := bo.ServerBO{
-			ID:          server.ID,
-			Name:        server.Name,
-			Group:       server.Group,
-			Version:     server.Version,
-			Hide:        server.Hide,
-			Index:       server.Index,
-			CreatedTime: server.CreatedTime,
-			UpdatedTime: server.UpdatedTime,
-			Live:        config.SocketClients.CheckExistByKey(strconv.Itoa(int(server.ID))),
-		}
-		if serverInfoDO != nil {
-			serverBO.Info = &serverInfoDO.Info
-		}
-		if serverStateDO != nil {
-			serverBO.State = &serverStateDO.State
-		}
+		serverBO := s.GetServerInfoById(server.ID)
 		serverBOList = append(serverBOList, serverBO)
 	}
 
 	return serverBOList
 }
 
-func (s *ServerService) GetServerInfo(serverId uint) *bo.ServerBO {
+func (s *ServerService) GetServerInfoById(serverId uint) *bo.ServerBO {
 	server, err := serverDao.GetServerById(serverId)
 	if err != nil {
 		return nil
 	}
 
+	return s.GetServerInfo(server)
+}
+func (s *ServerService) GetServerInfo(server do.Server) *bo.ServerBO {
+	if server.ID == 0 {
+		return nil
+	}
 	serverInfoDO := serverInfoDao.GetServerInfoByServerID(server.ID)
 	serverStateDO := serverStateDao.GetLastServerStateByServerID(server.ID)
 
@@ -83,15 +69,7 @@ func (s *ServerService) GetServerInfo(serverId uint) *bo.ServerBO {
 	return &serverBO
 }
 
-// 获取服务每分钟统计状态
-// timeType 1 分钟 2 小时 3 天 4 月
-//func (s *ServerService) GetServerStatistics(timeType int) map[string]interface{} {
-//	times := []string{}
-//
-//}
-
-// 获取服务故障率 按天
-func (s *ServerService) GetServerFaultTotal() []bo.ServerFaultTotalBO {
+func (s *ServerService) GetServerStatus() []bo.ServerFaultTotalBO {
 	// 获取前30天
 	today := time.Now()
 
@@ -99,7 +77,7 @@ func (s *ServerService) GetServerFaultTotal() []bo.ServerFaultTotalBO {
 	minDate := today.AddDate(0, 0, -30).Unix()
 	maxDate := today.AddDate(0, 0, 1).Unix()
 	// 使用循环获取前30天的日期
-	for i := 0; i <= 30; i++ {
+	for i := 0; i < 30; i++ {
 		// 计算前i天的日期
 		previousDate := today.AddDate(0, 0, -i)
 		// 格式化日期为字符串
@@ -118,10 +96,21 @@ func (s *ServerService) GetServerFaultTotal() []bo.ServerFaultTotalBO {
 			Group:    server.Group,
 			Items:    make([]*bo.ServerFaultTotalItemBO, 0),
 		}
-		serverFaultList := serverFaultDao.GetServerFaultListByTime(server.ID, minDate, maxDate)
+		serverStateList := serverStateDao.GetServerStateListByTime(server.ID, minDate, maxDate)
+		serverStateMaps := make(map[string][]int64)
+		for _, state := range serverStateList {
+			date := time.Unix(state.CreatedTime, 0).Format("2006-01-02")
+			if _, ok := serverStateMaps[date]; !ok {
+				serverStateMaps[date] = make([]int64, 0)
+			}
+			serverStateMaps[date] = append(serverStateMaps[date], state.CreatedTime)
+		}
 
+		var totalOnlineRate float64
 		for _, startDate := range times {
 			startDateTime, _ := time.ParseInLocation(dateLayout, startDate, time.Local)
+			date := startDateTime.Format("2006-01-02")
+
 			endDate := startDateTime.AddDate(0, 0, 1).Format(dateLayout)
 			endDateTime, _ := time.ParseInLocation(dateLayout, endDate, time.Local)
 
@@ -129,38 +118,45 @@ func (s *ServerService) GetServerFaultTotal() []bo.ServerFaultTotalBO {
 				endDateTime = time.Now()
 			}
 			totalTime := endDateTime.Sub(startDateTime)
-			faultTime := time.Duration(0)
+			faultTime := time.Duration(0) * time.Second
 
-			tmpServerFaultList := make([]do.ServerFault, 0)
-			for _, fault := range serverFaultList {
-				// 获取交集时间段
-				faultStartTime, _ := time.ParseInLocation(dateLayout, time.Unix(fault.StartTime, 0).Format(dateLayout), time.Local)
-				var faultEndTime time.Time
-				if fault.EndTime == 0 {
-					faultEndTime = time.Now()
-				} else {
-					faultEndTime, _ = time.ParseInLocation(dateLayout, time.Unix(fault.EndTime, 0).Format(dateLayout), time.Local)
+			onlineFlag := false
+			if serverStateMaps[date] != nil && len(serverStateList) > 0 {
+				serverStateList := serverStateMaps[date]
+				// 插入第一个
+				serverStateList = append([]int64{startDateTime.Unix()}, serverStateList...)
+				serverStateList = append(serverStateList, endDateTime.Unix())
+				for i := 0; i < len(serverStateList); i++ {
+					// 计算2次状态之间的时间差是否大于5分钟
+					if i+1 < len(serverStateList) {
+						startTime := serverStateList[i]
+						endTime := serverStateList[i+1]
+						if endTime-startTime > 300 {
+							// 故障时间
+							faultTime += time.Duration(endTime-startTime) * time.Second
+						}
+					}
 				}
-
-				// 获取交集时间段
-				intersectionStart, intersectionEnd := utils.Intersection(startDateTime, endDateTime, faultStartTime, faultEndTime)
-
-				if intersectionStart.IsZero() || intersectionEnd.IsZero() {
-					continue
-				}
-
-				faultTime += intersectionEnd.Sub(intersectionStart)
-				tmpServerFaultList = append(tmpServerFaultList, fault)
+				onlineFlag = true
 			}
 
+			faultRate := faultTime.Seconds() / totalTime.Seconds() * 100
+			onlineRate := 100 - faultRate
+			if !onlineFlag {
+				onlineRate = 0
+			}
 			serverFaultTotal.Items = append(serverFaultTotal.Items, &bo.ServerFaultTotalItemBO{
-				Time:      startDateTime.Format("2006-01-02"),
-				TotalTime: totalTime.Seconds(),
-				FaultTime: faultTime.Seconds(),
-				FaultRate: faultTime.Seconds() / totalTime.Seconds() * 100,
+				Time:       startDateTime.Format("2006-01-02"),
+				TotalTime:  totalTime.Seconds(),
+				FaultTime:  faultTime.Seconds(),
+				FaultRate:  faultRate,
+				OnlineRate: onlineRate,
+				Online:     onlineFlag,
 			})
-		}
 
+			totalOnlineRate += onlineRate
+		}
+		serverFaultTotal.TotalOnlineRate = totalOnlineRate / float64(len(times))
 		total = append(total, serverFaultTotal)
 	}
 

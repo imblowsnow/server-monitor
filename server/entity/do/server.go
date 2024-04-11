@@ -7,7 +7,8 @@ type Server struct {
 	// 备注
 	Remark string `json:"remark"`
 	// ip地址
-	Host string `json:"host" gorm:"type:varchar(128)"`
+	Host        string `json:"host" gorm:"type:varchar(128)"`
+	CountryCode string `json:"country_code" gorm:"type:varchar(10)"`
 	// key
 	Key string `json:"key" gorm:"type:varchar(100);unique;uniqueIndex"`
 	// 分组

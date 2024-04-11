@@ -51,7 +51,8 @@ func (e *ServerWebSocketEvent) OnMessage(message model.WebsocketMessage) {
 		config.SocketClients.Add(clientId, e.conn)
 
 		e.service.SendMessage(model.MessageTypeInit, nil)
-		e.service.SaveServerInfo(initMessage.ServerInfo)
+		// TODO 客户端版本号
+		e.service.SaveServerInfo(initMessage.ServerInfo, "1.0.0")
 		e.service.CheckFault()
 		// TODO 添加一个协程监听器，判断最后一次心跳时间，如果超过一定时间，关闭连接
 
