@@ -7,7 +7,6 @@ import (
 	"embed"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"net/http"
 	"strings"
 )
 
@@ -40,14 +39,14 @@ func outTemplate(c *gin.Context, prefix, template, path string, files embed.FS) 
 		// 首页模板文件
 		if path == "/" || path == "" {
 			// 输出指定模板文件
-			c.FileFromFS(realTemplatePath, http.FS(files))
+			c.File(realTemplatePath)
 			return
 		}
 		// 判断文件是否存在
 		_, err := files.Open(realTemplatePath)
 		if err == nil {
 			// 输出指定模板文件
-			c.FileFromFS(realTemplatePath, http.FS(files))
+			c.File(realTemplatePath)
 			return
 		}
 	}
