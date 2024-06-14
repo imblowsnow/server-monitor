@@ -6,6 +6,9 @@ import (
 	"github.com/gorilla/websocket"
 	"net/http"
 	"server-monitor/pkg/common/inner_websocket"
+	_ "server-monitor/pkg/server/config"
+	// 用于注册定时任务
+	_ "server-monitor/pkg/server/task"
 	"server-monitor/pkg/server/websocket/event"
 	"strconv"
 )
@@ -28,7 +31,7 @@ func CreateServer(port int) {
 		handleUpgradeWebsocket(c.Writer, c.Request)
 	})
 
-	// TODO 注册路由
+	// TODO 注册接口路由
 
 	r.Run(":" + strconv.Itoa(port))
 }
