@@ -15,7 +15,7 @@ type NotifyLogDO struct {
 	// 通知结果
 	Result string `json:"result" gorm:"type:text"`
 	// 创建时间
-	CreateTime time.Time `json:"create_time" gorm:"type:datetime"`
+	CreateTime time.Time `json:"create_time" gorm:"type:datetime;autoCreateTime"`
 	// 更新时间
-	UpdateTime time.Time `json:"update_time" gorm:"type:datetime"`
+	UpdateTime time.Time `json:"update_time" gorm:"type:datetime;autoUpdateTime"`
 }

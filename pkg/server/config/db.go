@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 	"server-monitor/pkg/server/dal/do"
+	"strings"
 	"sync"
 )
 
@@ -24,19 +25,24 @@ func DB() *gorm.DB {
 	return _db
 }
 
+func init() {
+	initDb()
+}
 func initDb() {
 	fmt.Println("数据库初始化开始")
 
 	db, err := gorm.Open(sqlite.Open("data.db"), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true,
+			NameReplacer:  strings.NewReplacer("DO", ""),
 		},
 	})
 	if err != nil {
 		panic("failed to connect database")
 	}
 
-	db.AutoMigrate(&do.ServerDO{})
+	db.AutoMigrate(&do.ServerDO{}, &do.ServerInfoDO{}, &do.ServerStateDO{}, &do.ServerInfoDO{})
+	db.AutoMigrate(&do.NotifyGroupDO{}, &do.NotifyChannelDO{}, &do.NotifyGroupChannelDO{}, &do.NotifyLogDO{})
 
 	_db = db
 

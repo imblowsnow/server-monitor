@@ -8,7 +8,7 @@ type ServerInit struct {
 	// 服务器Key
 	Key string `json:"key"`
 
-	bo.ServerInfoBO
+	bo.ServerInfo `json:"server_info"`
 
-	bo.ServerStateBO
+	bo.ServerState `json:"server_state"`
 }

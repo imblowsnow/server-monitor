@@ -41,6 +41,6 @@ func (ServerWebsocketEvent) OnMessage(conn *websocket.Conn, websocketMessage web
 			fmt.Println("解析消息失败:", err)
 			return
 		}
-		serverWebsocketHandle.OnServerStat(conn, serverStatMessage)
+		serverWebsocketHandle.OnServerState(conn, serverStatMessage)
 	}
 }

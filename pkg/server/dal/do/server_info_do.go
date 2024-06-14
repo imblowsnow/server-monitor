@@ -12,10 +12,10 @@ type ServerInfoDO struct {
 	ServerId uint `json:"server_id"`
 
 	// 服务器信息
-	bo.ServerInfoBO `json:"server_info" gorm:"embedded"`
+	bo.ServerInfo `json:"server_info" gorm:"embedded"`
 
 	// 创建时间
-	CreateTime time.Time `json:"create_time" gorm:"type:datetime"`
+	CreateTime time.Time `json:"create_time" gorm:"type:datetime;autoCreateTime"`
 	// 更新时间
-	UpdateTime time.Time `json:"update_time" gorm:"type:datetime"`
+	UpdateTime time.Time `json:"update_time" gorm:"type:datetime;autoUpdateTime"`
 }

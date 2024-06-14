@@ -6,6 +6,9 @@ import (
 	"github.com/gorilla/websocket"
 	"net/http"
 	"server-monitor/pkg/common/inner_websocket"
+	_ "server-monitor/pkg/server/config"
+	"server-monitor/pkg/server/controller"
+
 	// 用于注册定时任务
 	_ "server-monitor/pkg/server/task"
 	"server-monitor/pkg/server/websocket/event"
@@ -30,7 +33,8 @@ func CreateServer(port int) {
 		handleUpgradeWebsocket(c.Writer, c.Request)
 	})
 
-	// TODO 注册接口路由
+	// 注册接口路由
+	controller.InitRoute(r)
 
 	r.Run(":" + strconv.Itoa(port))
 }

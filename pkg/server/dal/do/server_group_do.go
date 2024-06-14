@@ -2,13 +2,13 @@ package do
 
 import "time"
 
-type NotifyGroupDO struct {
+type ServerGroupDO struct {
 	// ID
 	ID uint `json:"id" gorm:"primaryKey;autoIncrement"`
-	// 通知类型 1.上线 2.下线
-	Type int `json:"type" gorm:"type:int"`
-	// 名称
-	Name string `json:"name" gorm:"type:varchar(64)"`
+	// 组名
+	GroupName string `json:"group_name" gorm:"type:varchar(64)"`
+	// 排序
+	Sort int `json:"sort" gorm:"type:int;default:0"`
 	// 创建时间
 	CreateTime time.Time `json:"create_time" gorm:"type:datetime;autoCreateTime"`
 	// 更新时间

@@ -14,8 +14,8 @@ import (
 	"time"
 )
 
-func GetServerInfo() bo.ServerInfoBO {
-	var serverInfo bo.ServerInfoBO
+func GetServerInfo() bo.ServerInfo {
+	var serverInfo bo.ServerInfo
 
 	hostInfo, _ := host.Info()
 
@@ -71,8 +71,8 @@ func GetServerInfo() bo.ServerInfoBO {
 	return serverInfo
 }
 
-func GetServerState() bo.ServerStateBO {
-	var state bo.ServerStateBO
+func GetServerState() bo.ServerState {
+	var state bo.ServerState
 
 	// 获取 CPU 使用率
 	cpuPercent, err := cpu.Percent(time.Second, false)

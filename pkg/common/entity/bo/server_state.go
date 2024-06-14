@@ -1,6 +1,6 @@
 package bo
 
-type ServerStateBO struct {
+type ServerState struct {
 	// CPU占用
 	CPU float64 `json:"cpu" gorm:"type:double"`
 	// 内存占用

@@ -5,5 +5,5 @@ import (
 )
 
 type ServerState struct {
-	bo.ServerStateBO
+	bo.ServerState
 }

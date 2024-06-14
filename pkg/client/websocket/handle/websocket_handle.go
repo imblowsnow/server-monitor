@@ -16,8 +16,8 @@ type WebsocketHandle struct {
 func (h WebsocketHandle) OnConnected(conn *websocket.Conn) {
 	// 发送初始化消息
 	message := websocket_message.ServerInit{
-		ServerInfoBO:  utils.GetServerInfo(),
-		ServerStateBO: utils.GetServerState(),
+		ServerInfo:  utils.GetServerInfo(),
+		ServerState: utils.GetServerState(),
 	}
 	err := commonUtils.SendWebsocketMessage(conn, enum.MessageServerInit, message)
 	if err != nil {
@@ -44,7 +44,7 @@ func (h WebsocketHandle) startHeartbeat(conn *websocket.Conn) {
 			case <-time.Tick(time.Minute):
 				fmt.Println("推送服务器状态")
 				serverSate := websocket_message.ServerState{
-					ServerStateBO: utils.GetServerState(),
+					ServerState: utils.GetServerState(),
 				}
 				err := commonUtils.SendWebsocketMessage(conn, enum.MessageServerStat, serverSate)
 				if err != nil {
