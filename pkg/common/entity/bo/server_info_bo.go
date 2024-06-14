@@ -1,7 +1,7 @@
-package entity
+package bo
 
-// ServerInfo 服务器信息
-type ServerInfo struct {
+// ServerInfoBO 服务器信息
+type ServerInfoBO struct {
 	// 主机名
 	Hostname string `json:"host_name" gorm:"type:varchar(64)"`
 	// 系统版本

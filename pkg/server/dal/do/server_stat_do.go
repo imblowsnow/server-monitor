@@ -1,7 +1,7 @@
 package do
 
 import (
-	"server-monitor/pkg/common/entity"
+	"server-monitor/pkg/common/entity/bo"
 	"time"
 )
 
@@ -12,7 +12,7 @@ type ServerStatDO struct {
 	ServerId uint `json:"server_id"`
 
 	// 服务器当前信息
-	entity.ServerState `gorm:"embedded"`
+	bo.ServerStateBO `gorm:"embedded"`
 
 	// 创建时间
 	CreateTime time.Time `json:"create_time" gorm:"type:datetime"`

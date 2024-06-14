@@ -9,13 +9,13 @@ import (
 	"github.com/shirou/gopsutil/mem"
 	"github.com/shirou/gopsutil/net"
 	"github.com/shirou/gopsutil/process"
-	"server-monitor/pkg/common/entity"
+	"server-monitor/pkg/common/entity/bo"
 	"strings"
 	"time"
 )
 
-func GetServerInfo() entity.ServerInfo {
-	var serverInfo entity.ServerInfo
+func GetServerInfo() bo.ServerInfoBO {
+	var serverInfo bo.ServerInfoBO
 
 	hostInfo, _ := host.Info()
 
@@ -71,8 +71,8 @@ func GetServerInfo() entity.ServerInfo {
 	return serverInfo
 }
 
-func GetServerState() entity.ServerState {
-	var state entity.ServerState
+func GetServerState() bo.ServerStateBO {
+	var state bo.ServerStateBO
 
 	// 获取 CPU 使用率
 	cpuPercent, err := cpu.Percent(time.Second, false)

@@ -1,7 +1,9 @@
 package websocket_message
 
-import "server-monitor/pkg/common/entity"
+import (
+	"server-monitor/pkg/common/entity/bo"
+)
 
 type ServerState struct {
-	entity.ServerState
+	bo.ServerStateBO
 }

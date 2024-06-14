@@ -6,6 +6,7 @@ import (
 	"server-monitor/pkg/client/utils"
 	"server-monitor/pkg/common/entity/websocket_message"
 	"server-monitor/pkg/common/enum"
+	commonUtils "server-monitor/pkg/common/utils"
 	"time"
 )
 
@@ -15,10 +16,10 @@ type WebsocketHandle struct {
 func (h WebsocketHandle) OnConnected(conn *websocket.Conn) {
 	// 发送初始化消息
 	message := websocket_message.ServerInit{
-		ServerInfo:  utils.GetServerInfo(),
-		ServerState: utils.GetServerState(),
+		ServerInfoBO:  utils.GetServerInfo(),
+		ServerStateBO: utils.GetServerState(),
 	}
-	err := h.sendMessage(conn, enum.MessageServerInit, message)
+	err := commonUtils.SendWebsocketMessage(conn, enum.MessageServerInit, message)
 	if err != nil {
 		fmt.Println("发送初始化消息失败:", err)
 		conn.Close()
@@ -41,18 +42,15 @@ func (h WebsocketHandle) startHeartbeat(conn *websocket.Conn) {
 		for {
 			select {
 			case <-time.Tick(time.Minute):
+				fmt.Println("推送服务器状态")
 				serverSate := websocket_message.ServerState{
-					ServerState: utils.GetServerState(),
+					ServerStateBO: utils.GetServerState(),
 				}
-				err := h.sendMessage(conn, enum.MessageServerStat, serverSate)
+				err := commonUtils.SendWebsocketMessage(conn, enum.MessageServerStat, serverSate)
 				if err != nil {
 					fmt.Println("发送服务器状态失败:", err)
 				}
 			}
 		}
 	}()
-}
-
-func (WebsocketHandle) sendMessage(conn *websocket.Conn, messageType int, message interface{}) error {
-	return conn.WriteJSON(websocket_message.BuildWebsocketMessage(messageType, message))
 }

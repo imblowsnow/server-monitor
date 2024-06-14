@@ -1,6 +1,6 @@
-package entity
+package bo
 
-type ServerState struct {
+type ServerStateBO struct {
 	// CPU占用
 	CPU float64 `json:"cpu" gorm:"type:double"`
 	// 内存占用

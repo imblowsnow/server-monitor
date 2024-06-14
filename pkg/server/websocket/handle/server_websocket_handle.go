@@ -18,6 +18,8 @@ func (ServerWebsocketHandle) OnConnected(conn *websocket.Conn) {
 }
 
 func (h ServerWebsocketHandle) OnClose(conn *websocket.Conn) {
+	serverId := serverConnectionManage.GetServerId(conn)
+	fmt.Println("服务器关闭:", serverId)
 	serverConnectionManage.RemoveByConn(conn)
 }
 
