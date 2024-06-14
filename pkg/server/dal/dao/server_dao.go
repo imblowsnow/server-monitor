@@ -6,7 +6,7 @@ import (
 )
 
 type ServerDao struct {
-	BaseDao[do.ServerDO]
+	BaseDao[do.ServerDO, uint]
 }
 
 func (ServerDao) GetServerInfo() bo.ServerInfoBO {

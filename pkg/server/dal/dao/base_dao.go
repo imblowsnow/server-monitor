@@ -2,16 +2,18 @@ package dao
 
 import (
 	"fmt"
-	"server-monitor/pkg/server/constants"
+	"server-monitor/pkg/server/config"
 	"server-monitor/pkg/server/entity"
 )
 
-type BaseDao[T any] struct {
+// DO 数据库实体
+// ID 主键类型
+type BaseDao[DO any, ID any] struct {
 }
 
-func (BaseDao[T]) GetList() []T {
-	list := []T{}
-	result := constants.DB.Find(&list)
+func (BaseDao[DO, ID]) GetList() []DO {
+	list := []DO{}
+	result := config.DB().Find(&list)
 	if result.Error != nil {
 		fmt.Println("查询列表失败", result.Error)
 		return nil
@@ -19,22 +21,31 @@ func (BaseDao[T]) GetList() []T {
 	return list
 }
 
-func (BaseDao[T]) Page(page *entity.Page[T]) {
-	result := constants.DB.Model(page.List).Count(&page.TotalCount)
+func (BaseDao[DO, ID]) Page(page *entity.Page[DO]) bool {
+	// 默认页数值
+	if page.Page == 0 {
+		page.Page = 1
+	}
+	if page.PageSize == 0 {
+		page.PageSize = 10
+	}
+	result := config.DB().Model(page.List).Count(&page.TotalCount)
 	if result.Error != nil {
 		fmt.Println("查询总数失败", result.Error)
-		return
+		return false
 	}
-	result = constants.DB.Offset((page.Page - 1) * page.PageSize).Limit(page.PageSize).Find(&page.List)
+	page.TotalPage = int((page.TotalCount + int64(page.PageSize) - 1) / int64(page.PageSize))
+	result = config.DB().Offset((page.Page - 1) * page.PageSize).Limit(page.PageSize).Find(&page.List)
 	if result.Error != nil {
 		fmt.Println("查询列表失败", result.Error)
-		return
+		return false
 	}
+	return true
 }
 
-func (BaseDao[T]) Delete(id int) bool {
-	var entity T
-	result := constants.DB.Delete(entity, id)
+func (BaseDao[DO, ID]) Delete(id ID) bool {
+	var entity DO
+	result := config.DB().Delete(entity, id)
 	if result.Error != nil {
 		fmt.Println("删除失败", id, result.Error)
 		return false
@@ -42,8 +53,18 @@ func (BaseDao[T]) Delete(id int) bool {
 	return true
 }
 
-func (BaseDao[T]) Add(entity T) bool {
-	result := constants.DB.Create(entity)
+func (BaseDao[DO, ID]) GetById(id ID) DO {
+	var entity DO
+	result := config.DB().First(&entity, id)
+	if result.Error != nil {
+		fmt.Println("查询失败", id, result.Error)
+		return entity
+	}
+	return entity
+}
+
+func (BaseDao[DO, ID]) Add(entity DO) bool {
+	result := config.DB().Create(entity)
 	if result.Error != nil {
 		fmt.Println("新增失败", entity, result.Error)
 		return false
@@ -51,21 +72,11 @@ func (BaseDao[T]) Add(entity T) bool {
 	return true
 }
 
-func (BaseDao[T]) Update(entity T) bool {
-	result := constants.DB.Save(entity)
+func (BaseDao[DO, ID]) Update(entity DO) bool {
+	result := config.DB().Save(entity)
 	if result.Error != nil {
 		fmt.Println("更新失败", entity, result.Error)
 		return false
 	}
 	return true
-}
-
-func (BaseDao[T]) GetById(id int) T {
-	var entity T
-	result := constants.DB.First(&entity, id)
-	if result.Error != nil {
-		fmt.Println("查询失败", id, result.Error)
-		return entity
-	}
-	return entity
 }

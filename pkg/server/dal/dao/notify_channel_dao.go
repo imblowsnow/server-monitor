@@ -5,5 +5,5 @@ import (
 )
 
 type NotifyChannelDao struct {
-	BaseDao[do.NotifyChannelDO]
+	BaseDao[do.NotifyChannelDO, uint]
 }

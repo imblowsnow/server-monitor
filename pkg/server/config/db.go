@@ -5,10 +5,26 @@ import (
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
-	"server-monitor/pkg/server/constants"
+	"server-monitor/pkg/server/dal/do"
+	"sync"
 )
 
-func init() {
+var _db *gorm.DB
+var mutex sync.Mutex
+
+func DB() *gorm.DB {
+	if _db == nil {
+		mutex.Lock()
+		defer mutex.Unlock()
+		if _db == nil {
+			initDb()
+		}
+		return _db
+	}
+	return _db
+}
+
+func initDb() {
 	fmt.Println("数据库初始化开始")
 
 	db, err := gorm.Open(sqlite.Open("data.db"), &gorm.Config{
@@ -20,7 +36,9 @@ func init() {
 		panic("failed to connect database")
 	}
 
-	constants.DB = db
+	db.AutoMigrate(&do.ServerDO{})
+
+	_db = db
 
 	// 初始化数据库
 	fmt.Println("数据库初始化成功")
