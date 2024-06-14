@@ -3,8 +3,9 @@ package handle
 import (
 	"fmt"
 	"github.com/gorilla/websocket"
+	"server-monitor/pkg/common/entity/websocket_message"
 	"server-monitor/pkg/common/enum"
-	"server-monitor/pkg/common/model/websocket_message"
+	"server-monitor/pkg/common/utils"
 )
 
 type ServerWebsocketHandle struct {
@@ -35,13 +36,13 @@ func (h ServerWebsocketHandle) OnServerInit(conn *websocket.Conn, message websoc
 
 	serverInitSuccessMessage := websocket_message.ServerInitSuccess{}
 	// 发送初始化成功消息
-	err := h.sendMessage(conn, enum.ServerMessageInitSuccess, serverInitSuccessMessage)
+	err := utils.SendWebsocketMessage(conn, enum.ServerMessageInitSuccess, serverInitSuccessMessage)
 	if err != nil {
 		fmt.Println("发送初始化成功消息失败:", err)
 		conn.Close()
 	}
 }
 
-func (h ServerWebsocketHandle) sendMessage(conn *websocket.Conn, success int, message any) error {
-	return conn.WriteJSON(websocket_message.BuildWebsocketMessage(success, message))
+func (h ServerWebsocketHandle) OnServerStat(conn *websocket.Conn, message websocket_message.ServerState) {
+	fmt.Println("收到服务器状态:", message)
 }

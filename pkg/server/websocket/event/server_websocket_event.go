@@ -3,9 +3,9 @@ package event
 import (
 	"fmt"
 	"github.com/gorilla/websocket"
+	"server-monitor/pkg/common/entity/websocket_message"
 	"server-monitor/pkg/common/enum"
 	"server-monitor/pkg/common/inner_websocket"
-	"server-monitor/pkg/common/model/websocket_message"
 	"server-monitor/pkg/server/websocket/handle"
 )
 
@@ -35,5 +35,12 @@ func (ServerWebsocketEvent) OnMessage(conn *websocket.Conn, websocketMessage web
 		}
 		serverWebsocketHandle.OnServerInit(conn, serverInitMessage)
 		break
+	case enum.MessageServerStat:
+		serverStatMessage, err := websocket_message.ToMessageType(websocketMessage, websocket_message.ServerState{})
+		if err != nil {
+			fmt.Println("解析消息失败:", err)
+			return
+		}
+		serverWebsocketHandle.OnServerStat(conn, serverStatMessage)
 	}
 }

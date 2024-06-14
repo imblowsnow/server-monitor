@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"server-monitor/pkg/client/websocket/handle"
+	"server-monitor/pkg/common/entity/websocket_message"
 	"server-monitor/pkg/common/enum"
 	"server-monitor/pkg/common/inner_websocket"
-	"server-monitor/pkg/common/model/websocket_message"
 )
 
 type WebsocketEvent struct {

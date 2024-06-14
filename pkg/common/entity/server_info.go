@@ -1,4 +1,4 @@
-package model
+package entity
 
 // ServerInfo 服务器信息
 type ServerInfo struct {

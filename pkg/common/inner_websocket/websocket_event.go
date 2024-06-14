@@ -2,7 +2,7 @@ package inner_websocket
 
 import (
 	"github.com/gorilla/websocket"
-	"server-monitor/pkg/common/model/websocket_message"
+	"server-monitor/pkg/common/entity/websocket_message"
 )
 
 type WebsocketEvent interface {

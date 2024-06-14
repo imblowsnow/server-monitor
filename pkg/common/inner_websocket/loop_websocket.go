@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/websocket"
-	"server-monitor/pkg/common/model/websocket_message"
+	"server-monitor/pkg/common/entity/websocket_message"
 )
 
 func LoopWebsocket(conn *websocket.Conn, event WebsocketEvent) {

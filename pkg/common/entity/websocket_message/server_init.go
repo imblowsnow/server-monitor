@@ -1,12 +1,12 @@
 package websocket_message
 
-import "server-monitor/pkg/common/model"
+import "server-monitor/pkg/common/entity"
 
 type ServerInit struct {
 	// 服务器Key
 	Key string `json:"key"`
 
-	model.ServerInfo
+	entity.ServerInfo
 
-	model.ServerState
+	entity.ServerState
 }
