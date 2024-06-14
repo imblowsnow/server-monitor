@@ -37,11 +37,13 @@ func (h WebsocketHandle) OnServerInitSuccess(conn *websocket.Conn, message webso
 }
 
 func (h WebsocketHandle) startHeartbeat(conn *websocket.Conn) {
+
 	go func() {
 		// 每分钟推送一次服务器状态
 		for {
 			select {
-			case <-time.Tick(time.Minute):
+			// 30秒推送一次服务器状态
+			case <-time.Tick(time.Second * 30):
 				fmt.Println("推送服务器状态")
 				serverSate := websocket_message.ServerState{
 					ServerState: utils.GetServerState(),
