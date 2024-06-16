@@ -1,5 +1,3 @@
-//go:build dev
-
 package template
 
 import (
@@ -14,7 +12,6 @@ func initBackendTemplate(r *gin.Engine) {
 		if urlPath == "/" {
 			urlPath = "/index.html"
 		}
-		path := "backend/" + BackendTemplate + urlPath
-		writeHttpFileFromLocal(c, path)
+		autoResponseHttpFile(c, "backend", BackendTemplate, urlPath)
 	})
 }
