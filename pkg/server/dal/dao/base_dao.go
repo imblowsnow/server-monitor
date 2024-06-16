@@ -10,7 +10,6 @@ import (
 // DO 数据库实体
 // ID 主键类型
 type BaseDao[DO any, ID comparable] struct {
-	_     IBaseDao[DO, ID]
 	Order string
 }
 

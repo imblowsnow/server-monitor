@@ -2,7 +2,7 @@ package do
 
 import (
 	"server-monitor/pkg/common/entity/bo"
-	"time"
+	"server-monitor/pkg/common/time"
 )
 
 type ServerInfoDO struct {

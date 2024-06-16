@@ -1,20 +1,20 @@
 package base
 
 import (
+	"github.com/gin-gonic/gin"
 	"server-monitor/pkg/server/dal/dao"
-	"server-monitor/pkg/server/entity"
 )
 
 type ICrudController[DAO dao.IBaseDao[DO, ID], DO any, ID comparable] interface {
-	List() []DO
+	List(context *gin.Context) interface{}
 
-	Page(page int, size int) (entity.Page[DO], error)
+	Page(context *gin.Context) interface{}
 
-	Get(id ID) *DO
+	Get(context *gin.Context) interface{}
 
-	Create(do *DO) error
+	Create(context *gin.Context) interface{}
 
-	Update(id ID, do *DO) error
+	Update(context *gin.Context) interface{}
 
-	Delete(id ID) error
+	Delete(context *gin.Context) interface{}
 }

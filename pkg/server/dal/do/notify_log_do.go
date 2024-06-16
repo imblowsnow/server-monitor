@@ -1,6 +1,6 @@
 package do
 
-import "time"
+import "server-monitor/pkg/common/time"
 
 // NotifyLogDO 通知日志
 type NotifyLogDO struct {

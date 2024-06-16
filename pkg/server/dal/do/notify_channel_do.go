@@ -1,7 +1,7 @@
 package do
 
 import (
-	"time"
+	"server-monitor/pkg/common/time"
 )
 
 type NotifyChannelDO struct {

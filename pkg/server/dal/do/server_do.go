@@ -1,6 +1,6 @@
 package do
 
-import "time"
+import "server-monitor/pkg/common/time"
 
 type ServerDO struct {
 	// ID

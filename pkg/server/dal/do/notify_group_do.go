@@ -1,6 +1,6 @@
 package do
 
-import "time"
+import "server-monitor/pkg/common/time"
 
 type NotifyGroupDO struct {
 	// ID
