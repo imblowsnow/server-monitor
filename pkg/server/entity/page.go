@@ -11,4 +11,6 @@ type Page[T any] struct {
 	TotalCount int64 `json:"totalCount"`
 	// 数据
 	List []T `json:"list"`
+	// 排序
+	Order string `json:"order"`
 }
