@@ -48,7 +48,8 @@ func (c CrudController[DAO, DO, ID]) Page(context *gin.Context) interface{} {
 func (c CrudController[DAO, DO, ID]) Get(context *gin.Context) interface{} {
 	idParam := context.Param("id")
 	id, _ := strconv.ParseUint(idParam, 10, 64)
-	return c.Dao.GetById(ID(id))
+	idValue := ID(id)
+	return c.Dao.GetById(idValue)
 }
 
 func (c CrudController[DAO, DO, ID]) Create(context *gin.Context) interface{} {

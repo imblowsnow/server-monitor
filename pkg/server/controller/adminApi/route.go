@@ -12,22 +12,22 @@ func InitRoute(r *gin.Engine) {
 	adminApiV1Group := r.Group("/admin-api/v1")
 
 	// ----------------- 服务相关 ---------------------
-	serverController := v1.ServerController{}
+	serverController := v1.NewServerController()
 
 	serverV1Group := adminApiV1Group.Group("/server")
 	crudApi(serverV1Group, serverController.CrudController)
 	serverV1Group.GET("/groups", handleRouteFunc(serverController.GetServerGroups))
 
-	crudApi(adminApiV1Group.Group("/server_group"), v1.ServerGroupController{}.CrudController)
+	crudApi(adminApiV1Group.Group("/server_group"), v1.NewServerGroupController().CrudController)
 
 	// --------------------------------------------
 
 	// ---------------  通知相关 -----------------------
-	crudApi(adminApiV1Group.Group("/notify_group"), v1.NotifyGroupController{}.CrudController)
-	crudApi(adminApiV1Group.Group("/notify_channel"), v1.NotifyChannelController{}.CrudController)
+	crudApi(adminApiV1Group.Group("/notify_group"), v1.NewNotifyGroupController().CrudController)
+	crudApi(adminApiV1Group.Group("/notify_channel"), v1.NewNotifyChannelController().CrudController)
 
 	notifyLogGroup := adminApiV1Group.Group("/notify_log")
-	notifyLogGroup.GET("/", handleRouteFunc(v1.NotifyLogController{}.List))
+	notifyLogGroup.GET("/", handleRouteFunc(v1.NewNotifyLogController().List))
 	// -------------------------------------------
 }
 

@@ -7,5 +7,16 @@ import (
 )
 
 type NotifyLogController struct {
+	notifyLogDao *dao.NotifyLogDao
 	base.CrudController[dao.IBaseDao[do.NotifyLogDO, uint], do.NotifyLogDO, uint]
+}
+
+func NewNotifyLogController() *NotifyLogController {
+	var notifyLogDao = dao.NotifyLogDao{}
+	return &NotifyLogController{
+		notifyLogDao: &notifyLogDao,
+		CrudController: base.CrudController[dao.IBaseDao[do.NotifyLogDO, uint], do.NotifyLogDO, uint]{
+			Dao: &notifyLogDao,
+		},
+	}
 }

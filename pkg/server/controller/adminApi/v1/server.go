@@ -7,12 +7,22 @@ import (
 	"server-monitor/pkg/server/dal/do"
 )
 
-var serverDao = dao.ServerDao{}
-
 type ServerController struct {
+	serverDao *dao.ServerDao
 	base.CrudController[dao.IBaseDao[do.ServerDO, uint], do.ServerDO, uint]
 }
 
-func (ServerController) GetServerGroups(context *gin.Context) interface{} {
-	return serverDao.GetServerGroups()
+func NewServerController() *ServerController {
+	var serverDao = dao.ServerDao{}
+
+	return &ServerController{
+		serverDao: &serverDao,
+		CrudController: base.CrudController[dao.IBaseDao[do.ServerDO, uint], do.ServerDO, uint]{
+			Dao: &serverDao,
+		},
+	}
+}
+
+func (s ServerController) GetServerGroups(context *gin.Context) interface{} {
+	return s.serverDao.GetServerGroups()
 }

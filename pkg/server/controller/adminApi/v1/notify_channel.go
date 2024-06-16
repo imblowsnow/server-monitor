@@ -7,5 +7,16 @@ import (
 )
 
 type NotifyChannelController struct {
+	dao *dao.NotifyChannelDao
 	base.CrudController[dao.IBaseDao[do.NotifyChannelDO, uint], do.NotifyChannelDO, uint]
+}
+
+func NewNotifyChannelController() *NotifyChannelController {
+	var notifyChannelDao = dao.NotifyChannelDao{}
+	return &NotifyChannelController{
+		dao: &notifyChannelDao,
+		CrudController: base.CrudController[dao.IBaseDao[do.NotifyChannelDO, uint], do.NotifyChannelDO, uint]{
+			Dao: &notifyChannelDao,
+		},
+	}
 }

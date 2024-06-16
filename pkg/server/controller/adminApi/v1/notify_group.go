@@ -7,5 +7,16 @@ import (
 )
 
 type NotifyGroupController struct {
+	notifyGroupDao *dao.NotifyGroupDao
 	base.CrudController[dao.IBaseDao[do.NotifyGroupDO, uint], do.NotifyGroupDO, uint]
+}
+
+func NewNotifyGroupController() *NotifyGroupController {
+	var notifyGroupDao = dao.NotifyGroupDao{}
+	return &NotifyGroupController{
+		notifyGroupDao: &notifyGroupDao,
+		CrudController: base.CrudController[dao.IBaseDao[do.NotifyGroupDO, uint], do.NotifyGroupDO, uint]{
+			Dao: &notifyGroupDao,
+		},
+	}
 }

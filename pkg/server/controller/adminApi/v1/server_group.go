@@ -6,14 +6,15 @@ import (
 	"server-monitor/pkg/server/dal/do"
 )
 
-var serverGroupDao = dao.NewServerGroupDao()
-
 type ServerGroupController struct {
+	serverGroupDao *dao.ServerGroupDao
 	base.CrudController[dao.IBaseDao[do.ServerGroupDO, uint], do.ServerGroupDO, uint]
 }
 
-func NewServerGroupController() ServerGroupController {
-	return ServerGroupController{
+func NewServerGroupController() *ServerGroupController {
+	var serverGroupDao = dao.NewServerGroupDao()
+	return &ServerGroupController{
+		serverGroupDao: serverGroupDao,
 		CrudController: base.CrudController[dao.IBaseDao[do.ServerGroupDO, uint], do.ServerGroupDO, uint]{
 			Dao: serverGroupDao,
 		},

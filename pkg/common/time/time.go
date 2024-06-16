@@ -1,6 +1,10 @@
 package time
 
-import "time"
+import (
+	"database/sql"
+	"database/sql/driver"
+	"time"
+)
 
 type Time time.Time
 
@@ -33,4 +37,28 @@ func (t Time) String() string {
 		return ""
 	}
 	return time.Time(t).Format(timeFormart)
+}
+func (date *Time) Scan(value interface{}) (err error) {
+	// 如果为 int
+	if v, ok := value.(int64); ok {
+		*date = Time(time.Unix(v, 0))
+		return
+	}
+	nullTime := &sql.NullTime{}
+	err = nullTime.Scan(value)
+	*date = Time(nullTime.Time)
+	return
+}
+
+func (date Time) Value() (driver.Value, error) {
+	t := time.Time(date)
+	if t.IsZero() {
+		return nil, nil
+	}
+	return date.String(), nil
+}
+
+// GormDataType gorm common data type
+func (date Time) GormDataType() string {
+	return "datetime"
 }
