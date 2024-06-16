@@ -6,7 +6,7 @@ type ServerDO struct {
 	// ID
 	ID uint `json:"id" gorm:"primaryKey;autoIncrement"`
 	// 组ID
-	GroupID uint `json:"group_id" gorm:"type:int;index"`
+	GroupID uint `json:"group_id" gorm:"type:int;index;default:1"`
 	// 密钥
 	Key string `json:"key" gorm:"type:varchar(64);index"`
 	// 名称

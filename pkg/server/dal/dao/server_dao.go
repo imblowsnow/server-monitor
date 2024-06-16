@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"github.com/google/uuid"
 	"server-monitor/pkg/server/dal/do"
 	"server-monitor/pkg/server/entity/bo"
 	"time"
@@ -56,8 +57,9 @@ func (dao ServerDao) GetServerInfoListByGroupId(groupId uint) []*bo.ServerInfoBO
 }
 
 func (dao ServerDao) GetServerGroups() []*bo.ServerGroupBO {
-	var groups []do.ServerGroupDO
-	dao.DB().Model(&do.ServerGroupDO{}).Order("sort desc").Find(&groups)
+	// 获取分组列表
+	var serverGroupDao = ServerGroupDao{}
+	groups := serverGroupDao.GetList()
 
 	var list []*bo.ServerGroupBO
 
@@ -76,4 +78,9 @@ func (dao ServerDao) GetServerGroups() []*bo.ServerGroupBO {
 
 func (dao ServerDao) UpdateLastHeartbeatTime(serverId uint) {
 	dao.DB().Model(&do.ServerDO{}).Where("id = ?", serverId).Update("last_online_time", time.Now())
+}
+
+func (dao ServerDao) Add(server *do.ServerDO) error {
+	server.Key = uuid.New().String()
+	return dao.BaseDao.Add(server)
 }
