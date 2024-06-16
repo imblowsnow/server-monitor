@@ -16,7 +16,7 @@ func InitRoute(r *gin.Engine) {
 
 	serverV1Group := adminApiV1Group.Group("/server")
 	crudApi(serverV1Group, serverController.CrudController)
-	serverV1Group.GET("/groups", handleHandlerFunc(serverController.GetServerGroups))
+	serverV1Group.GET("/groups", handleRouteFunc(serverController.GetServerGroups))
 
 	crudApi(adminApiV1Group.Group("/server_group"), v1.ServerGroupController{}.CrudController)
 
@@ -27,21 +27,21 @@ func InitRoute(r *gin.Engine) {
 	crudApi(adminApiV1Group.Group("/notify_channel"), v1.NotifyChannelController{}.CrudController)
 
 	notifyLogGroup := adminApiV1Group.Group("/notify_log")
-	notifyLogGroup.GET("/", handleHandlerFunc(v1.NotifyLogController{}.List))
+	notifyLogGroup.GET("/", handleRouteFunc(v1.NotifyLogController{}.List))
 	// -------------------------------------------
 }
 
 func crudApi[DAO dao.IBaseDao[DO, ID], DO any, ID int | uint | uint32](g *gin.RouterGroup, crud base.CrudController[DAO, DO, ID]) {
-	g.GET("/", handleHandlerFunc(crud.List))
-	g.GET("/page/:currentPage/:size", handleHandlerFunc(crud.Page))
-	g.GET("/:id", handleHandlerFunc(crud.Get))
-	g.POST("/", handleHandlerFunc(crud.Create))
-	g.PUT("/:id", handleHandlerFunc(crud.Update))
-	g.DELETE("/:id", handleHandlerFunc(crud.Delete))
+	g.GET("/", handleRouteFunc(crud.List))
+	g.GET("/page/:currentPage/:size", handleRouteFunc(crud.Page))
+	g.GET("/:id", handleRouteFunc(crud.Get))
+	g.POST("/", handleRouteFunc(crud.Create))
+	g.PUT("/:id", handleRouteFunc(crud.Update))
+	g.DELETE("/:id", handleRouteFunc(crud.Delete))
 
 }
 
-func handleHandlerFunc(method func(context *gin.Context) interface{}) func(context *gin.Context) {
+func handleRouteFunc(method func(context *gin.Context) interface{}) func(context *gin.Context) {
 	return func(context *gin.Context) {
 		result := method(context)
 		if result != nil {

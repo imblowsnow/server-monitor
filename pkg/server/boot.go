@@ -8,6 +8,7 @@ import (
 	"server-monitor/pkg/common/inner_websocket"
 	_ "server-monitor/pkg/server/config"
 	"server-monitor/pkg/server/controller"
+	"server-monitor/pkg/server/template"
 
 	// 用于注册定时任务
 	_ "server-monitor/pkg/server/task"
@@ -35,6 +36,9 @@ func CreateServer(port int) {
 
 	// 注册接口路由
 	controller.InitRoute(r)
+
+	// 模版视图注册
+	template.InitTemplate(r)
 
 	r.Run(":" + strconv.Itoa(port))
 }

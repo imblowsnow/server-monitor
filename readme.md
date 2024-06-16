@@ -5,3 +5,9 @@
 - [ ] 对接服务器终端
 - [ ] 通知渠道
 - [ ] 上线/离线通知
+
+
+### 启动脚本
+```shell
+go run cmd/server/main.go -tags dev
+```
