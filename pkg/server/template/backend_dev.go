@@ -9,12 +9,12 @@ import (
 
 func initBackendTemplate(r *gin.Engine) {
 	fmt.Println("initBackendTemplate dev")
-	r.GET("/admin", func(c *gin.Context) {
-		path := "backend/" + BackendTemplate + "/index.html"
-		writeHttpFileFromLocal(c, path)
-	})
 	r.GET("/admin/*path", func(c *gin.Context) {
-		path := "backend/" + BackendTemplate + c.Param("path")
+		urlPath := c.Param("path")
+		if urlPath == "/" {
+			urlPath = "/index.html"
+		}
+		path := "backend/" + BackendTemplate + urlPath
 		writeHttpFileFromLocal(c, path)
 	})
 }

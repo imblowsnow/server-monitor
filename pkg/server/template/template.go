@@ -2,10 +2,11 @@ package template
 
 import (
 	"embed"
-	"github.com/gabriel-vasile/mimetype"
 	"github.com/gin-gonic/gin"
+	"mime"
 	"net/http"
 	"os"
+	"path"
 )
 
 // 默认后台模版
@@ -28,7 +29,7 @@ func writeHttpFileFromFs(c *gin.Context, path string, fs embed.FS) {
 		return
 	}
 
-	writeHttpFile(c, fileBytes)
+	writeHttpFile(c, path, fileBytes)
 }
 
 func writeHttpFileFromLocal(c *gin.Context, path string) {
@@ -41,13 +42,14 @@ func writeHttpFileFromLocal(c *gin.Context, path string) {
 		c.Writer.Write([]byte("404 Not Found"))
 		return
 	}
-	writeHttpFile(c, fileBytes)
+	writeHttpFile(c, path, fileBytes)
 }
 
-func writeHttpFile(c *gin.Context, content []byte) {
+func writeHttpFile(c *gin.Context, filePath string, content []byte) {
 	// 根据文件路径获取content-type
-	mime := mimetype.Detect(content)
-	c.Writer.Header().Set("Content-Type", mime.String())
+	contentType := mime.TypeByExtension(path.Ext(filePath))
+
+	c.Writer.Header().Set("Content-Type", contentType)
 	c.Writer.WriteHeader(http.StatusOK)
 	c.Writer.Write(content)
 }

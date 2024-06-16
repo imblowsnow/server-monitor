@@ -13,13 +13,12 @@ var backendTemplates embed.FS
 
 func initBackendTemplate(r *gin.Engine) {
 	fmt.Println("initBackendTemplate prod")
-
-	r.GET("/admin", func(c *gin.Context) {
-		path := "backend/" + BackendTemplate + "/index.html"
-		writeHttpFileFromFs(c, path, backendTemplates)
-	})
 	r.GET("/admin/*path", func(c *gin.Context) {
-		path := "backend/" + BackendTemplate + c.Param("path")
+		urlPath := c.Param("path")
+		if urlPath == "/" {
+			urlPath = "/index.html"
+		}
+		path := "backend/" + BackendTemplate + urlPath
 		writeHttpFileFromFs(c, path, backendTemplates)
 	})
 }
