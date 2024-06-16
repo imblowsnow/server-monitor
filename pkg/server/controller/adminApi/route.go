@@ -6,6 +6,7 @@ import (
 	v1 "server-monitor/pkg/server/controller/adminApi/v1"
 	"server-monitor/pkg/server/controller/base"
 	"server-monitor/pkg/server/dal/dao"
+	"server-monitor/pkg/server/utils"
 	"strconv"
 )
 
@@ -18,7 +19,7 @@ func InitRoute(r *gin.Engine) {
 func crudApi[DAO dao.IBaseDao[DO, ID], DO any, ID int | uint | uint32](g *gin.RouterGroup, crud base.CrudController[DAO, DO, ID]) {
 	g.GET("/", func(context *gin.Context) {
 		list := crud.List()
-		context.JSON(200, list)
+		context.JSON(200, utils.ResultSuccess(list))
 	})
 	g.GET("/page/:currentPage/:size", func(context *gin.Context) {
 		currentPageStr := context.Param("currentPage")
@@ -41,41 +42,41 @@ func crudApi[DAO dao.IBaseDao[DO, ID], DO any, ID int | uint | uint32](g *gin.Ro
 		}
 
 		page, err := crud.Page(currentPage, pageSize)
-		context.JSON(200, page)
+		context.JSON(200, utils.ResultSuccess(page))
 	})
 	g.GET("/:id", func(context *gin.Context) {
 		// Assuming you need to use ID here
 		idParam := context.Param("id")
 		id, _ := strconv.ParseUint(idParam, 10, 64)
 		item := crud.Get(ID(id))
-		context.JSON(200, item)
+		context.JSON(200, utils.ResultSuccess(item))
 	})
 	g.POST("/", func(context *gin.Context) {
 		var newItem DO
 		if err := context.ShouldBindJSON(&newItem); err != nil {
-			context.JSON(400, gin.H{"error": err.Error()})
+			context.JSON(200, utils.ResultError(err.Error()))
 			return
 		}
 		err := crud.Create(&newItem)
 		if err != nil {
 			fmt.Println("创建失败", err)
-			context.JSON(500, gin.H{"error": "创建失败"})
+			context.JSON(200, utils.ResultError(err.Error()))
 			return
 		}
-		context.JSON(200, newItem)
+		context.JSON(200, utils.ResultSuccess(newItem))
 	})
 	g.PUT("/:id", func(context *gin.Context) {
 		var updatedItem DO
 		idParam := context.Param("id")
 		id, _ := strconv.ParseUint(idParam, 10, 64)
 		if err := context.ShouldBindJSON(&updatedItem); err != nil {
-			context.JSON(400, gin.H{"error": err.Error()})
+			context.JSON(200, utils.ResultError(err.Error()))
 			return
 		}
 		err := crud.Update(ID(id), &updatedItem)
 		if err != nil {
 			fmt.Println("更新失败", id, err)
-			context.JSON(500, gin.H{"error": "更新失败"})
+			context.JSON(200, utils.ResultError("更新失败："+err.Error()))
 			return
 		}
 		context.JSON(200, updatedItem)
@@ -86,9 +87,9 @@ func crudApi[DAO dao.IBaseDao[DO, ID], DO any, ID int | uint | uint32](g *gin.Ro
 		err := crud.Delete(ID(id))
 		if err != nil {
 			fmt.Println("删除失败", id, err)
-			context.JSON(500, gin.H{"error": "删除失败"})
+			context.JSON(200, utils.ResultError("删除失败："+err.Error()))
 			return
 		}
-		context.Status(204)
+		context.JSON(200, utils.ResultSuccess(nil))
 	})
 }
