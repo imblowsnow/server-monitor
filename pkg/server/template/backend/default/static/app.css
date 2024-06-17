@@ -1,0 +1,124 @@
+#app {
+    width: 100vw;
+
+    --theme-color: #5cdd8b;
+    --theme-color-rgb: 92,221,139;
+}
+.btn-primary{
+    --bs-btn-bg: var(--theme-color);
+    --bs-btn-border-color: var(--theme-color);
+    --bs-btn-hover-bg: var(--theme-color);
+    --bs-btn-hover-border-color: var(--theme-color);
+    --bs-btn-active-bg: var(--theme-color);
+    --bs-btn-active-border-color: var(--theme-color);
+}
+.dropdown-item.active, .dropdown-item:active{
+    --bs-dropdown-link-active-bg: var(--theme-color);
+}
+.bg-primary {
+    --bs-primary-rgb: var(--theme-color-rgb);
+}
+
+.num {
+    font-size: 30px;
+    color: black;
+    font-weight: bold;
+    display: block;
+}
+
+.shadow-box {
+    padding: 20px;
+    box-shadow: 0 15px 70px rgba(0, 0, 0, .1);
+    border-radius: 10px;
+}
+
+table {
+    font-size: 14px;
+}
+
+table tr {
+    border-bottom: 1px solid #f0f0f0;
+}
+
+@media (max-width: 550px) {
+    table-layout: fixed;
+    overflow-wrap: break-word;
+}
+
+
+
+.bottom-nav {
+    z-index: 1000;
+    position: fixed;
+    bottom: 0;
+    height: calc(50px + env(safe-area-inset-bottom));
+    line-height: calc(50px + env(safe-area-inset-bottom));
+    width: 100%;
+    left: 0;
+    background-color: #fff;
+    box-shadow: 0 15px 47px 0 rgba(0, 0, 0, 0.05), 0 5px 14px 0 rgba(0, 0, 0, 0.05);
+    text-align: center;
+    white-space: nowrap;
+}
+.bottom-nav a{
+    text-align: center;
+    width: 25%;
+    display: inline-block;
+    height: 100%;
+    font-size: 13px;
+    color: #c1c1c1;
+    overflow: hidden;
+    text-decoration: none;
+}
+.bottom-nav a.router-link-exact-active, .bottom-nav a.active {
+    color: var(--theme-color);
+    font-weight: bold;
+}
+.bottom-nav a div{
+    font-size: 20px;
+}
+
+
+
+
+.hp-bar-big{
+    display: flex;
+}
+.hp-bar-big .beat {
+    display: inline-block;
+    background-color: var(--theme-color);
+    border-radius: 50rem;
+}
+
+.hp-bar-big .beat.empty {
+    background-color: #f0f8ff;
+}
+
+.hp-bar-big .beat.down {
+    background-color: #dc3545;
+}
+
+.hp-bar-big .beat.pending {
+    background-color: #f8a306;
+}
+
+.hp-bar-big .beat.maintenance {
+    background-color: #1747f5;
+}
+
+/*.hp-bar-big .beat.empty:hover{*/
+/*    transition: all ease-in-out 0.15s;*/
+/*    opacity: 0.8;*/
+/*    transform: scale(1.5);*/
+/*}*/
+.hp-bar-big .beat:not(.empty):hover {
+    transition: all ease-in-out .15s;
+    opacity: .8;
+    transform: scale(var(--hover-scale));
+}
+
+.dark .hp-bar-big .beat.empty {
+    background-color: #848484;
+}
+
+

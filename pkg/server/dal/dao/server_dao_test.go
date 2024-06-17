@@ -2,8 +2,8 @@ package dao
 
 import (
 	"fmt"
+	"server-monitor/pkg/server/common/entity"
 	"server-monitor/pkg/server/dal/do"
-	"server-monitor/pkg/server/entity"
 	"testing"
 )
 

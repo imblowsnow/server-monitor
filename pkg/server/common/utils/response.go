@@ -1,6 +1,8 @@
 package utils
 
-import "server-monitor/pkg/server/enum"
+import (
+	"server-monitor/pkg/server/common/enum"
+)
 
 type Response struct {
 	Code    int         `json:"code"`

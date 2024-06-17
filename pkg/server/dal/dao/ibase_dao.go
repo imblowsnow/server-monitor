@@ -2,7 +2,7 @@ package dao
 
 import (
 	"gorm.io/gorm"
-	"server-monitor/pkg/server/entity"
+	"server-monitor/pkg/server/common/entity"
 )
 
 type IBaseDao[DO any, ID comparable] interface {

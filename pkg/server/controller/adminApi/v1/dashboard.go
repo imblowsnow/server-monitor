@@ -3,8 +3,8 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"server-monitor/pkg/common/enum"
+	"server-monitor/pkg/server/common/entity/bo"
 	"server-monitor/pkg/server/dal/dao"
-	"server-monitor/pkg/server/entity/bo"
 )
 
 type DashboardController struct {

@@ -3,8 +3,8 @@ package base
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"server-monitor/pkg/server/common/entity"
 	"server-monitor/pkg/server/dal/dao"
-	"server-monitor/pkg/server/entity"
 	"strconv"
 )
 

@@ -1,0 +1,21 @@
+<div class="monitor-layout" :class="{'mobile': isMobile}">
+    <nav-header></nav-header>
+    <div v-if="!isMobile" class="row" style="width: 100%">
+        <div class="col-4">
+            <div class="shadow-box mb-3" style="height: calc(-160px + 100vh);">
+                <slot name="monitor-list">
+                    <monitor-list style="height: calc(100% - 107px);" class="scrollbar"></monitor-list>
+                </slot>
+            </div>
+        </div>
+        <div class="col mt-3">
+            <slot></slot>
+        </div>
+    </div>
+    <div v-else style="width: 100%">
+        <div class="m-3">
+            <slot></slot>
+        </div>
+    </div>
+    <nav-footer v-if="isMobile"></nav-footer>
+</div>

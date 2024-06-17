@@ -3,8 +3,8 @@ package dao
 import (
 	"fmt"
 	"gorm.io/gorm"
+	"server-monitor/pkg/server/common/entity"
 	"server-monitor/pkg/server/config"
-	"server-monitor/pkg/server/entity"
 )
 
 // DO 数据库实体

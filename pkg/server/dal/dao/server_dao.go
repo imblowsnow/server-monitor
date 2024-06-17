@@ -3,8 +3,8 @@ package dao
 import (
 	"github.com/google/uuid"
 	"server-monitor/pkg/common/enum"
+	bo2 "server-monitor/pkg/server/common/entity/bo"
 	"server-monitor/pkg/server/dal/do"
-	"server-monitor/pkg/server/entity/bo"
 	"time"
 )
 
@@ -18,7 +18,7 @@ func NewServerDao() *ServerDao {
 	}
 }
 
-func (dao ServerDao) GetServerInfo(id uint) *bo.ServerInfoBO {
+func (dao ServerDao) GetServerInfo(id uint) *bo2.ServerInfoBO {
 	var Server do.ServerDO
 	result := dao.DB().Where("id = ?", id).First(&Server)
 
@@ -33,45 +33,45 @@ func (dao ServerDao) GetServerInfo(id uint) *bo.ServerInfoBO {
 	var serverState do.ServerStateDO
 	dao.DB().Where("server_id = ?", id).Order("create_time desc").First(&serverState)
 
-	return &bo.ServerInfoBO{
+	return &bo2.ServerInfoBO{
 		ServerDO:      &Server,
 		ServerInfoDO:  &serverInfo,
 		ServerStateDO: &serverState,
 	}
 }
 
-func (dao ServerDao) GetServerInfoList() []*bo.ServerInfoBO {
+func (dao ServerDao) GetServerInfoList() []*bo2.ServerInfoBO {
 	list := dao.GetList()
 	if list == nil {
 		return nil
 	}
-	var result []*bo.ServerInfoBO
+	var result []*bo2.ServerInfoBO
 	for _, v := range list {
 		result = append(result, dao.GetServerInfo(v.ID))
 	}
 	return result
 }
 
-func (dao ServerDao) GetServerInfoListByGroupId(groupId uint) []*bo.ServerInfoBO {
+func (dao ServerDao) GetServerInfoListByGroupId(groupId uint) []*bo2.ServerInfoBO {
 	var list []do.ServerDO
 	dao.DB().Where("group_id = ?", groupId).Find(&list)
 
-	var result []*bo.ServerInfoBO
+	var result []*bo2.ServerInfoBO
 	for _, v := range list {
 		result = append(result, dao.GetServerInfo(v.ID))
 	}
 	return result
 }
 
-func (dao ServerDao) GetServerGroups() []*bo.ServerGroupBO {
+func (dao ServerDao) GetServerGroups() []*bo2.ServerGroupBO {
 	// 获取分组列表
 	var serverGroupDao = ServerGroupDao{}
 	groups := serverGroupDao.GetList()
 
-	var list []*bo.ServerGroupBO
+	var list []*bo2.ServerGroupBO
 
 	for _, v := range groups {
-		var result bo.ServerGroupBO
+		var result bo2.ServerGroupBO
 
 		serverInfos := dao.GetServerInfoListByGroupId(v.ID)
 		result.GroupName = v.GroupName

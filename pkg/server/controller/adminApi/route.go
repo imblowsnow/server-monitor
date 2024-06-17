@@ -2,10 +2,10 @@ package adminApi
 
 import (
 	"github.com/gin-gonic/gin"
+	"server-monitor/pkg/server/common/utils"
 	v1 "server-monitor/pkg/server/controller/adminApi/v1"
 	"server-monitor/pkg/server/controller/base"
 	"server-monitor/pkg/server/dal/dao"
-	"server-monitor/pkg/server/utils"
 )
 
 func InitRoute(r *gin.Engine) {
