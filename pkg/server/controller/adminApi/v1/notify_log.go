@@ -12,11 +12,11 @@ type NotifyLogController struct {
 }
 
 func NewNotifyLogController() *NotifyLogController {
-	var notifyLogDao = dao.NotifyLogDao{}
+	var notifyLogDao = dao.NewNotifyLogDao()
 	return &NotifyLogController{
-		notifyLogDao: &notifyLogDao,
+		notifyLogDao: notifyLogDao,
 		CrudController: base.CrudController[dao.IBaseDao[do.NotifyLogDO, uint], do.NotifyLogDO, uint]{
-			Dao: &notifyLogDao,
+			Dao: notifyLogDao,
 		},
 	}
 }

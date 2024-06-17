@@ -12,11 +12,11 @@ type NotifyGroupController struct {
 }
 
 func NewNotifyGroupController() *NotifyGroupController {
-	var notifyGroupDao = dao.NotifyGroupDao{}
+	var notifyGroupDao = dao.NewNotifyGroupDao()
 	return &NotifyGroupController{
-		notifyGroupDao: &notifyGroupDao,
+		notifyGroupDao: notifyGroupDao,
 		CrudController: base.CrudController[dao.IBaseDao[do.NotifyGroupDO, uint], do.NotifyGroupDO, uint]{
-			Dao: &notifyGroupDao,
+			Dao: notifyGroupDao,
 		},
 	}
 }

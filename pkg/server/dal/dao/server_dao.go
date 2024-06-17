@@ -2,13 +2,20 @@ package dao
 
 import (
 	"github.com/google/uuid"
+	"server-monitor/pkg/common/enum"
 	"server-monitor/pkg/server/dal/do"
 	"server-monitor/pkg/server/entity/bo"
 	"time"
 )
 
 type ServerDao struct {
-	BaseDao[do.ServerDO, uint]
+	IBaseDao[do.ServerDO, uint]
+}
+
+func NewServerDao() *ServerDao {
+	return &ServerDao{
+		IBaseDao: &BaseDao[do.ServerDO, uint]{},
+	}
 }
 
 func (dao ServerDao) GetServerInfo(id uint) *bo.ServerInfoBO {
@@ -82,5 +89,11 @@ func (dao ServerDao) UpdateLastHeartbeatTime(serverId uint) {
 
 func (dao ServerDao) Add(server *do.ServerDO) error {
 	server.Key = uuid.New().String()
-	return dao.BaseDao.Add(server)
+	return dao.IBaseDao.Add(server)
+}
+
+func (dao ServerDao) GetStatusNum(status enum.ServerStatus) int64 {
+	var count int64
+	dao.DB().Model(&do.ServerDO{}).Where("status = ?", status).Count(&count)
+	return count
 }

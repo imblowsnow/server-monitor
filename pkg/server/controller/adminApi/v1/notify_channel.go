@@ -12,11 +12,11 @@ type NotifyChannelController struct {
 }
 
 func NewNotifyChannelController() *NotifyChannelController {
-	var notifyChannelDao = dao.NotifyChannelDao{}
+	var notifyChannelDao = dao.NewNotifyChannelDao()
 	return &NotifyChannelController{
-		dao: &notifyChannelDao,
+		dao: notifyChannelDao,
 		CrudController: base.CrudController[dao.IBaseDao[do.NotifyChannelDO, uint], do.NotifyChannelDO, uint]{
-			Dao: &notifyChannelDao,
+			Dao: notifyChannelDao,
 		},
 	}
 }

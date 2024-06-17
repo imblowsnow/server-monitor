@@ -13,12 +13,11 @@ type ServerController struct {
 }
 
 func NewServerController() *ServerController {
-	var serverDao = dao.ServerDao{}
-
+	var serverDao = dao.NewServerDao()
 	return &ServerController{
-		serverDao: &serverDao,
+		serverDao: serverDao,
 		CrudController: base.CrudController[dao.IBaseDao[do.ServerDO, uint], do.ServerDO, uint]{
-			Dao: &serverDao,
+			Dao: serverDao,
 		},
 	}
 }

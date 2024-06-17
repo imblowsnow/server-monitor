@@ -3,7 +3,7 @@ package dao
 import "server-monitor/pkg/server/dal/do"
 
 type ServerInfoDao struct {
-	BaseDao[do.ServerInfoDO, uint]
+	IBaseDao[do.ServerInfoDO, uint]
 }
 
 func (dao ServerInfoDao) Save(serverInfoDO *do.ServerInfoDO) {
