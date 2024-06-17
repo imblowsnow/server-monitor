@@ -2,7 +2,7 @@ package inner_websocket
 
 import (
 	"github.com/gorilla/websocket"
-	"server-monitor/pkg/common/entity/websocket_message"
+	"server-monitor/pkg/common/entity/dto/websocket_message"
 )
 
 type WebsocketEvent interface {
@@ -13,5 +13,5 @@ type WebsocketEvent interface {
 	OnClose(conn *websocket.Conn)
 
 	// 收到消息
-	OnMessage(conn *websocket.Conn, websocketMessage websocket_message.WebsocketMessage)
+	OnMessage(conn *websocket.Conn, websocketMessage websocket_message.WebsocketMessageDTO)
 }

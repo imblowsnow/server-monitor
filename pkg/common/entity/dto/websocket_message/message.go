@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-type WebsocketMessage struct {
+type WebsocketMessageDTO struct {
 	// 消息id
 	Id string `json:"id"`
 	// 消息类型
@@ -18,9 +18,9 @@ type WebsocketMessage struct {
 	Time time.Time `json:"time"`
 }
 
-func BuildWebsocketMessage(messageType int, message any) WebsocketMessage {
+func BuildWebsocketMessage(messageType int, message any) WebsocketMessageDTO {
 	jsonByte, _ := json.Marshal(message)
-	websocketMessage := WebsocketMessage{
+	websocketMessage := WebsocketMessageDTO{
 		Id:          uuid.New().String(),
 		MessageType: messageType,
 		Message:     string(jsonByte),
@@ -29,7 +29,7 @@ func BuildWebsocketMessage(messageType int, message any) WebsocketMessage {
 	return websocketMessage
 }
 
-func ToMessageType[T any](websocketMessage WebsocketMessage, message T) (T, error) {
+func ToMessageType[T any](websocketMessage WebsocketMessageDTO, message T) (T, error) {
 	err := json.Unmarshal([]byte(websocketMessage.Message), &message)
 	if err != nil {
 		fmt.Println("解析消息失败:", websocketMessage.Message, err)

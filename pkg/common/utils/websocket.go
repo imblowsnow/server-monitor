@@ -2,7 +2,7 @@ package utils
 
 import (
 	"github.com/gorilla/websocket"
-	"server-monitor/pkg/common/entity/websocket_message"
+	"server-monitor/pkg/common/entity/dto/websocket_message"
 )
 
 func SendWebsocketMessage(conn *websocket.Conn, success int, message any) error {

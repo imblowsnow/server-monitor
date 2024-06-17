@@ -1,6 +1,6 @@
-package bo
+package dto
 
-type ServerState struct {
+type ServerStateDTO struct {
 	// CPU占用
 	CPU float64 `json:"cpu" gorm:"type:double"`
 	// 内存占用

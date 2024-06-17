@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/websocket"
-	"server-monitor/pkg/common/entity/websocket_message"
+	"server-monitor/pkg/common/entity/dto/websocket_message"
 )
 
 func LoopWebsocket(conn *websocket.Conn, event WebsocketEvent) {
@@ -24,7 +24,7 @@ func LoopWebsocket(conn *websocket.Conn, event WebsocketEvent) {
 			return
 		}
 
-		websocketMessage := websocket_message.WebsocketMessage{}
+		websocketMessage := websocket_message.WebsocketMessageDTO{}
 		err = json.Unmarshal(data, &websocketMessage)
 		if err != nil {
 			fmt.Println("解析消息失败:", err)

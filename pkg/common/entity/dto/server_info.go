@@ -1,7 +1,7 @@
-package bo
+package dto
 
-// ServerInfo 服务器信息
-type ServerInfo struct {
+// ServerInfoDTO 服务器信息
+type ServerInfoDTO struct {
 	// 主机名
 	Hostname string `json:"host_name" gorm:"type:varchar(255)"`
 	// 系统版本
