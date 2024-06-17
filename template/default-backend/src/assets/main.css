@@ -1,0 +1,56 @@
+@import './base.css';
+
+#app {
+  width: 100vw;
+
+  --theme-color: #5cdd8b;
+  --theme-color-rgb: 92,221,139;
+}
+
+.btn-primary{
+  --bs-btn-bg: var(--theme-color);
+  --bs-btn-border-color: var(--theme-color);
+  --bs-btn-hover-bg: var(--theme-color);
+  --bs-btn-hover-border-color: var(--theme-color);
+  --bs-btn-active-bg: var(--theme-color);
+  --bs-btn-active-border-color: var(--theme-color);
+}
+.dropdown-item.active, .dropdown-item:active{
+  --bs-dropdown-link-active-bg: var(--theme-color);
+}
+.bg-primary {
+  --bs-primary-rgb: var(--theme-color-rgb);
+}
+
+.dashboard .num {
+  font-size: 30px;
+  color: var(--theme-color);
+  font-weight: bold;
+  display: block;
+}
+
+.shadow-box {
+  padding: 20px;
+  box-shadow: 0 15px 70px rgba(0, 0, 0, .1);
+  border-radius: 10px;
+}
+
+table {
+  font-size: 14px;
+}
+
+table tr {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+@media (max-width: 550px) {
+  table-layout: fixed;
+  overflow-wrap: break-word;
+}
+
+.svg-inline--fa{
+  width: 0.875em;
+  display: inline-block;
+  font-size: inherit;
+  height: 1em;
+}
