@@ -31,8 +31,12 @@ export default {
     }
   },
   mounted() {
-    console.log(this.total);
     this.resizeHpBar();
+  },
+  watch: {
+    total() {
+      this.resizeHpBar();
+    }
   },
   methods: {
     resizeHpBar() {
@@ -49,7 +53,7 @@ export default {
     <div v-for="item in this.list"
          class="beat"
          :class="statusClass(item.status)"
-         :title="'健康率' + item.status + '%\n' + item.start_time + ' - ' + item.end_time"
+         :title="'在线率' + item.status + '%\n' + item.start_time + ' - ' + item.end_time"
          :style="{'width': this.width + 'px', 'height': this.height + 'px'}"
          style="margin: 2px; --hover-scale: 1.5;"></div>
   </div>

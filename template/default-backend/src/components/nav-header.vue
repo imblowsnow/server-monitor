@@ -16,29 +16,25 @@ export default defineComponent({
       <div class="collapse navbar-collapse" id="navbarScroll">
         <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
           <li class="nav-item">
-            <router-link class="nav-link active" aria-current="page" to="/">Home</router-link>
+            <router-link class="nav-link" to="/">首页</router-link>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
+            <router-link class="nav-link" to="/server_group">分组管理</router-link>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Link
+              通知管理
             </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
+              <li><router-link class="dropdown-item" to="/notify_group">通知组配置</router-link></li>
+              <li><router-link class="dropdown-item" to="/notify_channel">通知渠道配置</router-link></li>
               <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
+              <li><router-link class="dropdown-item" to="/notify_log">通知日志</router-link></li>
             </ul>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link disabled" aria-disabled="true">Link</a>
           </li>
         </ul>
         <form class="d-flex" role="search">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Search</button>
+
         </form>
       </div>
     </div>
@@ -46,5 +42,8 @@ export default defineComponent({
 </template>
 
 <style scoped>
-
+.navbar .navbar-collapse a.router-link-exact-active {
+  color: var(--theme-color);
+  font-weight: bold;
+}
 </style>

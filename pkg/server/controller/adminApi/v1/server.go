@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"server-monitor/pkg/server/common/entity/vo"
+	"server-monitor/pkg/server/common/enum"
 	"server-monitor/pkg/server/controller/base"
 	"server-monitor/pkg/server/dal/dao"
 	"server-monitor/pkg/server/dal/do"
@@ -53,4 +54,12 @@ func (s ServerController) Create(context *gin.Context) interface{} {
 		ShowIndex: newItem.ShowIndex,
 	}
 	return s.GetDao().Add(serverDO)
+}
+
+func (s ServerController) GetServerStatisticsList(context *gin.Context) interface{} {
+	idParam := context.Param("id")
+	id, _ := strconv.ParseUint(idParam, 10, 64)
+	typeParam, _ := strconv.Atoi(context.Query("type"))
+	monitorDurationEnum := enum.FindMonitorDurationEnumByType(typeParam)
+	return s.serverDao.GetMonitorServerStatisticsList(uint(id), monitorDurationEnum)
 }

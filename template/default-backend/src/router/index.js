@@ -1,6 +1,11 @@
 import {createRouter, createWebHistory} from 'vue-router'
 import MonitorLayout from "@/layout/monitor-layout.vue";
 import serverRouter from './server.js'
+import serverGroupRouter from './server_group.js'
+import notifyGroupRouter from './notify_group.js'
+import notifyLogRouter from './notify_log.js'
+import notifyChannelRouter from './notify_channel.js'
+
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
@@ -18,7 +23,11 @@ const router = createRouter({
                     name: 'monitor',
                     component: () => import('@/views/monitor.vue')
                 },
-                serverRouter
+                serverRouter,
+                serverGroupRouter,
+                notifyGroupRouter,
+                notifyLogRouter,
+                notifyChannelRouter
             ]
         }
     ]

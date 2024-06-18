@@ -3,9 +3,9 @@ package dao
 import (
 	"fmt"
 	"server-monitor/pkg/server/common/entity"
+	"server-monitor/pkg/server/common/enum"
 	"server-monitor/pkg/server/dal/do"
 	"testing"
-	"time"
 )
 
 func TestServerDao(t *testing.T) {
@@ -15,7 +15,7 @@ func TestServerDao(t *testing.T) {
 		Page:     1,
 		PageSize: 10,
 	}
-	serverDao.Page(&page)
+	serverDao.Page(&page, nil)
 
 	data := serverDao.GetById(1)
 
@@ -23,6 +23,6 @@ func TestServerDao(t *testing.T) {
 }
 func TestGetMonitorServerStatisticsList(t *testing.T) {
 	serverDao := NewServerDao()
-	list := serverDao.GetMonitorServerStatisticsList(1, time.Hour, 24)
+	list := serverDao.GetMonitorServerStatisticsList(1, enum.MONITOR_DURATION_MINUTE)
 	fmt.Println("查询列表", list)
 }

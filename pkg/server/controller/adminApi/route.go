@@ -25,6 +25,8 @@ func InitRoute(r *gin.Engine) {
 	serverV1Group := adminApiV1Group.Group("/server")
 	crudApi[do.ServerDO, uint](serverV1Group, serverController)
 	serverV1Group.GET("/info/:id", handleRouteFunc(serverController.GetServerInfo))
+	serverV1Group.GET("/statistics/:id", handleRouteFunc(serverController.GetServerStatisticsList))
+
 	// 服务器分组
 	crudApi[do.ServerGroupDO, uint](adminApiV1Group.Group("/server_group"), v1.NewServerGroupController())
 	// 服务器故障

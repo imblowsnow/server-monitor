@@ -6,4 +6,7 @@ type MonitorServerStatisticsBO struct {
 	EndTime   string `json:"end_time"`
 	// 在线率
 	Rate int `json:"status"`
+
+	Total  int64 `json:"total"`
+	Online int64 `json:"online"`
 }

@@ -1,10 +1,10 @@
 package dao
 
 import (
-	"fmt"
 	"github.com/google/uuid"
 	"server-monitor/pkg/common/enum"
 	"server-monitor/pkg/server/common/entity/bo"
+	enum2 "server-monitor/pkg/server/common/enum"
 	"server-monitor/pkg/server/dal/do"
 	"time"
 )
@@ -27,12 +27,18 @@ func (dao ServerDao) GetServerInfo(id uint) *bo.ServerInfoBO {
 		return nil
 	}
 
-	var serverInfo do.ServerInfoDO
+	var serverInfo *do.ServerInfoDO
 	dao.DB().Where("server_id = ?", id).First(&serverInfo)
+	if serverInfo.ID == 0 {
+		serverInfo = nil
+	}
 
 	// 获取最后一次状态
-	var serverState do.ServerStateDO
+	var serverState *do.ServerStateDO
 	dao.DB().Where("server_id = ?", id).Order("create_time desc").First(&serverState)
+	if serverState.ID == 0 {
+		serverState = nil
+	}
 
 	return &bo.ServerInfoBO{
 		ID:             Server.ID,
@@ -40,8 +46,8 @@ func (dao ServerDao) GetServerInfo(id uint) *bo.ServerInfoBO {
 		Status:         Server.Status,
 		Ip:             Server.IP,
 		LastOnlineTime: Server.LastOnlineTime,
-		ServerInfoDO:   &serverInfo,
-		ServerStateDO:  &serverState,
+		ServerInfoDO:   serverInfo,
+		ServerStateDO:  serverState,
 	}
 }
 
@@ -109,13 +115,13 @@ func (dao ServerDao) GetMonitorServers(groupId uint) []*bo.MonitorServerBO {
 
 	var result []*bo.MonitorServerBO
 	for _, v := range list {
-		servers := dao.GetMonitorServer(v.ID)
+		servers := dao.GetMonitorServer(v.ID, enum2.MONITOR_DURATION_HOUR)
 		result = append(result, servers)
 	}
 	return result
 }
 
-func (dao ServerDao) GetMonitorServer(serverId uint) *bo.MonitorServerBO {
+func (dao ServerDao) GetMonitorServer(serverId uint, monitorDurationEnum enum2.MonitorDurationEnum) *bo.MonitorServerBO {
 	var server *do.ServerDO
 	dao.DB().Where("id = ?", serverId).First(&server)
 
@@ -123,7 +129,7 @@ func (dao ServerDao) GetMonitorServer(serverId uint) *bo.MonitorServerBO {
 		return nil
 	}
 
-	monitorServerStatisticsList := dao.GetMonitorServerStatisticsList(serverId, time.Hour, 24)
+	monitorServerStatisticsList := dao.GetMonitorServerStatisticsList(serverId, monitorDurationEnum)
 
 	monitorServer := bo.MonitorServerBO{
 		ServerId:         server.ID,
@@ -137,25 +143,25 @@ func (dao ServerDao) GetMonitorServer(serverId uint) *bo.MonitorServerBO {
 	return &monitorServer
 }
 
-func (dao ServerDao) GetMonitorServerStatisticsList(serverId uint, duration time.Duration, num int) []*bo.MonitorServerStatisticsBO {
-	fmt.Println(dao.DB())
+func (dao ServerDao) GetMonitorServerStatisticsList(serverId uint, monitorDurationEnum enum2.MonitorDurationEnum) []*bo.MonitorServerStatisticsBO {
 	// 获取最近num条事件数据
 	var list []*bo.MonitorServerStatisticsBO
-
+	duration := monitorDurationEnum.Duration
+	num := monitorDurationEnum.Num
 	for i := 0; i < num; i++ {
 		var startTime, endTime string
 
 		subDuration := -duration * time.Duration(i)
 		addDuration := subDuration + (time.Duration(1) * duration)
-		if duration >= time.Hour*24*30 {
+		if monitorDurationEnum == enum2.MONITOR_DURATION_MONTH {
 			// 按月
 			startTime = time.Now().Add(subDuration).Format("2006-01") + "-01 00:00:00"
 			endTime = time.Now().Add(addDuration).Format("2006-01") + "-30 23:59:59"
-		} else if duration >= time.Hour*24 {
+		} else if monitorDurationEnum == enum2.MONITOR_DURATION_DAY {
 			// 按天
 			startTime = time.Now().Add(subDuration).Format("2006-01-02") + " 00:00:00"
 			endTime = time.Now().Add(addDuration).Format("2006-01-02") + " 00:00:00"
-		} else if duration >= time.Hour {
+		} else if monitorDurationEnum == enum2.MONITOR_DURATION_HOUR {
 			// 按小时
 			startTime = time.Now().Add(subDuration).Format("2006-01-02 15") + ":00:00"
 			endTime = time.Now().Add(addDuration).Format("2006-01-02 15") + ":00:00"
@@ -164,7 +170,6 @@ func (dao ServerDao) GetMonitorServerStatisticsList(serverId uint, duration time
 			startTime = time.Now().Add(subDuration).Format("2006-01-02 15:04") + ":00"
 			endTime = time.Now().Add(addDuration).Format("2006-01-02 15:04") + ":00"
 		}
-		fmt.Println(startTime, endTime)
 		list = append(list, dao.GetMonitorServerStatistics(serverId, duration, startTime, endTime))
 	}
 
@@ -179,6 +184,8 @@ func (dao ServerDao) GetMonitorServerStatistics(serverId uint, duration time.Dur
 		StartTime: startTime,
 		EndTime:   endTime,
 		Rate:      int(float64(count) / float64(total) * 100),
+		Total:     total,
+		Online:    count,
 	}
 }
 

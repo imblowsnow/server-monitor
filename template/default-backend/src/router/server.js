@@ -8,12 +8,12 @@ export default {
         },
         {
             path: 'add',
-            name: 'serverAdd',
+            name: 'server_add',
             component: () => import('@/views/server/add.vue')
         },
         {
             path: 'edit/:id',
-            name: 'serverEdit',
+            name: 'server_edit',
             component: () => import('@/views/server/edit.vue')
         }
     ]

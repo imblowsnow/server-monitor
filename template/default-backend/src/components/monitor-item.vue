@@ -12,16 +12,10 @@ export default {
   },
   data() {
     return {
-      total: []
     }
   },
   mounted() {
-    this.total = Array.from({length: 100}, (v, k) => {
-      return {
-        name: k,
-        status: Math.floor(Math.random() * 11)
-      }
-    });
+
   }
 }
 </script>

@@ -1,5 +1,6 @@
 <script>
 import {addServer} from "@/api/server.js";
+import {getServerGroups} from "@/api/server_group.js";
 
 export default {
   data() {
@@ -15,20 +16,30 @@ export default {
         },
       ],
       form: {
-        groupId: 1,
+        group_id: 1,
         name: '',
         remark: '',
         sort: 1,
-        showIndex: 1
+        show_index: 1
       }
     }
   },
+  mounted() {
+    this.getGroups();
+  },
   methods: {
+    getGroups() {
+      getServerGroups().then(data => {
+        this.groups = data;
+      }).catch(() => {
+        this.$message.error('获取分组失败!');
+      });
+    },
     addServer() {
       addServer(this.form).then(data => {
         this.$router.push({ name: 'server-list' });
       }).catch(err => {
-        this.$message.error(err);
+        this.$message.error('添加失败!' + err);
       });
     }
   }
@@ -46,9 +57,9 @@ export default {
               <label class="form-label">服务器分组</label>
               <div class="input-group">
                 <select class="form-control"
-                        v-model="form.groupId"
+                        v-model="form.group_id"
                         required>
-                  <option v-for="group in groups" :value="group.id">{{group.name}}</option>
+                  <option v-for="group in groups" :value="group.id">{{group.group_name}}</option>
                 </select>
                 <button type="button" class="btn btn-primary" aria-label="open modal to ">
                   <svg class="svg-inline--fa fa-plus fa-w-14" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="plus" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path class="" fill="currentColor" d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z"></path></svg>
@@ -76,7 +87,7 @@ export default {
             </div>
             <div class="mb-3">
               <label class="form-label">首页展示</label>
-              <input type="checkbox" class="form-control" v-model="form.showIndex"
+              <input type="checkbox" class="form-control" v-model="form.show_index"
                      required>
             </div>
           </div>
