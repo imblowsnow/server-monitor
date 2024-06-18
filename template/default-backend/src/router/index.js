@@ -13,6 +13,11 @@ const router = createRouter({
                     name: 'dashboard',
                     component: () => import('@/views/dashboard.vue')
                 },
+                {
+                    path: '/monitor',
+                    name: 'monitor',
+                    component: () => import('@/views/monitor.vue')
+                },
                 serverRouter
             ]
         }

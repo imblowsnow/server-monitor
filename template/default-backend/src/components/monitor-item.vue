@@ -5,7 +5,7 @@ export default {
   name: "MonitorItem",
   components: {HpBar},
   props: {
-    monitor: {
+    server: {
       type: Object,
       required: true
     }
@@ -28,19 +28,19 @@ export default {
 
 <template>
   <div class="monitor-item">
-    <router-link to="/server/1" style="margin-left: 0px;">
+    <router-link :to="'/server/' + server.server_id" style="margin-left: 0px;">
       <div class="row">
         <div class="col-8 small-padding">
           <div class="info">
-                    <span class="badge rounded-pill bg-primary" title="24小时">
-                        100%
-                    </span>
-            ces
+            <span class="badge rounded-pill bg-primary" title="最近24小时">
+                {{ server.online_rate }}%
+            </span>
+            {{ server.server_name }}
           </div>
         </div>
         <div class="col-4">
           <div class="wrap" style="padding: 4px 1.25px; width: 100%;" >
-            <hp-bar :total="total"></hp-bar>
+            <hp-bar :total="server.online_statistics"></hp-bar>
           </div>
         </div>
       </div>
@@ -49,5 +49,8 @@ export default {
 </template>
 
 <style scoped>
-
+.monitor-item a{
+  color: #000;
+  text-decoration: none;
+}
 </style>

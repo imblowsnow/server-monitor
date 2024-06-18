@@ -17,31 +17,28 @@ export default {
   },
   data() {
     return {
-      num: 10
+      num: 10,
+      list: []
     }
   },
   computed: {
-    list() {
-      // 从后往前取
-      return this.total.slice(-this.num);
-    },
     statusClass() {
       return (status) => {
-        if (status === 10) return 'error';
-        if (status === 0) return 'success';
+        if (status === 0) return 'empty';
+        if (status < 80 ) return 'error';
         return '';
       }
     }
   },
   mounted() {
+    console.log(this.total);
     this.resizeHpBar();
   },
   methods: {
     resizeHpBar() {
-      console.log('resizeHpBar', this.$refs.hpBar.clientWidth);
       // 计算最多显示多少个
       this.num = Math.floor(this.$refs.hpBar.clientWidth / (this.width + 4));
-      console.log('resizeHpBar', this.num);
+      this.list = this.total.reverse().slice(-this.num);
     }
   }
 }
@@ -52,12 +49,46 @@ export default {
     <div v-for="item in this.list"
          class="beat"
          :class="statusClass(item.status)"
-         :title="item.name"
-         :style="{'width': width + 'px', 'height': height + 'px'}"
+         :title="'健康率' + item.status + '%\n' + item.start_time + ' - ' + item.end_time"
+         :style="{'width': this.width + 'px', 'height': this.height + 'px'}"
          style="margin: 2px; --hover-scale: 1.5;"></div>
   </div>
 </template>
 
 <style scoped>
+.hp-bar-big{
+  display: flex;
+}
+.hp-bar-big .beat {
+  display: inline-block;
+  background-color: var(--theme-color);
+  border-radius: 50rem;
+}
 
+.hp-bar-big .beat.empty {
+  background-color: #dcdcdc;
+}
+
+.hp-bar-big .beat.error {
+  background-color: #dc3545;
+}
+
+.hp-bar-big .beat.pending {
+  background-color: #f8a306;
+}
+
+.hp-bar-big .beat.maintenance {
+  background-color: #1747f5;
+}
+
+/*.hp-bar-big .beat.empty:hover{*/
+/*    transition: all ease-in-out 0.15s;*/
+/*    opacity: 0.8;*/
+/*    transform: scale(1.5);*/
+/*}*/
+.hp-bar-big .beat:not(.empty):hover {
+  transition: all ease-in-out .15s;
+  opacity: .8;
+  transform: scale(var(--hover-scale));
+}
 </style>

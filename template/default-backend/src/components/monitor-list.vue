@@ -1,21 +1,39 @@
 <script>
 import MonitorItem from '@/components/monitor-item.vue'
+import {monitorGroups} from "@/api/monitor.js";
 export default {
   name: "MonitorList",
   components: {
     MonitorItem
+  },
+  data() {
+    return {
+      activeGroupIds: [1],
+      groups: []
+    }
+  },
+  mounted() {
+    this.getMonitorGroups()
+  },
+  methods:{
+    getMonitorGroups() {
+      monitorGroups().then(res => {
+        this.groups = res.data.data
+        console.log('monitorGroups',this.groups);
+      })
+    }
   }
 }
 </script>
 
 <template>
   <div class="monitor-list">
-    <el-collapse accordion>
-      <el-collapse-item v-for="i in 10" :name="i">
+    <el-collapse v-model="activeGroupIds">
+      <el-collapse-item v-for="group in groups" :name="group.group_id">
         <template #title>
-          分组{{ i }}
+          {{ group.group_name }}
         </template>
-        <monitor-item v-for="i in 10"></monitor-item>
+        <monitor-item v-for="server in group.servers" :server="server"></monitor-item>
       </el-collapse-item>
     </el-collapse>
   </div>

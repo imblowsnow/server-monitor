@@ -8,12 +8,14 @@ import (
 )
 
 type DashboardController struct {
-	serverDao *dao.ServerDao
+	serverDao      *dao.ServerDao
+	serverGroupDao *dao.ServerGroupDao
 }
 
 func NewDashboardController() *DashboardController {
 	return &DashboardController{
-		serverDao: dao.NewServerDao(),
+		serverDao:      dao.NewServerDao(),
+		serverGroupDao: dao.NewServerGroupDao(),
 	}
 }
 
@@ -29,4 +31,24 @@ func (c DashboardController) Total(context *gin.Context) interface{} {
 	}
 
 	return result
+}
+
+// 获取
+func (s DashboardController) MonitorGroups(context *gin.Context) interface{} {
+	var monitorGroups []*bo.MonitorGroupBO
+	serverGroups := s.serverGroupDao.GetList()
+	for i := range serverGroups {
+
+		monitorGroup := bo.MonitorGroupBO{
+			GroupId:   serverGroups[i].ID,
+			GroupName: serverGroups[i].GroupName,
+			Servers:   s.serverDao.GetMonitorServers(serverGroups[i].ID),
+		}
+
+		if monitorGroup.Servers != nil {
+			monitorGroups = append(monitorGroups, &monitorGroup)
+		}
+	}
+
+	return monitorGroups
 }

@@ -1,38 +1,4 @@
-.hp-bar-big{
-  display: flex;
-}
-.hp-bar-big .beat {
-  display: inline-block;
-  background-color: var(--theme-color);
-  border-radius: 50rem;
-}
 
-.hp-bar-big .beat.empty {
-  background-color: #dcdcdc;
-}
-
-.hp-bar-big .beat.down {
-  background-color: #dc3545;
-}
-
-.hp-bar-big .beat.pending {
-  background-color: #f8a306;
-}
-
-.hp-bar-big .beat.maintenance {
-  background-color: #1747f5;
-}
-
-/*.hp-bar-big .beat.empty:hover{*/
-/*    transition: all ease-in-out 0.15s;*/
-/*    opacity: 0.8;*/
-/*    transform: scale(1.5);*/
-/*}*/
-.hp-bar-big .beat:not(.empty):hover {
-  transition: all ease-in-out .15s;
-  opacity: .8;
-  transform: scale(var(--hover-scale));
-}
 
 
 .scrollbar{

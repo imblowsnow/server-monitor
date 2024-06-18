@@ -14,9 +14,9 @@ type ServerWebsocketHandle struct {
 }
 
 var serverConnectionManage = NewServerConnectionManage()
-var serverDao = dao.ServerDao{}
-var serverStateDao = dao.ServerStateDao{}
-var serverInfoDao = dao.ServerInfoDao{}
+var serverDao = dao.NewServerDao()
+var serverStateDao = dao.NewServerStateDao()
+var serverInfoDao = dao.NewServerInfoDao()
 
 func (ServerWebsocketHandle) OnConnected(conn *websocket.Conn) {
 

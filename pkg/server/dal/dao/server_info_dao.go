@@ -6,6 +6,12 @@ type ServerInfoDao struct {
 	IBaseDao[do.ServerInfoDO, uint]
 }
 
+func NewServerInfoDao() *ServerInfoDao {
+	return &ServerInfoDao{
+		IBaseDao: &BaseDao[do.ServerInfoDO, uint]{},
+	}
+}
+
 func (dao ServerInfoDao) Save(serverInfoDO *do.ServerInfoDO) {
 	serverInfo := dao.GetByServerId(serverInfoDO.ServerId)
 	if serverInfo == nil {

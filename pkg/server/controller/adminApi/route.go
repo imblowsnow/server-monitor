@@ -17,6 +17,9 @@ func InitRoute(r *gin.Engine) {
 
 	serverFaultController := v1.NewServerFaultController()
 	adminApiV1Group.GET("/dashboard/faults", handleRouteFunc(serverFaultController.Page))
+
+	// monitor_groups
+	adminApiV1Group.GET("/monitor/groups", handleRouteFunc(dashboardController.MonitorGroups))
 	// ----------------------------------------------
 
 	// ----------------- 服务相关 ---------------------
