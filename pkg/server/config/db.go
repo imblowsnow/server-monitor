@@ -41,7 +41,7 @@ func initDb() {
 		panic("failed to connect database")
 	}
 
-	db.AutoMigrate(&do.ServerDO{}, &do.ServerInfoDO{}, &do.ServerStateDO{}, &do.ServerInfoDO{}, &do.ServerGroupDO{})
+	db.AutoMigrate(&do.ServerDO{}, &do.ServerInfoDO{}, &do.ServerStateDO{}, &do.ServerInfoDO{}, &do.ServerGroupDO{}, &do.ServerFaultDO{})
 	db.AutoMigrate(&do.NotifyGroupDO{}, &do.NotifyChannelDO{}, &do.NotifyGroupChannelDO{}, &do.NotifyLogDO{})
 
 	_db = db

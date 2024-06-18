@@ -5,7 +5,7 @@ import (
 	"server-monitor/pkg/server/common/utils"
 	v1 "server-monitor/pkg/server/controller/adminApi/v1"
 	"server-monitor/pkg/server/controller/base"
-	"server-monitor/pkg/server/dal/dao"
+	"server-monitor/pkg/server/dal/do"
 )
 
 func InitRoute(r *gin.Engine) {
@@ -15,9 +15,6 @@ func InitRoute(r *gin.Engine) {
 	dashboardController := v1.NewDashboardController()
 	adminApiV1Group.GET("/dashboard/total", handleRouteFunc(dashboardController.Total))
 
-	serverFaultController := v1.NewServerFaultController()
-	adminApiV1Group.GET("/dashboard/faults", handleRouteFunc(serverFaultController.Page))
-
 	// monitor_groups
 	adminApiV1Group.GET("/monitor/groups", handleRouteFunc(dashboardController.MonitorGroups))
 	// ----------------------------------------------
@@ -26,18 +23,18 @@ func InitRoute(r *gin.Engine) {
 	serverController := v1.NewServerController()
 
 	serverV1Group := adminApiV1Group.Group("/server")
-	crudApi(serverV1Group, serverController.CrudController)
-	// 按分组获取服务器
-	serverV1Group.GET("/groups", handleRouteFunc(serverController.GetServerGroups))
+	crudApi[do.ServerDO, uint](serverV1Group, serverController)
+	serverV1Group.GET("/info/:id", handleRouteFunc(serverController.GetServerInfo))
 	// 服务器分组
-	crudApi(adminApiV1Group.Group("/server_group"), v1.NewServerGroupController().CrudController)
+	crudApi[do.ServerGroupDO, uint](adminApiV1Group.Group("/server_group"), v1.NewServerGroupController())
 	// 服务器故障
-	crudApi(adminApiV1Group.Group("/server_fault"), serverFaultController.CrudController)
+	serverFaultController := v1.NewServerFaultController()
+	serverV1Group.GET("/fault/page", handleRouteFunc(serverFaultController.Page))
 	// --------------------------------------------
 
 	// ---------------  通知相关 -----------------------
-	crudApi(adminApiV1Group.Group("/notify_group"), v1.NewNotifyGroupController().CrudController)
-	crudApi(adminApiV1Group.Group("/notify_channel"), v1.NewNotifyChannelController().CrudController)
+	crudApi[do.NotifyGroupDO, uint](adminApiV1Group.Group("/notify_group"), v1.NewNotifyGroupController())
+	crudApi[do.NotifyChannelDO, uint](adminApiV1Group.Group("/notify_channel"), v1.NewNotifyChannelController())
 
 	notifyLogGroup := adminApiV1Group.Group("/notify_log")
 	notifyLogGroup.GET("/", handleRouteFunc(v1.NewNotifyLogController().List))
@@ -45,9 +42,9 @@ func InitRoute(r *gin.Engine) {
 
 }
 
-func crudApi[DAO dao.IBaseDao[DO, ID], DO any, ID int | uint | uint32](g *gin.RouterGroup, crud base.CrudController[DAO, DO, ID]) {
+func crudApi[DO any, ID int | uint | uint32](g *gin.RouterGroup, crud base.ICrudController[DO, ID]) {
 	g.GET("/", handleRouteFunc(crud.List))
-	g.GET("/page/:currentPage/:size", handleRouteFunc(crud.Page))
+	g.GET("/page", handleRouteFunc(crud.Page))
 	g.GET("/:id", handleRouteFunc(crud.Get))
 	g.POST("/", handleRouteFunc(crud.Create))
 	g.PUT("/:id", handleRouteFunc(crud.Update))

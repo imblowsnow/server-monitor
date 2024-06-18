@@ -8,14 +8,14 @@ import (
 
 type NotifyChannelController struct {
 	dao *dao.NotifyChannelDao
-	base.CrudController[dao.IBaseDao[do.NotifyChannelDO, uint], do.NotifyChannelDO, uint]
+	base.ICrudController[do.NotifyChannelDO, uint]
 }
 
 func NewNotifyChannelController() *NotifyChannelController {
 	var notifyChannelDao = dao.NewNotifyChannelDao()
 	return &NotifyChannelController{
 		dao: notifyChannelDao,
-		CrudController: base.CrudController[dao.IBaseDao[do.NotifyChannelDO, uint], do.NotifyChannelDO, uint]{
+		ICrudController: base.CrudController[do.NotifyChannelDO, uint]{
 			Dao: notifyChannelDao,
 		},
 	}

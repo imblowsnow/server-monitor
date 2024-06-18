@@ -1,4 +1,6 @@
 <script>
+import {pageServerFaults} from "@/api/server.js";
+
 export default {
   name: "monitor-faults",
   props: {
@@ -12,9 +14,24 @@ export default {
       faults: [
         { id: 1, name: 'fault1', status: 'up' },
       ],
-      clientHeight: document.body.clientHeight,
+      page: {
+        current: 1,
+        limit: 10,
+        total: 0
+      }
     }
   },
+  mounted() {
+    this.pageServerFaults();
+  },
+  methods: {
+    pageServerFaults() {
+      pageServerFaults(this.serverId, this.page.current, this.page.limit).then(data => {
+        this.faults = data.list
+        this.page.total = data.total
+      });
+    }
+  }
 }
 </script>
 
@@ -31,21 +48,27 @@ export default {
       </thead>
       <tbody>
       <tr
-          v-for="(beat, index) in faults"
+          v-for="(fault, index) in faults"
           :key="index"
-          :class="{ 'shadow-box': clientHeight <= 550}"
       >
-        <td>服务器A</td>
-        <td>2024-06-17 10:00:00</td>
-        <td>2024-06-17 10:00:00</td>
-        <td class="border-0">离线故障</td>
+        <td>{{ fault.name }}</td>
+        <td>{{ fault.start_time }}</td>
+        <td>{{ fault.end_time }}</td>
+        <td class="border-0">
+          {{ fault.remark }}
+          <el-button class="btn btn-primary" size="small">备注</el-button>
+        </td>
       </tr>
 
       <tr v-if="faults.length === 0">
-        <td colspan="4">No important events</td>
+        <td colspan="4" style="text-align: center">无故障事件</td>
       </tr>
       </tbody>
     </table>
+    <nav aria-label="Page navigation example">
+      <el-pagination v-model:page-size="page.limit" v-model:current-page="page.current" @size-change="pageServerFaults" @current-change="pageServerFaults"
+          layout="prev, pager, next" :total="this.page.total" />
+    </nav>
   </div>
 </template>
 

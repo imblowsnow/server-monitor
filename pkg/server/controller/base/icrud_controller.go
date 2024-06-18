@@ -5,7 +5,7 @@ import (
 	"server-monitor/pkg/server/dal/dao"
 )
 
-type ICrudController[DAO dao.IBaseDao[DO, ID], DO any, ID comparable] interface {
+type ICrudController[DO any, ID int | uint | uint32 | uint64 | string] interface {
 	List(context *gin.Context) interface{}
 
 	Page(context *gin.Context) interface{}
@@ -17,4 +17,6 @@ type ICrudController[DAO dao.IBaseDao[DO, ID], DO any, ID comparable] interface 
 	Update(context *gin.Context) interface{}
 
 	Delete(context *gin.Context) interface{}
+
+	GetDao() dao.IBaseDao[DO, ID]
 }

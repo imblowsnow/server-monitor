@@ -36,7 +36,7 @@ func (c DashboardController) Total(context *gin.Context) interface{} {
 // 获取
 func (s DashboardController) MonitorGroups(context *gin.Context) interface{} {
 	var monitorGroups []*bo.MonitorGroupBO
-	serverGroups := s.serverGroupDao.GetList()
+	serverGroups := s.serverGroupDao.GetList(nil)
 	for i := range serverGroups {
 
 		monitorGroup := bo.MonitorGroupBO{

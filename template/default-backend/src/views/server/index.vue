@@ -1,12 +1,15 @@
 <script>
 import HpBar from "@/components/hp-bar.vue";
 import MonitorFaults from "@/components/monitor-faults.vue";
+import {getServerInfo} from "@/api/server.js";
 
 export default {
   components: {MonitorFaults, HpBar},
   data() {
     return {
-      total: []
+      total: [],
+      server: null,
+      serverId: null
     }
   },
   mounted() {
@@ -16,25 +19,35 @@ export default {
         status: Math.floor(Math.random() * 11)
       }
     });
+    this.serverId = this.$route.params.id;
+    this.getServerInfo(this.serverId);
   },
   methods: {
     handleEdit(id) {
       this.$router.push(`/edit/${id}`);
+    },
+    getServerInfo(id) {
+      getServerInfo(id).then(data => {
+        this.server = data
+      });
     }
   }
 }
 </script>
 
 <template>
-  <div class="server">
-    <h1 class="mb-3">服务名称</h1>
+  <div v-if="server"  class="server">
+    <h1 class="mb-3">{{ server.name }}</h1>
     <div class="mb-3">
-      备注信息
+      {{ server.remark }}
     </div>
     <div class="functions mb-3">
       <div class="btn-group" role="group">
         <button class="btn btn-normal" style="border-radius: 30px 0 0 30px;">
           编辑
+        </button>
+        <button class="btn btn-normal">
+          复制秘钥
         </button>
         <button class="btn btn-danger" style="border-radius: 0 30px 30px 0;">
           删除
@@ -72,43 +85,43 @@ export default {
             当前
           </p>
           <span class="col-4 col-sm-12 num">
-                        127.0.0.1
-                    </span>
+            {{ server.ip }}
+          </span>
         </div>
         <div class="col-12 col-sm col row d-flex align-items-center d-sm-block">
           <h4 class="col-4 col-sm-12">系统</h4>
           <p class="col-4 col-sm-12 mb-0 mb-sm-2">
-            当前
+            os
           </p>
           <span class="col-4 col-sm-12 num">
-                        ubunut
-                    </span>
+              {{ server.server_info.os }}
+          </span>
         </div>
         <div class="col-12 col-sm col row d-flex align-items-center d-sm-block">
-          <h4 class="col-4 col-sm-12">在线时间</h4>
+          <h4 class="col-4 col-sm-12">系统型号</h4>
           <p class="col-4 col-sm-12 mb-0 mb-sm-2">
-            (24小时)
+            platform
           </p>
           <span class="col-4 col-sm-12 num">
-                        <span class="" title="24小时">
-                            100%
-                        </span>
-                    </span>
+              {{ server.server_info.platform }}
+          </span>
         </div>
         <div class="col-12 col-sm col row d-flex align-items-center d-sm-block">
-          <h4 class="col-4 col-sm-12">在线时间</h4>
+          <h4 class="col-4 col-sm-12">最后在线时间</h4>
           <p class="col-4 col-sm-12 mb-0 mb-sm-2">
-            (30天)
+            Last online
           </p>
           <span class="col-4 col-sm-12 num">
-                        <span class="" title="30天">100%</span>
-                    </span>
+              <span class="" title="24小时">
+                  {{ server.last_online_time }}
+              </span>
+          </span>
         </div>
       </div>
     </div>
 
     <div class="shadow-box mb-3">
-      <monitor-faults></monitor-faults>
+      <monitor-faults :server-id="serverId"></monitor-faults>
     </div>
   </div>
 </template>

@@ -8,14 +8,14 @@ import (
 
 type ServerGroupController struct {
 	serverGroupDao *dao.ServerGroupDao
-	base.CrudController[dao.IBaseDao[do.ServerGroupDO, uint], do.ServerGroupDO, uint]
+	base.ICrudController[do.ServerGroupDO, uint]
 }
 
 func NewServerGroupController() *ServerGroupController {
 	var serverGroupDao = dao.NewServerGroupDao()
 	return &ServerGroupController{
 		serverGroupDao: serverGroupDao,
-		CrudController: base.CrudController[dao.IBaseDao[do.ServerGroupDO, uint], do.ServerGroupDO, uint]{
+		ICrudController: base.CrudController[do.ServerGroupDO, uint]{
 			Dao: serverGroupDao,
 		},
 	}

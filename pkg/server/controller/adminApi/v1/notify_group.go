@@ -8,14 +8,14 @@ import (
 
 type NotifyGroupController struct {
 	notifyGroupDao *dao.NotifyGroupDao
-	base.CrudController[dao.IBaseDao[do.NotifyGroupDO, uint], do.NotifyGroupDO, uint]
+	base.ICrudController[do.NotifyGroupDO, uint]
 }
 
 func NewNotifyGroupController() *NotifyGroupController {
 	var notifyGroupDao = dao.NewNotifyGroupDao()
 	return &NotifyGroupController{
 		notifyGroupDao: notifyGroupDao,
-		CrudController: base.CrudController[dao.IBaseDao[do.NotifyGroupDO, uint], do.NotifyGroupDO, uint]{
+		ICrudController: base.CrudController[do.NotifyGroupDO, uint]{
 			Dao: notifyGroupDao,
 		},
 	}

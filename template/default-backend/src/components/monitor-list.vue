@@ -17,8 +17,8 @@ export default {
   },
   methods:{
     getMonitorGroups() {
-      monitorGroups().then(res => {
-        this.groups = res.data.data
+      monitorGroups().then(data => {
+        this.groups = data
         console.log('monitorGroups',this.groups);
       })
     }

@@ -11,7 +11,8 @@ type ServerInfoBO struct {
 	// 名称
 	Name string `json:"name"`
 	// 状态 1.正常 0.离线
-	Status int `json:"status"`
+	Status int    `json:"status"`
+	Ip     string `json:"ip"`
 	// 最后在线时间
 	LastOnlineTime    time.Time `json:"last_online_time"`
 	*do.ServerInfoDO  `json:"server_info"`

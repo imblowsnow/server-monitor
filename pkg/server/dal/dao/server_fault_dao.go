@@ -9,7 +9,7 @@ type ServerFaultDao struct {
 func NewServerFaultDao() *ServerFaultDao {
 	return &ServerFaultDao{
 		IBaseDao: &BaseDao[do.ServerFaultDO, uint]{
-			Order: "create_time desc",
+			Order: "start_time desc",
 		},
 	}
 }

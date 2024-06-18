@@ -13,12 +13,17 @@ type BaseDao[DO any, ID comparable] struct {
 	Order string
 }
 
-func (dao *BaseDao[DO, ID]) GetList() []DO {
+func (dao *BaseDao[DO, ID]) GetList(querys map[string]interface{}) []DO {
 	list := []DO{}
 
 	query := dao.DB()
 	if dao.Order != "" {
 		query = query.Order(dao.Order)
+	}
+	if querys != nil && len(querys) > 0 {
+		for s := range querys {
+			query = query.Where(s, querys[s])
+		}
 	}
 	result := query.Find(&list)
 	if result.Error != nil {
@@ -28,13 +33,20 @@ func (dao *BaseDao[DO, ID]) GetList() []DO {
 	return list
 }
 
-func (dao *BaseDao[DO, ID]) Page(page *entity.Page[DO]) error {
+func (dao *BaseDao[DO, ID]) Page(page *entity.Page[DO], querys map[string]interface{}) error {
 	// 默认页数值
 	if page.Page == 0 {
 		page.Page = 1
 	}
 	if page.PageSize == 0 {
 		page.PageSize = 10
+	}
+
+	query := dao.DB()
+	if querys != nil && len(querys) > 0 {
+		for s := range querys {
+			query = query.Where(s, querys[s])
+		}
 	}
 	result := dao.DB().Model(page.List).Count(&page.TotalCount)
 	if result.Error != nil {
@@ -43,11 +55,16 @@ func (dao *BaseDao[DO, ID]) Page(page *entity.Page[DO]) error {
 	}
 	page.TotalPage = int((page.TotalCount + int64(page.PageSize) - 1) / int64(page.PageSize))
 
-	query := dao.DB()
+	query = dao.DB()
 	if page.Order != "" {
 		query = query.Order(page.Order)
 	} else if dao.Order != "" {
 		query = query.Order(dao.Order)
+	}
+	if querys != nil && len(querys) > 0 {
+		for s := range querys {
+			query = query.Where(s, querys[s])
+		}
 	}
 	result = query.Offset((page.Page - 1) * page.PageSize).Limit(page.PageSize).Find(&page.List)
 	if result.Error != nil {

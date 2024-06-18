@@ -38,6 +38,7 @@ func (dao ServerDao) GetServerInfo(id uint) *bo.ServerInfoBO {
 		ID:             Server.ID,
 		Name:           Server.Name,
 		Status:         Server.Status,
+		Ip:             Server.IP,
 		LastOnlineTime: Server.LastOnlineTime,
 		ServerInfoDO:   &serverInfo,
 		ServerStateDO:  &serverState,
@@ -45,7 +46,7 @@ func (dao ServerDao) GetServerInfo(id uint) *bo.ServerInfoBO {
 }
 
 func (dao ServerDao) GetServerInfoList() []*bo.ServerInfoBO {
-	list := dao.GetList()
+	list := dao.GetList(nil)
 	if list == nil {
 		return nil
 	}
@@ -70,7 +71,7 @@ func (dao ServerDao) GetServerInfoListByGroupId(groupId uint) []*bo.ServerInfoBO
 func (dao ServerDao) GetServerGroups() []*bo.ServerGroupBO {
 	// 获取分组列表
 	var serverGroupDao = NewServerGroupDao()
-	groups := serverGroupDao.GetList()
+	groups := serverGroupDao.GetList(nil)
 
 	var list []*bo.ServerGroupBO
 

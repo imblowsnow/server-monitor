@@ -1,4 +1,6 @@
 <script>
+import {addServer} from "@/api/server.js";
+
 export default {
   data() {
     return {
@@ -17,9 +19,19 @@ export default {
         name: '',
         remark: '',
         sort: 1,
+        showIndex: 1
       }
     }
   },
+  methods: {
+    addServer() {
+      addServer(this.form).then(data => {
+        this.$router.push({ name: 'server-list' });
+      }).catch(err => {
+        this.$message.error(err);
+      });
+    }
+  }
 }
 </script>
 
@@ -62,10 +74,15 @@ export default {
                      min="0"
                      required>
             </div>
+            <div class="mb-3">
+              <label class="form-label">首页展示</label>
+              <input type="checkbox" class="form-control" v-model="form.showIndex"
+                     required>
+            </div>
           </div>
         </div>
         <div class="row">
-          <button type="submit" class="btn btn-primary">添加</button>
+          <button type="button" class="btn btn-primary" @click="addServer">添加</button>
         </div>
       </form>
     </div>
