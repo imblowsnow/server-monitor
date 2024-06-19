@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"server-monitor/pkg/server/common/entity"
+	"server-monitor/pkg/server/common/entity/bo"
 	"server-monitor/pkg/server/controller/base"
 	"server-monitor/pkg/server/dal/dao"
 	"server-monitor/pkg/server/dal/do"
@@ -56,5 +57,24 @@ func (c ServerFaultController) Page(context *gin.Context) interface{} {
 	if err != nil {
 		return err
 	}
-	return pageE
+
+	var page entity.Page[bo.ServerFaultBO]
+	page.Page = pageE.Page
+	page.PageSize = pageE.PageSize
+	page.TotalPage = pageE.TotalPage
+	page.TotalCount = pageE.TotalCount
+
+	serverDao := dao.NewServerDao()
+	// 转换为BO
+	for _, item := range pageE.List {
+		serverFaultBO := bo.ServerFaultBO{
+			ServerFaultDO: item,
+		}
+		server := serverDao.GetById(item.ServerId)
+		if server != nil {
+			serverFaultBO.ServerName = server.Name
+		}
+		page.List = append(page.List, serverFaultBO)
+	}
+	return page
 }

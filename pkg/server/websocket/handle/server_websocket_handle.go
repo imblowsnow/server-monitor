@@ -5,9 +5,12 @@ import (
 	"github.com/gorilla/websocket"
 	websocket_message2 "server-monitor/pkg/common/entity/dto/websocket_message"
 	"server-monitor/pkg/common/enum"
+	time2 "server-monitor/pkg/common/time"
 	"server-monitor/pkg/common/utils"
 	"server-monitor/pkg/server/dal/dao"
 	"server-monitor/pkg/server/dal/do"
+	"strings"
+	"time"
 )
 
 type ServerWebsocketHandle struct {
@@ -17,6 +20,7 @@ var serverConnectionManage = NewServerConnectionManage()
 var serverDao = dao.NewServerDao()
 var serverStateDao = dao.NewServerStateDao()
 var serverInfoDao = dao.NewServerInfoDao()
+var serverFaultDao = dao.NewServerFaultDao()
 
 func (ServerWebsocketHandle) OnConnected(conn *websocket.Conn) {
 
@@ -25,8 +29,15 @@ func (ServerWebsocketHandle) OnConnected(conn *websocket.Conn) {
 // 客户端关闭事件
 func (h ServerWebsocketHandle) OnClose(conn *websocket.Conn) {
 	serverId := serverConnectionManage.GetServerId(conn)
+	if serverId == 0 {
+		return
+	}
 	fmt.Println("服务器关闭:", serverId)
 	serverConnectionManage.RemoveByConn(conn)
+	// 更新服务器状态为离线
+	serverDao.UpdateStatus(uint(serverId), enum.ServerStatusOffline)
+	// 记录服务器掉线
+	serverFaultDao.RecordFault(uint(serverId), "服务器掉线")
 }
 
 // 客户端初始化事件
@@ -52,7 +63,7 @@ func (h ServerWebsocketHandle) OnServerInit(conn *websocket.Conn, message websoc
 	}
 
 	// 更新服务器最后心跳时间
-
+	serverFaultDao.RecoverFault(uint(serverId))
 	serverInfoDao.Save(&do.ServerInfoDO{
 		ServerId:      uint(serverId),
 		ServerInfoDTO: message.ServerInfoDTO,
@@ -62,7 +73,14 @@ func (h ServerWebsocketHandle) OnServerInit(conn *websocket.Conn, message websoc
 		ServerStateDTO: message.ServerStateDTO,
 	})
 
-	serverDao.UpdateLastHeartbeatTime(uint(serverId))
+	ip := conn.RemoteAddr().String()
+	// 只保留IP ，去掉端口
+	ip = ip[:strings.LastIndex(ip, ":")]
+	serverDao.UpdateById(uint(serverId), &do.ServerDO{
+		Status:         int(enum.ServerStatusOnline),
+		LastOnlineTime: time2.Time(time.Now()),
+		IP:             ip,
+	})
 }
 
 // 客户端状态事件

@@ -45,6 +45,14 @@ export async function pageServerFaults(server_id, page=1, size=10) {
     })
 }
 
+export async function editServerFaultRemark(id, remark) {
+    return request({
+        url: `/admin-api/v1/server/fault/${id}`,
+        method: 'put',
+        data: {remark}
+    })
+}
+
 export async function deleteServer(id) {
     return request({
         url: '/admin-api/v1/server/' + id,

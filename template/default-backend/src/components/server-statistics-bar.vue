@@ -1,6 +1,6 @@
 <script>
 export default {
-  name: "hp-bar",
+  name: "server-statistics-bar",
   props: {
     total: {
       type: Array,
@@ -13,11 +13,14 @@ export default {
     height: {
       type: Number,
       default: 16
+    },
+    maxNum: {
+      type: Number,
+      default: null
     }
   },
   data() {
     return {
-      num: 10,
       list: []
     }
   },
@@ -25,31 +28,31 @@ export default {
     statusClass() {
       return (status) => {
         if (status === 0) return 'empty';
-        if (status < 80 ) return 'error';
+        if (status < 50 ) return 'error';
+        if (status < 90 ) return 'pending';
         return '';
       }
     }
   },
   mounted() {
-    this.resizeHpBar();
+    this.resizeServerStatisticsBar();
   },
   watch: {
     total() {
-      this.resizeHpBar();
+      this.resizeServerStatisticsBar();
     }
   },
   methods: {
-    resizeHpBar() {
-      // 计算最多显示多少个
-      this.num = Math.floor(this.$refs.hpBar.clientWidth / (this.width + 4));
-      this.list = this.total.reverse().slice(-this.num);
+    resizeServerStatisticsBar() {
+      if (this.maxNum) this.list = this.total.reverse().slice(-this.maxNum);
+      else this.list = this.total.reverse();
     }
   }
 }
 </script>
 
 <template>
-  <div ref="hpBar" @resize="resizeHpBar" class="hp-bar-big" style="transform: translateX(0px);" >
+  <div ref="hpBar" @resize="resizeServerStatisticsBar" class="server-statistics-bar-big" style="transform: translateX(0px);" >
     <div v-for="item in this.list"
          class="beat"
          :class="statusClass(item.status)"
@@ -60,37 +63,37 @@ export default {
 </template>
 
 <style scoped>
-.hp-bar-big{
-  display: flex;
+.server-statistics-bar-big{
+
 }
-.hp-bar-big .beat {
+.server-statistics-bar-big .beat {
   display: inline-block;
   background-color: var(--theme-color);
   border-radius: 50rem;
 }
 
-.hp-bar-big .beat.empty {
+.server-statistics-bar-big .beat.empty {
   background-color: #dcdcdc;
 }
 
-.hp-bar-big .beat.error {
+.server-statistics-bar-big .beat.error {
   background-color: #dc3545;
 }
 
-.hp-bar-big .beat.pending {
+.server-statistics-bar-big .beat.pending {
   background-color: #f8a306;
 }
 
-.hp-bar-big .beat.maintenance {
+.server-statistics-bar-big .beat.maintenance {
   background-color: #1747f5;
 }
 
-/*.hp-bar-big .beat.empty:hover{*/
+/*.server-statistics-bar-big .beat.empty:hover{*/
 /*    transition: all ease-in-out 0.15s;*/
 /*    opacity: 0.8;*/
 /*    transform: scale(1.5);*/
 /*}*/
-.hp-bar-big .beat:not(.empty):hover {
+.server-statistics-bar-big .beat:not(.empty):hover {
   transition: all ease-in-out .15s;
   opacity: .8;
   transform: scale(var(--hover-scale));

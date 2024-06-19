@@ -1,9 +1,9 @@
 <script>
-import HpBar from "@/components/hp-bar.vue";
+import ServerStatisticsBar from "@/components/server-statistics-bar.vue";
 
 export default {
   name: "MonitorItem",
-  components: {HpBar},
+  components: {ServerStatisticsBar},
   props: {
     server: {
       type: Object,
@@ -34,7 +34,8 @@ export default {
         </div>
         <div class="col-4">
           <div class="wrap" style="padding: 4px 1.25px; width: 100%;" >
-            <hp-bar :total="server.online_statistics"></hp-bar>
+            <server-statistics-bar :max-num="10"
+                :total="server.online_statistics"></server-statistics-bar>
           </div>
         </div>
       </div>

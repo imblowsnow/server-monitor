@@ -42,10 +42,24 @@ export default {
     },
     updateServer() {
       updateServer(this.id, this.form).then(data => {
-        this.$router.push({ name: 'server-list' });
+        this.$bus.emit('serverChanged');
+
+        this.$router.push({ name: 'server', params: { id: this.id} });
       }).catch(err => {
         this.$message.error('更新失败!' + err);
       });
+    },
+    generateKey(){
+      // 生成uuid
+      this.form.key = this.generateUUID()
+    },
+
+    generateUUID() {
+      return 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0,
+            v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      })
     }
   }
 }
@@ -93,8 +107,8 @@ export default {
             <div class="mb-3">
               <label class="form-label">秘钥</label>
               <div class="input-group">
-                <input class="form-control" v-model="form.key" required>
-                <button type="button" class="btn btn-primary" aria-label="open modal to ">
+                <input class="form-control" v-model="form.key" required disabled>
+                <button type="button" class="btn btn-primary" aria-label="open modal to " @click="generateKey">
                   重新生成
                 </button>
               </div>

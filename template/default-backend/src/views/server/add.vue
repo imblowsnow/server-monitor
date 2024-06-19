@@ -37,7 +37,12 @@ export default {
     },
     addServer() {
       addServer(this.form).then(data => {
-        this.$router.push({ name: 'server-list' });
+        this.$bus.emit('serverChanged');
+
+        this.$router.push({ name: 'server', params: {
+          id: data.id
+          }
+        });
       }).catch(err => {
         this.$message.error('添加失败!' + err);
       });

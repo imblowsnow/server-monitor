@@ -11,8 +11,8 @@ type ServerFaultDO struct {
 	StartTime time.Time `json:"start_time"`
 	// 异常结束时间
 	EndTime time.Time `json:"end_time"`
-	// 持续时间
-	Duration uint64 `json:"duration"`
+	// 持续时间 秒
+	Duration int64 `json:"duration"`
 	// 备注
 	Remark string `json:"remark" gorm:"type:varchar(64)"`
 }

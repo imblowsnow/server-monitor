@@ -1,8 +1,6 @@
 @import './base.css';
 
 #app {
-  width: 100vw;
-
   --theme-color: #5cdd8b;
   --theme-color-rgb: 92,221,139;
 }

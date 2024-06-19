@@ -1,6 +1,7 @@
 package handle
 
 import (
+	"context"
 	"fmt"
 	"github.com/gorilla/websocket"
 	"server-monitor/pkg/client/utils"
@@ -11,8 +12,17 @@ import (
 )
 
 type WebsocketHandle struct {
+	context context.Context
+	cancel  context.CancelFunc
 }
 
+func NewWebsocketHandle() *WebsocketHandle {
+	ctx, cancel := context.WithCancel(context.Background())
+	return &WebsocketHandle{
+		context: ctx,
+		cancel:  cancel,
+	}
+}
 func (h WebsocketHandle) OnConnected(conn *websocket.Conn) {
 	// 发送初始化消息
 	message := websocket_message2.MessageServerInitDTO{
@@ -26,8 +36,9 @@ func (h WebsocketHandle) OnConnected(conn *websocket.Conn) {
 	}
 }
 
-func (WebsocketHandle) OnClose(conn *websocket.Conn) {
+func (h WebsocketHandle) OnClose(conn *websocket.Conn) {
 	fmt.Println("链接关闭")
+	h.cancel()
 }
 
 func (h WebsocketHandle) OnServerInitSuccess(conn *websocket.Conn, message websocket_message2.ServerInitSuccessDTO) {
@@ -52,6 +63,9 @@ func (h WebsocketHandle) startHeartbeat(conn *websocket.Conn) {
 				if err != nil {
 					fmt.Println("发送服务器状态失败:", err)
 				}
+
+			case <-h.context.Done():
+				return
 			}
 		}
 	}()

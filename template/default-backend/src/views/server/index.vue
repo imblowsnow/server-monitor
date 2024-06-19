@@ -1,10 +1,10 @@
 <script>
-import HpBar from "@/components/hp-bar.vue";
+import ServerStatisticsBar from "@/components/server-statistics-bar.vue";
 import MonitorFaults from "@/components/monitor-faults.vue";
 import {getServerInfo, getServerStatisticsList, deleteServer} from "@/api/server.js";
 
 export default {
-  components: {MonitorFaults, HpBar},
+  components: {MonitorFaults, ServerStatisticsBar},
   data() {
     return {
       total: [],
@@ -42,6 +42,7 @@ export default {
             type: 'success',
             message: '删除成功!'
           });
+          this.$bus.emit('serverChanged');
           // 路由返回
           this.$router.go(-1);
         }).catch((err) => {
@@ -99,7 +100,7 @@ export default {
               class="wrap"
               style="padding: 7.5px 2.6px; width: 100%;"
           >
-            <hp-bar :width="10" :height="30" :total="total"></hp-bar>
+            <server-statistics-bar :width="10" :height="30" :total="total"></server-statistics-bar>
           </div>
           <span class="word">最近30天</span>
         </div>

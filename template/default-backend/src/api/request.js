@@ -1,8 +1,6 @@
 import axios from 'axios'
 
-
 export default async function (options) {
-    axios.put()
     return axios(options).then(response => {
         if (response.status === 200) {
             if (options.nocheck || response.data.code === 200) {

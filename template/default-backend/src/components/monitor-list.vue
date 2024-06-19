@@ -14,6 +14,10 @@ export default {
   },
   mounted() {
     this.getMonitorGroups()
+    // 监听事件
+    this.$bus.on('serverChanged', () => {
+      this.getMonitorGroups()
+    })
   },
   methods:{
     getMonitorGroups() {

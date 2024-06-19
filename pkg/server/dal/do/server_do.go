@@ -19,6 +19,8 @@ type ServerDO struct {
 	ShowIndex int `json:"show_index" gorm:"type:int"`
 	// 状态 1.正常 0.离线
 	Status int `json:"status" gorm:"type:int"`
+	// 排序
+	Sort int `json:"sort" gorm:"type:int;default:1"`
 	// 最后在线时间
 	LastOnlineTime time.Time `json:"last_online_time" gorm:"type:datetime"`
 	// 创建时间

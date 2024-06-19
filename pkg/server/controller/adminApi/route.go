@@ -32,6 +32,7 @@ func InitRoute(r *gin.Engine) {
 	// 服务器故障
 	serverFaultController := v1.NewServerFaultController()
 	serverV1Group.GET("/fault/page", handleRouteFunc(serverFaultController.Page))
+	serverV1Group.PUT("/fault/:id", handleRouteFunc(serverFaultController.Update))
 	// --------------------------------------------
 
 	// ---------------  通知相关 -----------------------

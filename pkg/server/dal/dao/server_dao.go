@@ -15,7 +15,9 @@ type ServerDao struct {
 
 func NewServerDao() *ServerDao {
 	return &ServerDao{
-		IBaseDao: &BaseDao[do.ServerDO, uint]{},
+		IBaseDao: &BaseDao[do.ServerDO, uint]{
+			Order: "sort desc, id asc",
+		},
 	}
 }
 
@@ -95,7 +97,14 @@ func (dao ServerDao) GetServerGroups() []*bo.ServerGroupBO {
 }
 
 func (dao ServerDao) UpdateLastHeartbeatTime(serverId uint) {
-	dao.DB().Model(&do.ServerDO{}).Where("id = ?", serverId).Update("last_online_time", time.Now())
+	dao.DB().Model(&do.ServerDO{}).Where("id = ?", serverId).UpdateColumns(map[string]interface{}{
+		"last_online_time": time.Now(),
+		"status":           enum.ServerStatusOnline,
+	})
+}
+
+func (dao ServerDao) UpdateStatus(serverId uint, status enum.ServerStatus) {
+	dao.DB().Model(&do.ServerDO{}).Where("id = ?", serverId).Update("status", status)
 }
 
 func (dao ServerDao) Add(server *do.ServerDO) error {
@@ -195,4 +204,27 @@ func (dao ServerDao) calcMonitorServerStatisticsRate(statisticsList []*bo.Monito
 		total += statisticsBO.Rate
 	}
 	return total / len(statisticsList)
+}
+
+func (dao ServerDao) CheckServerOffline() {
+	lastOnlineTime := time.Now().Add(-time.Minute * 5)
+	var list []do.ServerDO
+	dao.DB().Model(&do.ServerDO{}).Where("last_online_time <= ?", lastOnlineTime).Find(&list)
+	if len(list) == 0 {
+		return
+	}
+
+	serverFaultDao := NewServerFaultDao()
+
+	ids := make([]uint, 0)
+
+	for _, v := range list {
+		// 记录故障
+		serverFaultDao.RecordFaultAndTime(v.ID, "服务端掉线", time.Time(v.LastOnlineTime))
+
+		ids = append(ids, v.ID)
+	}
+
+	// 更新状态 where in ids
+	dao.DB().Model(&do.ServerDO{}).Where("id in (?)", ids).Update("status", enum.ServerStatusOffline)
 }
