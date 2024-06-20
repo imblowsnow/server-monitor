@@ -24,7 +24,7 @@ export default {
         size: this.page.size
       }).then(data => {
         this.list = data.list;
-        this.page.total = data.totalCount;
+        this.page.total = data.total;
         console.log('pageServerGroupList', data);
       }).catch(() => {
         this.$message({

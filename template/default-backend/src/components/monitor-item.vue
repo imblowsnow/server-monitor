@@ -23,19 +23,19 @@ export default {
 <template>
   <div class="monitor-item">
     <router-link :to="'/server/' + server.server_id" style="margin-left: 0px;">
-      <div class="row">
-        <div class="col-8 small-padding">
+      <div class="box">
+        <div class="small-padding" style="flex: 1">
           <div class="info">
-            <span class="badge rounded-pill bg-primary" title="最近24小时">
+            <span class="badge rounded-pill " :class="{'bg-primary' : server.server_status === 1, 'bg-danger' : server.server_status === 0}"
+                  title="最近24小时">
                 {{ server.online_rate }}%
             </span>
             {{ server.server_name }}
           </div>
         </div>
-        <div class="col-4">
+        <div style="width: 180px;">
           <div class="wrap" style="padding: 4px 1.25px; width: 100%;" >
-            <server-statistics-bar :max-num="10"
-                :total="server.online_statistics"></server-statistics-bar>
+            <server-statistics-bar :width="10" :height="10" :total="server.online_statistics"></server-statistics-bar>
           </div>
         </div>
       </div>
@@ -44,6 +44,10 @@ export default {
 </template>
 
 <style scoped>
+.monitor-item .box{
+  display: flex;
+  align-items: center;
+}
 .monitor-item a{
   color: #000;
   text-decoration: none;

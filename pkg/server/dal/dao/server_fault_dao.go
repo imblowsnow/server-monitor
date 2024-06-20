@@ -25,6 +25,12 @@ func (d ServerFaultDao) RecordFault(serverId uint, remark string) {
 }
 
 func (d ServerFaultDao) RecordFaultAndTime(serverId uint, remark string, startTime time.Time) {
+	var total int64
+	d.DB().Model(&do.ServerFaultDO{}).Where("server_id = ? and end_time is null", serverId).Count(&total)
+	if total > 0 {
+		return
+	}
+
 	d.DB().Save(&do.ServerFaultDO{
 		ServerId:  serverId,
 		StartTime: time2.Time(startTime),

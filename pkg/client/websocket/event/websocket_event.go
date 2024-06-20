@@ -11,21 +11,26 @@ import (
 
 type WebsocketEvent struct {
 	inner_websocket.WebsocketEvent
+	websocketHandle *handle.WebsocketHandle
 }
 
-var websocketHandle = handle.NewWebsocketHandle()
+func NewWebsocketEvent() *WebsocketEvent {
+	return &WebsocketEvent{
+		websocketHandle: handle.NewWebsocketHandle(),
+	}
+}
 
-func (WebsocketEvent) OnConnected(conn *websocket.Conn) {
-	websocketHandle.OnConnected(conn)
+func (e WebsocketEvent) OnConnected(conn *websocket.Conn) {
+	e.websocketHandle.OnConnected(conn)
 }
 
 // 链接关闭
-func (WebsocketEvent) OnClose(conn *websocket.Conn) {
-	websocketHandle.OnClose(conn)
+func (e WebsocketEvent) OnClose(conn *websocket.Conn) {
+	e.websocketHandle.OnClose(conn)
 }
 
 // 收到消息
-func (WebsocketEvent) OnMessage(conn *websocket.Conn, websocketMessage websocket_message2.WebsocketMessageDTO) {
+func (e WebsocketEvent) OnMessage(conn *websocket.Conn, websocketMessage websocket_message2.WebsocketMessageDTO) {
 	fmt.Println("收到服务端消息:", websocketMessage)
 	switch websocketMessage.MessageType {
 	case enum.ServerMessageInitSuccess:
@@ -34,7 +39,7 @@ func (WebsocketEvent) OnMessage(conn *websocket.Conn, websocketMessage websocket
 			fmt.Println("解析消息失败:", err)
 			return
 		}
-		websocketHandle.OnServerInitSuccess(conn, message)
+		e.websocketHandle.OnServerInitSuccess(conn, message)
 		break
 	}
 }

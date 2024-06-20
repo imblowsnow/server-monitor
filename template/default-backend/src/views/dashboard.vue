@@ -1,6 +1,7 @@
-<script lang="ts">
+<script>
 import {defineComponent} from 'vue'
 import MonitorFaults from "@/components/monitor-faults.vue";
+import {dashboardTotal} from "@/api/monitor.js";
 
 export default defineComponent({
   name: "dashboard",
@@ -8,17 +9,20 @@ export default defineComponent({
   data() {
     return {
       total: {
-        up: 10,
-        down: 10,
+        onlineNum: 0,
+        offlineNum: 0,
       },
-      faults: [
-        { id: 1, name: 'fault1', status: 'up' },
-      ],
-      clientHeight: document.body.clientHeight,
     }
   },
   mounted() {
-    console.log('mounted')
+    this.dashboardTotal();
+  },
+  methods: {
+    dashboardTotal() {
+      dashboardTotal().then(data => {
+        this.total = data
+      });
+    }
   }
 })
 </script>
@@ -32,19 +36,19 @@ export default defineComponent({
           <h3>在线</h3>
           <span
               class="num"
-              :class="total.up === 0 && 'text-secondary'"
+              :class="total.onlineNum === 0 && 'text-secondary'"
           >
-                                    0
-                                </span>
+              {{ total.onlineNum}}
+          </span>
         </div>
         <div class="col">
           <h3>离线</h3>
           <span
               class="num"
-              :class="total.down > 0 ? 'text-danger' : 'text-secondary'"
+              :class="total.offlineNum > 0 ? 'text-danger' : 'text-secondary'"
           >
-                                    0
-                                </span>
+             {{ total.offlineNum}}
+          </span>
         </div>
       </div>
     </div>

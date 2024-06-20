@@ -6,3 +6,11 @@ export function monitorGroups() {
         method: 'get'
     })
 }
+
+
+export function dashboardTotal() {
+    return request({
+        url: '/admin-api/v1/dashboard/total',
+        method: 'get'
+    })
+}

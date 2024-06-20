@@ -42,18 +42,17 @@ func (dao *BaseDao[DO, ID]) Page(page *entity.Page[DO], querys map[string]interf
 		page.PageSize = 10
 	}
 
-	query := dao.DB()
+	query := dao.DB().Model(page.List)
 	if querys != nil && len(querys) > 0 {
 		for s := range querys {
 			query = query.Where(s, querys[s])
 		}
 	}
-	result := dao.DB().Model(page.List).Count(&page.TotalCount)
+	result := query.Count(&page.Total)
 	if result.Error != nil {
 		fmt.Println("查询总数失败", result.Error)
 		return result.Error
 	}
-	page.TotalPage = int((page.TotalCount + int64(page.PageSize) - 1) / int64(page.PageSize))
 
 	query = dao.DB()
 	if page.Order != "" {

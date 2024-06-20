@@ -20,12 +20,14 @@ export default {
       this.serverId = this.$route.params.id;
       this.getServerInfo(this.serverId);
       this.getServerStatisticsList(this.serverId);
+      this.$bus.emit('serverSelect', this.serverId);
     }
   },
   mounted() {
     this.serverId = this.$route.params.id;
     this.getServerInfo(this.serverId);
     this.getServerStatisticsList(this.serverId);
+    this.$bus.emit('serverSelect', this.serverId);
   },
   methods: {
     handleEdit(id) {
@@ -80,9 +82,9 @@ export default {
                 style="border-radius: 30px 0 0 30px;">
           编辑
         </button>
-        <button class="btn btn-normal">
-          终端
-        </button>
+<!--        <button class="btn btn-normal">-->
+<!--          终端-->
+<!--        </button>-->
         <button class="btn btn-normal">
           安装脚本
         </button>

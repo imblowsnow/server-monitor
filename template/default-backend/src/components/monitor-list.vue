@@ -18,13 +18,31 @@ export default {
     this.$bus.on('serverChanged', () => {
       this.getMonitorGroups()
     })
+    this.$bus.on('serverSelect', (serverId) => {
+      this.selectGroupByServerId(serverId)
+    })
   },
   methods:{
     getMonitorGroups() {
       monitorGroups().then(data => {
         this.groups = data
-        console.log('monitorGroups',this.groups);
+        if (this.groups.length === 0) {
+          return
+        }
+        // 设置当前默认选中的分组
+        this.activeGroupIds = [this.groups[0].group_id]
+        console.log('activeGroupIds',this.activeGroupIds);
       })
+    },
+    selectGroupByServerId(serverId){
+      for (let group of this.groups) {
+        for (let server of group.servers) {
+          if (server.serverId === serverId) {
+            this.activeGroupIds = [group.group_id]
+            return
+          }
+        }
+      }
     }
   }
 }

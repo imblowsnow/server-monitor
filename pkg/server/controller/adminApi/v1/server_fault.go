@@ -61,8 +61,7 @@ func (c ServerFaultController) Page(context *gin.Context) interface{} {
 	var page entity.Page[bo.ServerFaultBO]
 	page.Page = pageE.Page
 	page.PageSize = pageE.PageSize
-	page.TotalPage = pageE.TotalPage
-	page.TotalCount = pageE.TotalCount
+	page.Total = pageE.Total
 
 	serverDao := dao.NewServerDao()
 	// 转换为BO

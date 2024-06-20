@@ -17,7 +17,7 @@ func LoopWebsocket(host string, port int) error {
 	}
 
 	// 循环监听消息
-	inner_websocket.LoopWebsocket(conn, &event.WebsocketEvent{})
+	inner_websocket.LoopWebsocket(conn, event.NewWebsocketEvent())
 
 	return nil
 }

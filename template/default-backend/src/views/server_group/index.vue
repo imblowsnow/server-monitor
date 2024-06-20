@@ -24,7 +24,7 @@ export default {
         size: this.page.size
       }).then(data => {
         this.list = data.list;
-        this.page.total = data.totalCount;
+        this.page.total = data.total;
         console.log('pageServerGroupList', data);
       }).catch(() => {
         this.$message({
@@ -74,8 +74,7 @@ export default {
     <h1 class="mb-3">分组管理</h1>
     <div class="functions mb-3">
       <div class="btn-group" role="group">
-        <button class="btn btn-normal" @click="handleAdd()"
-                style="border-radius: 30px 0 0 30px;"
+        <button class="btn btn-primary" @click="handleAdd()"
         >
           新增
         </button>
