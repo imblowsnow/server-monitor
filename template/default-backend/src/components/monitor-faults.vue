@@ -7,6 +7,10 @@ export default {
     serverId: {
       type: Number,
       default: null
+    },
+    limit: {
+      type: Number,
+      default: 10
     }
   },
   data() {
@@ -27,6 +31,7 @@ export default {
     }
   },
   mounted() {
+    this.page.limit = this.limit
     this.pageServerFaults();
   },
   methods: {

@@ -15,13 +15,14 @@ func NewServerStateDao() *ServerStateDao {
 	}
 }
 func (dao *ServerStateDao) Add(entity *do.ServerStateDO) error {
+	return dao.DB().Create(entity).Error
+}
+
+func (dao *ServerStateDao) CheckNowMinuteExist(serverId uint) bool {
 	// 获取当前时间 年月日 时分
 	addTime := time.Now().Format("2006-01-02 15:04")
 	// 判断当前分钟是否已经存在，则不再添加
-	var serverState do.ServerStateDO
-	dao.DB().Where("server_id = ? and create_time >= ?", entity.ServerId, addTime).First(&serverState)
-	if serverState.ID > 0 {
-		return nil
-	}
-	return dao.DB().Create(entity).Error
+	var count int64
+	dao.DB().Where("server_id = ? and create_time >= ?", serverId, addTime).Count(&count)
+	return count > 0
 }

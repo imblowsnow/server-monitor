@@ -56,7 +56,7 @@ export default defineComponent({
         class="shadow-box table-shadow-box"
         style="overflow-x: hidden;"
     >
-      <monitor-faults></monitor-faults>
+      <monitor-faults ></monitor-faults>
     </div>
   </div>
 </template>

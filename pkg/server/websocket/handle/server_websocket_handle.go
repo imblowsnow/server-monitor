@@ -14,6 +14,7 @@ import (
 )
 
 type ServerWebsocketHandle struct {
+	webClientWebsocketHandle *WebClientWebsocketHandle
 }
 
 var serverConnectionManage = NewServerConnectionManage()
@@ -21,6 +22,12 @@ var serverDao = dao.NewServerDao()
 var serverStateDao = dao.NewServerStateDao()
 var serverInfoDao = dao.NewServerInfoDao()
 var serverFaultDao = dao.NewServerFaultDao()
+
+func NewServerWebsocketHandle(webClientWebsocketHandle *WebClientWebsocketHandle) ServerWebsocketHandle {
+	return ServerWebsocketHandle{
+		webClientWebsocketHandle: webClientWebsocketHandle,
+	}
+}
 
 func (ServerWebsocketHandle) OnConnected(conn *websocket.Conn) {
 
@@ -34,10 +41,9 @@ func (h ServerWebsocketHandle) OnClose(conn *websocket.Conn) {
 	}
 	fmt.Println("服务器关闭:", serverId)
 	serverConnectionManage.RemoveByConn(conn)
-	// 更新服务器状态为离线
-	serverDao.UpdateStatus(uint(serverId), enum.ServerStatusOffline)
-	// 记录服务器掉线
-	serverFaultDao.RecordFault(uint(serverId), "服务器掉线")
+
+	// 通知服务器状态离线
+	h.notifyServerOffline(conn, uint(serverId))
 }
 
 // 客户端初始化事件
@@ -60,37 +66,72 @@ func (h ServerWebsocketHandle) OnServerInit(conn *websocket.Conn, message websoc
 	if err != nil {
 		fmt.Println("发送初始化成功消息失败:", err)
 		conn.Close()
+		return
 	}
 
-	// 更新服务器最后心跳时间
-	serverFaultDao.RecoverFault(uint(serverId))
-	serverInfoDao.Save(&do.ServerInfoDO{
-		ServerId:      uint(serverId),
-		ServerInfoDTO: message.ServerInfoDTO,
-	})
-	serverStateDao.Add(&do.ServerStateDO{
-		ServerId:       uint(serverId),
-		ServerStateDTO: message.ServerStateDTO,
-	})
-
-	ip := conn.RemoteAddr().String()
-	// 只保留IP ，去掉端口
-	ip = ip[:strings.LastIndex(ip, ":")]
-	serverDao.UpdateById(uint(serverId), &do.ServerDO{
-		Status:         int(enum.ServerStatusOnline),
-		LastOnlineTime: time2.Time(time.Now()),
-		IP:             ip,
-	})
+	h.notifyServerOnline(conn, uint(serverId), message)
 }
 
 // 客户端状态事件
 func (h ServerWebsocketHandle) OnServerState(conn *websocket.Conn, message websocket_message2.ServerStateDTO) {
 	fmt.Println("收到服务器状态:", message)
 	serverId := serverConnectionManage.GetServerId(conn)
-	serverStateDao.Add(&do.ServerStateDO{
+
+	// 通知服务器状态
+	h.notifyServerState(conn, do.ServerStateDO{
 		ServerId:       uint(serverId),
 		ServerStateDTO: message.ServerStateDTO,
 	})
+}
 
-	serverDao.UpdateLastHeartbeatTime(uint(serverId))
+func (h ServerWebsocketHandle) notifyServerState(conn *websocket.Conn, serverState do.ServerStateDO) {
+	serverId := serverState.ServerId
+	if !serverStateDao.CheckNowMinuteExist(serverId) {
+		serverStateDao.Add(&serverState)
+	}
+	serverDao.UpdateLastHeartbeatTime(serverId)
+
+	// 推送web 客户端
+	h.webClientWebsocketHandle.NotifyServerState(serverState)
+}
+
+func (h ServerWebsocketHandle) notifyServerOnline(conn *websocket.Conn, serverId uint, message websocket_message2.MessageServerInitDTO) {
+
+	// 恢复服务器故障
+	serverFaultDao.RecoverFault(serverId)
+
+	ip := conn.RemoteAddr().String()
+	// 只保留IP ，去掉端口
+	ip = ip[:strings.LastIndex(ip, ":")]
+	serverDao.UpdateById(serverId, &do.ServerDO{
+		Status:         int(enum.ServerStatusOnline),
+		LastOnlineTime: time2.Time(time.Now()),
+		IP:             ip,
+	})
+
+	// 更新服务器信息
+	serverInfoDao.Save(&do.ServerInfoDO{
+		ServerId:      serverId,
+		ServerInfoDTO: message.ServerInfoDTO,
+	})
+
+	// 通知服务器状态
+	h.notifyServerState(conn, do.ServerStateDO{
+		ServerId:       serverId,
+		ServerStateDTO: message.ServerStateDTO,
+	})
+
+	// 推送web 客户端
+	h.webClientWebsocketHandle.NotifyServerOnline(serverId, message)
+}
+
+func (h ServerWebsocketHandle) notifyServerOffline(conn *websocket.Conn, serverId uint) {
+	// 更新服务器状态为离线
+	serverDao.UpdateStatus(serverId, enum.ServerStatusOffline)
+
+	// 记录服务器掉线
+	serverFaultDao.RecordFault(serverId, "服务器掉线")
+
+	// 推送到web客户端
+	h.webClientWebsocketHandle.NotifyServerOffline(serverId)
 }

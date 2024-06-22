@@ -10,6 +10,8 @@ type ServerInfoBO struct {
 	ID uint `json:"id"`
 	// 名称
 	Name string `json:"name"`
+	// 备注
+	Remark string `json:"remark"`
 	// 状态 1.正常 0.离线
 	Status int    `json:"status"`
 	Ip     string `json:"ip"`

@@ -1,7 +1,6 @@
 package dao
 
 import (
-	"fmt"
 	"github.com/google/uuid"
 	"server-monitor/pkg/common/enum"
 	"server-monitor/pkg/server/common/entity/bo"
@@ -46,6 +45,7 @@ func (dao ServerDao) GetServerInfo(id uint) *bo.ServerInfoBO {
 	return &bo.ServerInfoBO{
 		ID:             Server.ID,
 		Name:           Server.Name,
+		Remark:         Server.Remark,
 		Status:         Server.Status,
 		Ip:             Server.IP,
 		LastOnlineTime: Server.LastOnlineTime,
@@ -125,12 +125,13 @@ func (dao ServerDao) GetMonitorServers(groupId uint) []*bo.MonitorServerBO {
 
 	var result []*bo.MonitorServerBO
 	for _, v := range list {
-		servers := dao.GetMonitorServer(v.ID, enum2.MONITOR_DURATION_MINUTE)
+		servers := dao.GetMonitorServer(v.ID, enum2.MONITOR_DURATION_HOUR)
 		result = append(result, servers)
 	}
 	return result
 }
 
+// 获取服务器监控统计数据
 func (dao ServerDao) GetMonitorServer(serverId uint, monitorDurationEnum enum2.MonitorDurationEnum) *bo.MonitorServerBO {
 	var server *do.ServerDO
 	dao.DB().Where("id = ?", serverId).First(&server)
@@ -153,6 +154,7 @@ func (dao ServerDao) GetMonitorServer(serverId uint, monitorDurationEnum enum2.M
 	return &monitorServer
 }
 
+// 获取服务器监控统计数据列表
 func (dao ServerDao) GetMonitorServerStatisticsList(serverId uint, monitorDurationEnum enum2.MonitorDurationEnum) []*bo.MonitorServerStatisticsBO {
 	// 获取最近num条事件数据
 	var list []*bo.MonitorServerStatisticsBO
@@ -186,7 +188,6 @@ func (dao ServerDao) GetMonitorServerStatisticsList(serverId uint, monitorDurati
 
 		serverStatistics := dao.GetMonitorServerStatistics(serverId, startTime, endTime)
 		list = append(list, serverStatistics)
-		fmt.Println("startTime", serverStatistics.StartTime, serverStatistics.EndTime)
 	}
 
 	return list
@@ -222,6 +223,7 @@ func (dao ServerDao) GetMonitorServerStatistics(serverId uint, startTime, endTim
 	}
 }
 
+// 计算监控服务器在线率
 func (dao ServerDao) calcMonitorServerStatisticsRate(statisticsList []*bo.MonitorServerStatisticsBO) int {
 	total := 0
 	for _, statisticsBO := range statisticsList {
@@ -230,6 +232,7 @@ func (dao ServerDao) calcMonitorServerStatisticsRate(statisticsList []*bo.Monito
 	return total / len(statisticsList)
 }
 
+// 检查服务端掉线>5分钟
 func (dao ServerDao) CheckServerOffline() {
 	lastOnlineTime := time.Now().Add(-time.Minute * 5)
 	var list []do.ServerDO

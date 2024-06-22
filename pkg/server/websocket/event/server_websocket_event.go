@@ -13,7 +13,8 @@ type ServerWebsocketEvent struct {
 	inner_websocket.WebsocketEvent
 }
 
-var serverWebsocketHandle = handle.ServerWebsocketHandle{}
+var webClientWebsocketHandle = handle.NewWebClientWebsocketHandle()
+var serverWebsocketHandle = handle.NewServerWebsocketHandle(&webClientWebsocketHandle)
 
 func (ServerWebsocketEvent) OnConnected(conn *websocket.Conn) {
 	serverWebsocketHandle.OnConnected(conn)

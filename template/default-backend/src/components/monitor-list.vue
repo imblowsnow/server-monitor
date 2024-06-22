@@ -9,7 +9,9 @@ export default {
   data() {
     return {
       activeGroupIds: [1],
-      groups: []
+      groups: [],
+
+      activeServerId: null
     }
   },
   mounted() {
@@ -19,7 +21,10 @@ export default {
       this.getMonitorGroups()
     })
     this.$bus.on('serverSelect', (serverId) => {
-      this.selectGroupByServerId(serverId)
+      console.log('serverSelect', serverId);
+      this.activeServerId = serverId;
+      if (!this.activeServerId) return;
+      this.selectGroupByServerId(this.activeServerId)
     })
   },
   methods:{
@@ -55,7 +60,10 @@ export default {
         <template #title>
           {{ group.group_name }}
         </template>
-        <monitor-item v-for="server in group.servers" :server="server"></monitor-item>
+        <monitor-item v-for="server in group.servers"
+                      :class="{'active': activeServerId == server.server_id}"
+                :server="server">
+        </monitor-item>
       </el-collapse-item>
     </el-collapse>
   </div>
@@ -70,8 +78,9 @@ export default {
   transition: all ease-in-out .15s;
   font-size: 16px;
   cursor: pointer;
+  margin-bottom: 10px;
 }
-.monitor-list .monitor-item:hover {
+.monitor-list .monitor-item:hover , .monitor-list .monitor-item.active{
   background-color: #e7faec;
 }
 </style>
