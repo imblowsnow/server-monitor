@@ -10,11 +10,22 @@ type ServerGroupDao struct {
 }
 
 func NewServerGroupDao() *ServerGroupDao {
-	return &ServerGroupDao{
+	dao := &ServerGroupDao{
 		IBaseDao: &BaseDao[do.ServerGroupDO, uint]{
 			Order: "sort desc, id asc",
 		},
 	}
+	dao.Init()
+	return dao
+}
+
+func (dao *ServerGroupDao) Init() {
+	// 初始化系统默认分组
+	dao.DB().Where("system = 1").FirstOrCreate(&do.ServerGroupDO{
+		GroupName: "默认",
+		Sort:      1,
+		System:    1,
+	})
 }
 
 func (dao *ServerGroupDao) Delete(id uint) error {
