@@ -1,7 +1,15 @@
 import axios from 'axios'
 
+// 设置请求头
 export default async function (options) {
-    return axios(options).then(response => {
+    options.headers = options.headers || {}
+    return axios({
+        ...options,
+        headers: {
+            ...options.headers,
+            'Authorization': localStorage.getItem('token') || ''
+        }
+    }).then(response => {
         if (response.status === 200) {
             if (options.nocheck || response.data.code === 200) {
                 return response.data.data
@@ -10,6 +18,15 @@ export default async function (options) {
             }
         }else{
             throw new Error('Request failed with status code ' + response.status)
+        }
+    }).catch(error => {
+        if (error.response && error.response.status === 401) {
+            console.log('未登录，跳转到登录页')
+            localStorage.setItem('token', '')
+            // router跳转到登录页
+            window.location.href = '/login'
+        }else{
+            throw error
         }
     })
 }

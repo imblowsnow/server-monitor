@@ -36,6 +36,11 @@ export default defineConfig({
                 changeOrigin: true,
                 rewrite: (path) => path.replace(/^\/admin-api/, '/admin-api')
             },
+            '/api': {
+                target: 'http://127.0.0.1:22251',
+                changeOrigin: true,
+                rewrite: (path) => path.replace(/^\/api/, '/api')
+            },
             '/ws': {
                 target: 'ws://127.0.0.1:22251',
                 changeOrigin: true,

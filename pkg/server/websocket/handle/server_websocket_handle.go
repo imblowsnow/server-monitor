@@ -86,9 +86,9 @@ func (h ServerWebsocketHandle) OnServerState(conn *websocket.Conn, message webso
 
 func (h ServerWebsocketHandle) notifyServerState(conn *websocket.Conn, serverState do.ServerStateDO) {
 	serverId := serverState.ServerId
-	if !serverStateDao.CheckNowMinuteExist(serverId) {
-		serverStateDao.Add(&serverState)
-	}
+	// 记录服务器状态
+	serverStateDao.Record(&serverState)
+	// 更新服务器最后心跳时间
 	serverDao.UpdateLastHeartbeatTime(serverId)
 
 	// 推送web 客户端

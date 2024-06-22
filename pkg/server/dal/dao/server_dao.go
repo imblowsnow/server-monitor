@@ -169,21 +169,48 @@ func (dao ServerDao) GetMonitorServerStatisticsList(serverId uint, monitorDurati
 			// 按月
 			startTime = time.Now().Add(subDuration).Format("2006-01") + "-01 00:00:00"
 			endTime = time.Now().Add(addDuration).Format("2006-01") + "-01 00:00:00"
+			if startTime == endTime {
+				subDuration = -duration * time.Duration(i+1)
+				addDuration = -duration * time.Duration(i)
+
+				startTime = time.Now().Add(subDuration).Format("2006-01") + "-01 00:00:00"
+				endTime = time.Now().Add(addDuration).Format("2006-01") + "-01 00:00:00"
+			}
 		} else if monitorDurationEnum == enum2.MONITOR_DURATION_DAY {
 			// 按天
 			startTime = time.Now().Add(subDuration).Format("2006-01-02") + " 00:00:00"
 			endTime = time.Now().Add(addDuration).Format("2006-01-02") + " 00:00:00"
+			if startTime == endTime {
+				subDuration = -duration * time.Duration(i+1)
+				addDuration = -duration * time.Duration(i)
+
+				startTime = time.Now().Add(subDuration).Format("2006-01-02") + " 00:00:00"
+				endTime = time.Now().Add(addDuration).Format("2006-01-02") + " 00:00:00"
+			}
 		} else if monitorDurationEnum == enum2.MONITOR_DURATION_HOUR {
 			// 按小时
 			startTime = time.Now().Add(subDuration).Format("2006-01-02 15") + ":00:00"
 			endTime = time.Now().Add(addDuration).Format("2006-01-02 15") + ":00:00"
-		} else {
-			subDuration = -duration * time.Duration(i+1)
-			addDuration = -duration * time.Duration(i)
 
+			if startTime == endTime {
+				subDuration = -duration * time.Duration(i+1)
+				addDuration = -duration * time.Duration(i)
+
+				startTime = time.Now().Add(subDuration).Format("2006-01-02 15") + ":00:00"
+				endTime = time.Now().Add(addDuration).Format("2006-01-02 15") + ":00:00"
+			}
+		} else {
 			// 按分钟
 			startTime = time.Now().Add(subDuration).Format("2006-01-02 15:04") + ":00"
 			endTime = time.Now().Add(addDuration).Format("2006-01-02 15:04") + ":00"
+
+			if startTime == endTime {
+				subDuration = -duration * time.Duration(i+1)
+				addDuration = -duration * time.Duration(i)
+
+				startTime = time.Now().Add(subDuration).Format("2006-01-02 15:04") + ":00"
+				endTime = time.Now().Add(addDuration).Format("2006-01-02 15:04") + ":00"
+			}
 		}
 
 		serverStatistics := dao.GetMonitorServerStatistics(serverId, startTime, endTime)

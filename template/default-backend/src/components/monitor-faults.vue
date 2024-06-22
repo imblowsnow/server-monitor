@@ -62,7 +62,7 @@ export default {
           });
         });
       });
-    }
+    },
   }
 }
 </script>
@@ -70,7 +70,11 @@ export default {
 <template>
   <div class="monitor-faults">
     <el-table :data="faults" class="table table-borderless table-hover">
-      <el-table-column prop="server_name" label="名称"></el-table-column>
+      <el-table-column prop="server_name" label="名称">
+        <template v-slot:default="scope">
+          <router-link :to="'/server/'+ scope.row.server_id">{{ scope.row.server_name }}</router-link>
+        </template>
+      </el-table-column>
       <el-table-column prop="start_time" label="开始时间"></el-table-column>
       <el-table-column prop="end_time" label="结束时间"></el-table-column>
       <el-table-column prop="duration" label="耗时(秒)"></el-table-column>

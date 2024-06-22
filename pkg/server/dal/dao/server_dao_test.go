@@ -23,6 +23,6 @@ func TestServerDao(t *testing.T) {
 }
 func TestGetMonitorServerStatisticsList(t *testing.T) {
 	serverDao := NewServerDao()
-	list := serverDao.GetMonitorServerStatisticsList(1, enum.MONITOR_DURATION_MINUTE)
+	list := serverDao.GetMonitorServerStatisticsList(1, enum.MONITOR_DURATION_DAY)
 	fmt.Println("查询列表", list)
 }

@@ -4,9 +4,11 @@ import (
 	"github.com/gorilla/websocket"
 	websocket_message2 "server-monitor/pkg/common/entity/dto/websocket_message"
 	"server-monitor/pkg/common/enum"
+	time2 "server-monitor/pkg/common/time"
 	"server-monitor/pkg/common/utils"
 	"server-monitor/pkg/server/common/entity/bo"
 	"server-monitor/pkg/server/dal/do"
+	"time"
 )
 
 type WebClientWebsocketHandle struct {
@@ -28,6 +30,9 @@ func (h *WebClientWebsocketHandle) OnClientClose(conn *websocket.Conn) {
 }
 
 func (w WebClientWebsocketHandle) NotifyServerState(serverState do.ServerStateDO) {
+	if time.Time(serverState.UpdateTime).IsZero() {
+		serverState.UpdateTime = time2.Time(time.Now())
+	}
 	w.notifyAll(enum.WebMessageServerState, serverState)
 }
 

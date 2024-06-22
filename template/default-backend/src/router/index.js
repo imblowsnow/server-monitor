@@ -23,12 +23,22 @@ const router = createRouter({
                     name: 'monitor',
                     component: () => import('@/views/monitor.vue')
                 },
+                {
+                    path: '/setting',
+                    name: 'setting',
+                    component: () => import('@/views/setting.vue')
+                },
                 serverRouter,
                 serverGroupRouter,
                 notifyGroupRouter,
                 notifyLogRouter,
                 notifyChannelRouter
             ]
+        },
+        {
+            path: '/login',
+            name: 'login',
+            component: () => import('@/views/login.vue')
         }
     ]
 })

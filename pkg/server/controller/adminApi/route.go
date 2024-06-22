@@ -2,21 +2,31 @@ package adminApi
 
 import (
 	"github.com/gin-gonic/gin"
-	"server-monitor/pkg/server/common/utils"
 	v1 "server-monitor/pkg/server/controller/adminApi/v1"
 	"server-monitor/pkg/server/controller/base"
+	"server-monitor/pkg/server/controller/middle"
 	"server-monitor/pkg/server/dal/do"
 )
 
 func InitRoute(r *gin.Engine) {
 	adminApiV1Group := r.Group("/admin-api/v1")
+	adminApiV1Group.Use(middle.AdminAuthMiddle)
+
+	// ----------------- 用户相关 ---------------------
+	userController := v1.NewUserController()
+	adminApiV1Group.POST("/user/login", base.HandleRouteFunc(userController.Login))
+
+	// -------------   配置相关 ---------------------
+	configController := v1.NewConfigController()
+	adminApiV1Group.GET("/config", base.HandleRouteFunc(configController.GetSetting))
+	adminApiV1Group.PUT("/config", base.HandleRouteFunc(configController.UpdateSetting))
 
 	// ----------------- home ---------------------
 	dashboardController := v1.NewDashboardController()
-	adminApiV1Group.GET("/dashboard/total", handleRouteFunc(dashboardController.Total))
+	adminApiV1Group.GET("/dashboard/total", base.HandleRouteFunc(dashboardController.Total))
 
 	// monitor_groups
-	adminApiV1Group.GET("/monitor/groups", handleRouteFunc(dashboardController.MonitorGroups))
+	adminApiV1Group.GET("/monitor/groups", base.HandleRouteFunc(dashboardController.MonitorGroups))
 	// ----------------------------------------------
 
 	// ----------------- 服务相关 ---------------------
@@ -24,15 +34,15 @@ func InitRoute(r *gin.Engine) {
 
 	serverV1Group := adminApiV1Group.Group("/server")
 	crudApi[do.ServerDO, uint](serverV1Group, serverController)
-	serverV1Group.GET("/info/:id", handleRouteFunc(serverController.GetServerInfo))
-	serverV1Group.GET("/statistics/:id", handleRouteFunc(serverController.GetServerStatisticsList))
+	serverV1Group.GET("/info/:id", base.HandleRouteFunc(serverController.GetServerInfo))
+	serverV1Group.GET("/statistics/:id", base.HandleRouteFunc(serverController.GetServerStatisticsList))
 
 	// 服务器分组
 	crudApi[do.ServerGroupDO, uint](adminApiV1Group.Group("/server_group"), v1.NewServerGroupController())
 	// 服务器故障
 	serverFaultController := v1.NewServerFaultController()
-	serverV1Group.GET("/fault/page", handleRouteFunc(serverFaultController.Page))
-	serverV1Group.PUT("/fault/:id", handleRouteFunc(serverFaultController.Update))
+	serverV1Group.GET("/fault/page", base.HandleRouteFunc(serverFaultController.Page))
+	serverV1Group.PUT("/fault/:id", base.HandleRouteFunc(serverFaultController.Update))
 	// --------------------------------------------
 
 	// ---------------  通知相关 -----------------------
@@ -40,29 +50,15 @@ func InitRoute(r *gin.Engine) {
 	crudApi[do.NotifyChannelDO, uint](adminApiV1Group.Group("/notify_channel"), v1.NewNotifyChannelController())
 
 	notifyLogGroup := adminApiV1Group.Group("/notify_log")
-	notifyLogGroup.GET("/", handleRouteFunc(v1.NewNotifyLogController().List))
+	notifyLogGroup.GET("/", base.HandleRouteFunc(v1.NewNotifyLogController().List))
 	// -------------------------------------------
-
 }
 
 func crudApi[DO any, ID int | uint | uint32](g *gin.RouterGroup, crud base.ICrudController[DO, ID]) {
-	g.GET("/", handleRouteFunc(crud.List))
-	g.GET("/page", handleRouteFunc(crud.Page))
-	g.GET("/:id", handleRouteFunc(crud.Get))
-	g.POST("/", handleRouteFunc(crud.Create))
-	g.PUT("/:id", handleRouteFunc(crud.Update))
-	g.DELETE("/:id", handleRouteFunc(crud.Delete))
-}
-
-func handleRouteFunc(method func(context *gin.Context) interface{}) func(context *gin.Context) {
-	return func(context *gin.Context) {
-		result := method(context)
-		if result != nil {
-			if err, ok := result.(error); ok {
-				context.JSON(200, utils.ResultError(err.Error()))
-				return
-			}
-		}
-		context.JSON(200, utils.ResultSuccess(result))
-	}
+	g.GET("/", base.HandleRouteFunc(crud.List))
+	g.GET("/page", base.HandleRouteFunc(crud.Page))
+	g.GET("/:id", base.HandleRouteFunc(crud.Get))
+	g.POST("/", base.HandleRouteFunc(crud.Create))
+	g.PUT("/:id", base.HandleRouteFunc(crud.Update))
+	g.DELETE("/:id", base.HandleRouteFunc(crud.Delete))
 }

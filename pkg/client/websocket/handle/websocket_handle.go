@@ -44,17 +44,17 @@ func (h WebsocketHandle) OnClose(conn *websocket.Conn) {
 func (h WebsocketHandle) OnServerInitSuccess(conn *websocket.Conn, message websocket_message2.ServerInitSuccessDTO) {
 	fmt.Println("初始化成功:", message)
 	// 开启心跳 推送服务器状态
-	h.startHeartbeat(conn)
+	h.startHeartbeat(conn, 5*time.Second)
 }
 
-func (h WebsocketHandle) startHeartbeat(conn *websocket.Conn) {
+func (h WebsocketHandle) startHeartbeat(conn *websocket.Conn, duration time.Duration) {
 
 	go func() {
 		// 每分钟推送一次服务器状态
 		for {
 			select {
 			// 30秒推送一次服务器状态
-			case <-time.Tick(time.Second * 10):
+			case <-time.Tick(duration):
 				fmt.Println("推送服务器状态")
 				serverSate := websocket_message2.ServerStateDTO{
 					ServerStateDTO: utils.GetServerState(),
