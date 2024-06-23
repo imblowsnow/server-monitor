@@ -21,5 +21,12 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }} # 一个默认的变量，用来实现往 Release 中添加文件
           goos: ${{ matrix.goos }}
           goarch: ${{ matrix.goarch }}
-          multi_binaries: true,
+          binary_name: monitor-client
           project_path: ./cmd/client
+      - uses: wangyoucao577/go-release-action@v1.51
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }} # 一个默认的变量，用来实现往 Release 中添加文件
+          goos: ${{ matrix.goos }}
+          goarch: ${{ matrix.goarch }}
+          binary_name: monitor-server
+          project_path: ./cmd/server
