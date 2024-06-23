@@ -1,9 +1,22 @@
 #!/bin/bash
 
+
+# 检查是否提供了参数
+if [ "$#" -ne 3 ]; then
+    echo "Usage: $0 <HOST> <PORT> <TOKEN>"
+    exit 1
+fi
+
+
 GITHUB_API_URL="https://api.github.com/repos/imblowsnow/server-monitor/releases/latest"
 
 SERVICE_NAME="monitor-client"
 SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
+WORK_DIR=$(pwd)
+SERVER_HOST=$1
+SERVER_PORT=$2
+TOKEN=$3
+SERVICE_ARGS="-host $SERVER_HOST -port $SERVER_PORT -token $TOKEN"
 
 # 获取系统类型
 OS=$(uname -s)
@@ -70,42 +83,44 @@ curl -L $download_url -o $file_name
 #tar -xzf $DOWNLOAD_DIR/$file_name -C $DOWNLOAD_DIR
 
 # 找到解压后的可执行文件 (假设解压后的目录结构固定)
-extracted_file=$(find $DOWNLOAD_DIR -type f -name 'monitor-client*' | head -n 1)
+#extracted_file=$(find . -type f -name 'monitor-client*' | head -n 1)
+#
+#if [ -z "$extracted_file" ]; then
+#    echo "Extracted file not found"
+#    exit 1
+#fi
 
-if [ -z "$extracted_file" ]; then
-    echo "Extracted file not found"
-    exit 1
-fi
+# 获取绝对路径
+extracted_file=$(realpath $file_name)
 
+## 赋予执行权限
+#echo "Setting execute permissions..."
+#chmod +x $extracted_file
+#
+## 创建 systemd 服务文件
+#echo "Creating systemd service file..."
+#cat <<EOT > $SERVICE_FILE
+#[Unit]
+#Description=Client Monitor Service
+#After=network.target
+#
+#[Service]
+#ExecStart=$extracted_file $SERVICE_ARGS
+#Restart=always
+#User=root
+#Group=root
+#
+#[Install]
+#WantedBy=multi-user.target
+#EOT
+#
+## 重新加载 systemd 管理配置
+#echo "Reloading systemd daemon..."
+#systemctl daemon-reload
+#
+## 启动并启用服务
+#echo "Starting and enabling the service..."
+#systemctl start $SERVICE_NAME
+#systemctl enable $SERVICE_NAME
 
-# 赋予执行权限
-echo "Setting execute permissions..."
-chmod +x $extracted_file
-
-# 创建 systemd 服务文件
-echo "Creating systemd service file..."
-cat <<EOT > $SERVICE_FILE
-[Unit]
-Description=Client Monitor Service
-After=network.target
-
-[Service]
-ExecStart=$extracted_file
-Restart=always
-User=root
-Group=root
-
-[Install]
-WantedBy=multi-user.target
-EOT
-
-# 重新加载 systemd 管理配置
-echo "Reloading systemd daemon..."
-systemctl daemon-reload
-
-# 启动并启用服务
-echo "Starting and enabling the service..."
-systemctl start $SERVICE_NAME
-systemctl enable $SERVICE_NAME
-
-echo "Deployment completed."
+echo "Deployment completed. ${extracted_file}"
