@@ -23,6 +23,7 @@ jobs:
           goarch: ${{ matrix.goarch }}
           binary_name: monitor-client
           project_path: ./cmd/client
+          compress_assets: OFF
       - uses: wangyoucao577/go-release-action@v1.51
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }} # 一个默认的变量，用来实现往 Release 中添加文件
@@ -30,3 +31,4 @@ jobs:
           goarch: ${{ matrix.goarch }}
           binary_name: monitor-server
           project_path: ./cmd/server
+          compress_assets: OFF
