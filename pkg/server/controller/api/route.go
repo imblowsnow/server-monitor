@@ -13,6 +13,12 @@ func InitRoute(r *gin.Engine) {
 	apiV1Group.GET("/config", base.HandleRouteFunc(configController.GetConfig))
 	//--------------------配置--------------------
 
+	dashboardController := v1.NewDashboardController()
+	apiV1Group.GET("/monitor/total", base.HandleRouteFunc(dashboardController.Total))
+
+	// monitor_groups
+	apiV1Group.GET("/monitor/groups", base.HandleRouteFunc(dashboardController.MonitorGroups))
+
 	//--------------------服务器--------------------
 
 }

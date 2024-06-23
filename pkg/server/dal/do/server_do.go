@@ -15,7 +15,7 @@ type ServerDO struct {
 	IP string `json:"ip" gorm:"type:varchar(64)"`
 	// 备注
 	Remark string `json:"remark" gorm:"type:varchar(64)"`
-	// 首页显示 1.显示 0.不显示
+	// 首页显示 1.显示 10.不显示
 	ShowIndex int `json:"show_index" gorm:"type:int"`
 	// 状态 1.正常 0.离线
 	Status int `json:"status" gorm:"type:int"`

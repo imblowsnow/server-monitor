@@ -23,7 +23,7 @@ func InitRoute(r *gin.Engine) {
 
 	// ----------------- home ---------------------
 	dashboardController := v1.NewDashboardController()
-	adminApiV1Group.GET("/dashboard/total", base.HandleRouteFunc(dashboardController.Total))
+	adminApiV1Group.GET("/monitor/total", base.HandleRouteFunc(dashboardController.Total))
 
 	// monitor_groups
 	adminApiV1Group.GET("/monitor/groups", base.HandleRouteFunc(dashboardController.MonitorGroups))

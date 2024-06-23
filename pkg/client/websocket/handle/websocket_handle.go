@@ -16,6 +16,8 @@ type WebsocketHandle struct {
 	cancel  context.CancelFunc
 }
 
+var Key string
+
 func NewWebsocketHandle() *WebsocketHandle {
 	ctx, cancel := context.WithCancel(context.Background())
 	return &WebsocketHandle{
@@ -26,6 +28,7 @@ func NewWebsocketHandle() *WebsocketHandle {
 func (h WebsocketHandle) OnConnected(conn *websocket.Conn) {
 	// 发送初始化消息
 	message := websocket_message2.MessageServerInitDTO{
+		Key:            Key,
 		ServerInfoDTO:  utils.GetServerInfo(),
 		ServerStateDTO: utils.GetServerState(),
 	}

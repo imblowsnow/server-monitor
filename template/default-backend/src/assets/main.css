@@ -20,12 +20,6 @@
   --bs-primary-rgb: var(--theme-color-rgb);
 }
 
-.dashboard .num {
-  font-size: 30px;
-  color: var(--theme-color);
-  font-weight: bold;
-  display: block;
-}
 
 .shadow-box {
   padding: 20px;

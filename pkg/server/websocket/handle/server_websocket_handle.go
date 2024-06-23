@@ -49,7 +49,13 @@ func (h ServerWebsocketHandle) OnClose(conn *websocket.Conn) {
 // 客户端初始化事件
 func (h ServerWebsocketHandle) OnServerInit(conn *websocket.Conn, message websocket_message2.MessageServerInitDTO) {
 	// 通过服务器Key获取服务器ID
-	serverId := 1
+	serverId := int(serverDao.GetServerIdByKey(message.Key))
+
+	if serverId == 0 {
+		fmt.Println("秘钥错误:", message.Key)
+		conn.Close()
+		return
+	}
 
 	if serverConnectionManage.Exist(serverId) {
 		fmt.Println("服务器已经存在:", serverId)

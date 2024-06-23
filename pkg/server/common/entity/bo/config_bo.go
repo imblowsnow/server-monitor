@@ -2,7 +2,7 @@ package bo
 
 type ConfigBo struct {
 	// 秘钥
-	Secret string `json:"omitempty"`
+	Secret string `json:"-"`
 	// 站点名称
 	SiteName string `json:"site_name"`
 

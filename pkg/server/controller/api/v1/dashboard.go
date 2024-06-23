@@ -21,9 +21,9 @@ func NewDashboardController() *DashboardController {
 
 func (c DashboardController) Total(context *gin.Context) interface{} {
 	// 在线服务器数量
-	onlineNum := c.serverDao.GetStatusNum(enum.ServerStatusOnline, false)
+	onlineNum := c.serverDao.GetStatusNum(enum.ServerStatusOnline, true)
 	// 离线服务器数量
-	offlineNum := c.serverDao.GetStatusNum(enum.ServerStatusOffline, false)
+	offlineNum := c.serverDao.GetStatusNum(enum.ServerStatusOffline, true)
 
 	result := bo.DashboardTotalBO{
 		OnlineNum:  onlineNum,
@@ -36,13 +36,15 @@ func (c DashboardController) Total(context *gin.Context) interface{} {
 // 获取
 func (s DashboardController) MonitorGroups(context *gin.Context) interface{} {
 	var monitorGroups []*bo.MonitorGroupBO
-	serverGroups := s.serverGroupDao.GetList(nil)
+
+	wheres := make(map[string]interface{})
+	serverGroups := s.serverGroupDao.GetList(wheres)
 	for i := range serverGroups {
 
 		monitorGroup := bo.MonitorGroupBO{
 			GroupId:   serverGroups[i].ID,
 			GroupName: serverGroups[i].GroupName,
-			Servers:   s.serverDao.GetMonitorServers(serverGroups[i].ID, false),
+			Servers:   s.serverDao.GetMonitorServers(serverGroups[i].ID, true),
 		}
 
 		if monitorGroup.Servers != nil {

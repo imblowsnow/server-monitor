@@ -113,15 +113,24 @@ func (dao ServerDao) Add(server *do.ServerDO) error {
 	return dao.IBaseDao.Add(server)
 }
 
-func (dao ServerDao) GetStatusNum(status enum.ServerStatus) int64 {
+func (dao ServerDao) GetStatusNum(status enum.ServerStatus, fromIndex bool) int64 {
 	var count int64
-	dao.DB().Model(&do.ServerDO{}).Where("status = ?", status).Count(&count)
+	query := dao.DB().Model(&do.ServerDO{})
+	if fromIndex {
+		query = query.Where("show_index = ?", 1)
+	}
+	query.Where("status = ?", status).Count(&count)
 	return count
 }
 
-func (dao ServerDao) GetMonitorServers(groupId uint) []*bo.MonitorServerBO {
+func (dao ServerDao) GetMonitorServers(groupId uint, fromIndex bool) []*bo.MonitorServerBO {
 	var list []do.ServerDO
-	dao.DB().Select("id").Where("group_id = ?", groupId).Find(&list)
+
+	query := dao.DB().Select("id")
+	if fromIndex {
+		query = query.Where("show_index = ?", 1)
+	}
+	query.Where("group_id = ?", groupId).Find(&list)
 
 	var result []*bo.MonitorServerBO
 	for _, v := range list {
@@ -281,4 +290,10 @@ func (dao ServerDao) CheckServerOffline() {
 
 	// 更新状态 where in ids
 	dao.DB().Model(&do.ServerDO{}).Where("id in (?)", ids).Update("status", enum.ServerStatusOffline)
+}
+
+func (dao ServerDao) GetServerIdByKey(key string) uint {
+	var server do.ServerDO
+	dao.DB().Where("key = ?", key).First(&server)
+	return server.ID
 }

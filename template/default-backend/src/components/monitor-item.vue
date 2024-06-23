@@ -8,6 +8,14 @@ export default {
     server: {
       type: Object,
       required: true
+    },
+    width: {
+      type: Number,
+      default: 10
+    },
+    height: {
+      type: Number,
+      default: 10
     }
   },
   data() {
@@ -22,7 +30,6 @@ export default {
 
 <template>
   <div class="monitor-item">
-    <router-link :to="'/server/' + server.server_id" style="margin-left: 0px;">
       <div class="box">
         <div class="small-padding" style="flex: 1">
           <div class="info">
@@ -33,13 +40,13 @@ export default {
             {{ server.server_name }}
           </div>
         </div>
-        <div style="width: 180px;">
+        <div class="statistics-bar-box">
           <div class="wrap" style="padding: 4px 1.25px; width: 100%;" >
-            <server-statistics-bar :width="10" :height="10" :total="server.online_statistics"></server-statistics-bar>
+            <server-statistics-bar :width="width" :height="height" :total="server.online_statistics"></server-statistics-bar>
           </div>
+          <slot name="statistics-bar-after"></slot>
         </div>
       </div>
-    </router-link>
   </div>
 </template>
 
@@ -48,8 +55,8 @@ export default {
   display: flex;
   align-items: center;
 }
-.monitor-item a{
-  color: #000;
-  text-decoration: none;
+
+.statistics-bar-box{
+  width: 180px;
 }
 </style>

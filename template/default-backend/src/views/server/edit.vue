@@ -108,7 +108,7 @@ export default {
               <label class="form-label">首页展示</label>
               <select class="form-control" v-model="form.show_index">
                 <option :value="1">展示</option>
-                <option :value="0">不展示</option>
+                <option :value="10">不展示</option>
               </select>
             </div>
             <div class="mb-3">

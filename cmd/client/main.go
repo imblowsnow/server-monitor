@@ -1,20 +1,40 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"server-monitor/pkg/client/websocket"
+	"server-monitor/pkg/client/websocket/handle"
 	"time"
 )
 
 func main() {
-	websocket.LoopWebsocket("127.0.0.1", 22251)
+	var host string
+	var port int
+	var key string
+	flag.StringVar(&host, "host", "", "host")
+	flag.IntVar(&port, "port", 22251, "port")
+	flag.StringVar(&key, "key", "", "key")
+	flag.Parse()
+	if host == "" {
+		fmt.Println("请输入host")
+		return
+	}
+	if key == "" {
+		fmt.Println("请输入秘钥")
+		return
+	}
+	// 从参数中获取秘钥
+	handle.Key = key
+
+	websocket.LoopWebsocket(host, port)
 
 	ticker := time.NewTicker(10 * time.Second)
 	for {
 		select {
 		case <-ticker.C:
-			fmt.Println("尝试重新连接")
-			websocket.LoopWebsocket("127.0.0.1", 22251)
+			fmt.Println("尝试重新连接：" + host + ":" + fmt.Sprintf("%d", port))
+			websocket.LoopWebsocket(host, port)
 		}
 	}
 }

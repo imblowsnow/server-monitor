@@ -1,8 +1,8 @@
 <script>
 import MonitorItem from '@/components/monitor-item.vue'
-import {monitorGroups} from "@/api/monitor.js";
+import {apiMonitorGroups} from "@/api/monitor.js";
 export default {
-  name: "MonitorList",
+  name: "FrontendMonitorList",
   components: {
     MonitorItem
   },
@@ -29,14 +29,13 @@ export default {
   },
   methods:{
     getMonitorGroups() {
-      monitorGroups().then(data => {
+      apiMonitorGroups().then(data => {
         this.groups = data
         if (this.groups.length === 0) {
           return
         }
         // 设置当前默认选中的分组
-        this.activeGroupIds = [this.groups[0].group_id]
-        console.log('activeGroupIds',this.activeGroupIds);
+        this.activeGroupIds = this.groups.map(group => group.group_id)
       })
     },
     selectGroupByServerId(serverId){
@@ -60,13 +59,17 @@ export default {
         <template #title>
           {{ group.group_name }}
         </template>
-        <router-link v-for="server in group.servers"
-                     :to="'/server/' + server.server_id" style="margin-left: 0px;">
+        <div v-for="server in group.servers">
           <monitor-item
+                        :width="5" :height="16"
                         :class="{'active': activeServerId == server.server_id}"
-                  :server="server">
+                        :server="server">
+            <template v-slot:statistics-bar-after>
+              <span class="desc" style="float: left;">24小时</span>
+              <span class="desc" style="float: right">now</span>
+            </template>
           </monitor-item>
-        </router-link>
+        </div>
       </el-collapse-item>
     </el-collapse>
   </div>
@@ -86,9 +89,8 @@ export default {
 .monitor-list .monitor-item:hover , .monitor-list .monitor-item.active{
   background-color: #e7faec;
 }
-
-.monitor-list a{
-  color: #000;
-  text-decoration: none;
+.desc{
+  font-size: 13px;
+  color: #aaa;
 }
 </style>

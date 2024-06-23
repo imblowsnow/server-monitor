@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "dev frontend": "vite -m frontend",
+    "build backend": "vite build -m backend",
+    "build frontend": "vite build -m frontend",
     "preview": "vite preview",
     "build-only": "vite build"
   },
