@@ -30,3 +30,9 @@ func (dao *ServerStateDao) CheckNowMinuteExist(serverId uint) bool {
 	dao.DB().Model(&do.ServerStateDO{}).Where("server_id = ? and create_time >= ?", serverId, addTime).Count(&count)
 	return count > 0
 }
+
+func (dao *ServerStateDao) DeleteThirtyDaysAgo() {
+	// 获取30天前的时间
+	agoTime := time.Now().AddDate(0, 0, -30).Format("2006-01-02 15:04:05")
+	dao.DB().Where("create_time < ?", agoTime).Delete(&do.ServerStateDO{})
+}
