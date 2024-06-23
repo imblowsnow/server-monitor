@@ -22,4 +22,4 @@ jobs:
           goos: ${{ matrix.goos }}
           goarch: ${{ matrix.goarch }}
           multi_binaries: true,
-          project_path: ./cmd/client ./cmd/server
+          project_path: "./cmd/client ./cmd/server"
