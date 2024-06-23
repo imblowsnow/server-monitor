@@ -93,34 +93,34 @@ curl -L $download_url -o $file_name
 # 获取绝对路径
 extracted_file=$(realpath $file_name)
 
-## 赋予执行权限
-#echo "Setting execute permissions..."
-#chmod +x $extracted_file
-#
-## 创建 systemd 服务文件
-#echo "Creating systemd service file..."
-#cat <<EOT > $SERVICE_FILE
-#[Unit]
-#Description=Client Monitor Service
-#After=network.target
-#
-#[Service]
-#ExecStart=$extracted_file $SERVICE_ARGS
-#Restart=always
-#User=root
-#Group=root
-#
-#[Install]
-#WantedBy=multi-user.target
-#EOT
-#
-## 重新加载 systemd 管理配置
-#echo "Reloading systemd daemon..."
-#systemctl daemon-reload
-#
-## 启动并启用服务
-#echo "Starting and enabling the service..."
-#systemctl start $SERVICE_NAME
-#systemctl enable $SERVICE_NAME
+# 赋予执行权限
+echo "Setting execute permissions..."
+chmod +x $extracted_file
+
+# 创建 systemd 服务文件
+echo "Creating systemd service file..."
+cat <<EOT > $SERVICE_FILE
+[Unit]
+Description=Client Monitor Service
+After=network.target
+
+[Service]
+ExecStart=$extracted_file $SERVICE_ARGS
+Restart=always
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
+EOT
+
+# 重新加载 systemd 管理配置
+echo "Reloading systemd daemon..."
+systemctl daemon-reload
+
+# 启动并启用服务
+echo "Starting and enabling the service..."
+systemctl start $SERVICE_NAME
+systemctl enable $SERVICE_NAME
 
 echo "Deployment completed. ${extracted_file}"
