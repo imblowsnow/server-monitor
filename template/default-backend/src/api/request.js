@@ -1,5 +1,5 @@
 import axios from 'axios'
-
+import router from '@/router'
 // 设置请求头
 export default async function (options) {
     options.headers = options.headers || {}
@@ -24,9 +24,11 @@ export default async function (options) {
             console.log('未登录，跳转到登录页')
             localStorage.setItem('token', '')
             // router跳转到登录页
-            window.location.href = '/login'
+            router.push({
+                name: 'login'
+            })
         }else{
             throw error
-        }
+        }   
     })
 }

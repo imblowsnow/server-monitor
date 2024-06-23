@@ -1,4 +1,4 @@
-import {createRouter, createWebHistory} from "vue-router";
+import {createRouter, createWebHashHistory, createWebHistory} from "vue-router";
 import MonitorLayout from "@/layout/monitor-layout.vue";
 import serverRouter from "@/router/server.js";
 import serverGroupRouter from "@/router/server_group.js";
@@ -7,7 +7,7 @@ import notifyLogRouter from "@/router/notify_log.js";
 import notifyChannelRouter from "@/router/notify_channel.js";
 
 const router = createRouter({
-    history: createWebHistory(import.meta.env.BASE_URL),
+    history: createWebHashHistory(import.meta.env.BASE_URL),
     routes: [
         {
             path: '/',

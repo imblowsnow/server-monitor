@@ -24,6 +24,7 @@ export default defineConfig((mode) => {
                 '@': fileURLToPath(new URL('./src', import.meta.url))
             }
         },
+        base: './',
         // 修改编译后生成的目录
         build: {
             outDir: mode.mode === 'backend' ? '../../pkg/server/template/backend/default'

@@ -4,6 +4,7 @@ package template
 
 import (
 	"embed"
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
@@ -22,6 +23,7 @@ func autoResponseHttpFile(c *gin.Context, group, template, urlPath string) {
 	} else {
 		fs = frontedTemplates
 	}
+	fmt.Println("filepath:", filepath, fs)
 	err := responseHttpFileFromFs(c, filepath, fs)
 	if err != nil {
 		c.Writer.WriteHeader(404)
