@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm/schema"
 	"os"
 	"path"
+	"path/filepath"
 	"server-monitor/pkg/server/dal/do"
 	"strings"
 	"sync"
@@ -32,14 +33,14 @@ func init() {
 }
 func initDb() {
 	// 获取当前工作目录
-	wd, err := os.Getwd()
+	executable, err := os.Executable()
 	if err != nil {
 		fmt.Println("Error getting current directory:", err)
 		return
 	}
+	dir := filepath.Dir(executable)
 	// 获取数据库当前完整路径地址
-	dbPath := "./data.db"
-	dbPath = path.Join(wd, dbPath)
+	dbPath := path.Join(dir, "./data.db")
 	fmt.Println("数据库初始化开始", dbPath)
 	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{
 		// 开启sql日志
