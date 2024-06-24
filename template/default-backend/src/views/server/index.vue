@@ -170,18 +170,16 @@ export default {
     </div>
     <div class="functions mb-3">
       <div class="btn-group" role="group">
-        <button class="btn btn-normal" @click="handleEdit(server.id)"
-                style="border-radius: 30px 0 0 30px;">
+        <button class="btn btn-primary" @click="handleEdit(server.id)">
           编辑
         </button>
         <!--        <button class="btn btn-normal">-->
         <!--          终端-->
         <!--        </button>-->
-        <button class="btn btn-normal" @click="copyInstallScript">
+        <button class="btn btn-primary" @click="copyInstallScript" >
           安装脚本
         </button>
-        <button class="btn btn-danger" @click="handleDelete(server.id)"
-                style="border-radius: 0 30px 30px 0;">
+        <button class="btn btn-danger" @click="handleDelete(server.id)">
           删除
         </button>
       </div>
