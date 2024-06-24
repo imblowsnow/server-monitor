@@ -97,6 +97,7 @@ chmod +x $extracted_file
 
 # 判断服务是否已经存在
 if [ -f $SERVICE_FILE ]; then
+    echo "Stop systemd service and remove existing service file..."
     systemctl stop $SERVICE_NAME
     systemctl disable $SERVICE_NAME
     rm -f $SERVICE_FILE
