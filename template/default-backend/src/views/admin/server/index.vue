@@ -195,7 +195,7 @@ export default {
             >
               <server-statistics-bar :width="10" :height="30" :total="total"></server-statistics-bar>
             </div>
-            <span class="word">最近30天</span>
+            <span class="desc">最近30天</span>
           </div>
           <div class="col-md-4 text-center">
             <span v-if="server.status === 1" class="badge rounded-pill bg-primary"
