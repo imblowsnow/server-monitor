@@ -9,5 +9,5 @@
 
 ### 启动脚本
 ```shell
-go run cmd/server/main.go -tags dev
+curl https://cdn.jsdelivr.net/gh/imblowsnow/server-monitor@master/deploy-server.sh | bash 
 ```
