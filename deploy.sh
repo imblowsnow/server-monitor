@@ -67,7 +67,7 @@ if [ -z "$download_url" ]; then
     exit 1
 fi
 
-file_name=$(basename $download_url)
+file_name=$SERVICE_NAME
 
 echo "Latest release URL: $download_url"
 echo "File name: $file_name"
