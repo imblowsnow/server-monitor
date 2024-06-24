@@ -5,6 +5,8 @@ import (
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
+	"os"
+	"path"
 	"server-monitor/pkg/server/dal/do"
 	"strings"
 	"sync"
@@ -29,9 +31,17 @@ func init() {
 	initDb()
 }
 func initDb() {
-	fmt.Println("数据库初始化开始")
-
-	db, err := gorm.Open(sqlite.Open("./data.db"), &gorm.Config{
+	// 获取当前工作目录
+	wd, err := os.Getwd()
+	if err != nil {
+		fmt.Println("Error getting current directory:", err)
+		return
+	}
+	// 获取数据库当前完整路径地址
+	dbPath := "./data.db"
+	dbPath = path.Join(wd, dbPath)
+	fmt.Println("数据库初始化开始", dbPath)
+	db, err := gorm.Open(sqlite.Open(dbPath), &gorm.Config{
 		// 开启sql日志
 		//Logger: logger.Default.LogMode(logger.Info),
 		NamingStrategy: schema.NamingStrategy{
