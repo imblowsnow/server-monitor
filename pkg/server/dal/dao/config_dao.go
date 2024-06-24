@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"server-monitor/pkg/server/common/entity/bo"
+	"server-monitor/pkg/server/common/utils"
 	"server-monitor/pkg/server/config"
 	"server-monitor/pkg/server/dal/do"
+	"strconv"
 )
 
 type ConfigDao struct {
@@ -97,6 +99,8 @@ func (dao ConfigDao) InitConfig() {
 		BackendTemplate:  "default",
 		AdminUsername:    "admin",
 		AdminPassword:    "admin",
+		ServerIp:         utils.GetIp(),
+		ServerPort:       strconv.Itoa(config.ServerPort),
 	}
 	err := dao.initConfigData(configBo)
 	if err != nil {

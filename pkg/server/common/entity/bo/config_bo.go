@@ -15,4 +15,9 @@ type ConfigBo struct {
 	AdminUsername string `json:"admin_username"`
 	// 管理员密码
 	AdminPassword string `json:"admin_password"`
+
+	// 服务器IP
+	ServerIp string `json:"server_ip"`
+	// 服务器端口
+	ServerPort string `json:"server_port"`
 }

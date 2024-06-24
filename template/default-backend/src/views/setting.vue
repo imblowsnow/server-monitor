@@ -14,6 +14,9 @@ export default {
 
         admin_username: '',
         admin_password: '',
+
+        server_ip: '',
+        server_port: '',
       },
       frontendTemplates: [
         {
@@ -78,6 +81,16 @@ export default {
               <input type="password" class="form-control" v-model="form.admin_password"
                      required>
             </div>
+            <div class="mb-3">
+              <label class="form-label">服务器IP</label>
+              <input type="text" class="form-control" v-model="form.server_ip"
+                     required>
+            </div>
+<!--            <div class="mb-3">-->
+<!--              <label class="form-label">服务器端口</label>-->
+<!--              <input type="text" class="form-control" v-model="form.server_port"-->
+<!--                     required>-->
+<!--            </div>-->
           </div>
           <div class="col-md-6">
             <div class="mb-3">

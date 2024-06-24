@@ -1,9 +1,8 @@
-#!/bin/bash
 
 
 # 检查是否提供了参数
 if [ "$#" -ne 3 ]; then
-    echo "Usage: $0 <HOST> <PORT> <TOKEN>"
+    echo "Usage: $0 <HOST> <PORT> <KEY>"
     exit 1
 fi
 
@@ -15,8 +14,8 @@ SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 WORK_DIR=$(pwd)
 SERVER_HOST=$1
 SERVER_PORT=$2
-TOKEN=$3
-SERVICE_ARGS="-host $SERVER_HOST -port $SERVER_PORT -token $TOKEN"
+SERVER_KEY=$3
+SERVICE_ARGS="-host $SERVER_HOST -port $SERVER_PORT -key $SERVER_KEY"
 
 # 获取系统类型
 OS=$(uname -s)
@@ -62,7 +61,6 @@ if [ -z "$response" ]; then
 fi
 # 查找匹配的下载 URL
 # https://github.com/imblowsnow/server-monitor/releases/download/0.0.7/monitor-client-0.0.7-darwin-amd64.tar.gz
-echo "$response" | grep -o "\"browser_download_url.*\".*\"" | grep "${OS}-${ARCH}" | grep "${SERVICE_NAME}"
 download_url=$(echo "$response" | grep -o "\"browser_download_url.*\".*\"" | grep "${SERVICE_NAME}" | grep "${OS}-${ARCH}" | cut -d '"' -f 4)
 if [ -z "$download_url" ]; then
     echo "No suitable download found for OS: $OS and architecture: $ARCH"

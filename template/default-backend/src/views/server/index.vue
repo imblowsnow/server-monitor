@@ -3,6 +3,8 @@ import ServerStatisticsBar from "@/components/server-statistics-bar.vue";
 import MonitorFaults from "@/components/monitor-faults.vue";
 import {deleteServer, getServerInfo, getServerStatisticsList} from "@/api/server.js";
 import help from "@/utils/help";
+import {getSetting} from "@/api/setting.js";
+import {useSettingStore} from "@/stores/setting.js";
 
 export default {
   computed: {
@@ -13,6 +15,8 @@ export default {
   components: {MonitorFaults, ServerStatisticsBar},
   data() {
     return {
+      settingStore: useSettingStore(),
+
       total: [],
       server: null,
       serverId: null,
@@ -132,7 +136,28 @@ export default {
           this.registerServerListen();
         }, 1000);
       });
-    }
+    },
+
+    copyInstallScript() {
+      let serverIp = this.settingStore.setting.server_ip;
+      let serverPort = this.settingStore.setting.server_port;
+      let key = this.server.key;
+      let installScript = `curl https://cdn.jsdelivr.net/gh/imblowsnow/server-monitor@master/deploy.sh | bash -s -- ${serverIp} ${serverPort} ${key}`;
+      console.log(installScript);
+
+      // 复制到剪贴板
+      let input = document.createElement('input');
+      input.value = installScript;
+      document.body.appendChild(input);
+      input.select();
+      document.execCommand('copy');
+      document.body.removeChild(input);
+
+      this.$message({
+        type: 'success',
+        message: '复制成功!'
+      });
+    },
   }
 }
 </script>
@@ -152,7 +177,7 @@ export default {
         <!--        <button class="btn btn-normal">-->
         <!--          终端-->
         <!--        </button>-->
-        <button class="btn btn-normal">
+        <button class="btn btn-normal" @click="copyInstallScript">
           安装脚本
         </button>
         <button class="btn btn-danger" @click="handleDelete(server.id)"

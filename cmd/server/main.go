@@ -1,7 +1,13 @@
 package main
 
-import "server-monitor/pkg/server"
+import (
+	"flag"
+	"server-monitor/pkg/server"
+)
 
 func main() {
-	server.CreateServer(22251)
+	var port int
+	flag.IntVar(&port, "port", 22251, "port")
+	flag.Parse()
+	server.CreateServer(port)
 }

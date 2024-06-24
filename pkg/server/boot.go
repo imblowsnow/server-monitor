@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/websocket"
 	"net/http"
 	"server-monitor/pkg/common/inner_websocket"
+	"server-monitor/pkg/server/config"
 	_ "server-monitor/pkg/server/config"
 	"server-monitor/pkg/server/controller"
 	"server-monitor/pkg/server/template"
@@ -25,6 +26,8 @@ var upgrader = websocket.Upgrader{
 }
 
 func CreateServer(port int) {
+	config.ServerPort = port
+
 	// 启动一个 http 服务
 	r := gin.Default()
 

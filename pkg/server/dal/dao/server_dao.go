@@ -48,6 +48,7 @@ func (dao ServerDao) GetServerInfo(id uint) *bo.ServerInfoBO {
 		Remark:         Server.Remark,
 		Status:         Server.Status,
 		Ip:             Server.IP,
+		Key:            Server.Key,
 		LastOnlineTime: Server.LastOnlineTime,
 		ServerInfoDO:   serverInfo,
 		ServerStateDO:  serverState,
