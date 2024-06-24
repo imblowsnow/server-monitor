@@ -9,6 +9,7 @@ import (
 	"github.com/shirou/gopsutil/mem"
 	"github.com/shirou/gopsutil/net"
 	"github.com/shirou/gopsutil/process"
+	"server-monitor/pkg/client/constants"
 	"server-monitor/pkg/common/entity/dto"
 	"strings"
 	"time"
@@ -28,6 +29,7 @@ func GetServerInfo() dto.ServerInfoDTO {
 	serverInfo.KernelVersion = hostInfo.KernelVersion
 	serverInfo.Virtualization = hostInfo.VirtualizationSystem
 	serverInfo.BootTime = hostInfo.BootTime
+	serverInfo.Version = constants.ClientVersion
 
 	// 获取CPU信息
 	cpuInfo, err := cpu.Info()

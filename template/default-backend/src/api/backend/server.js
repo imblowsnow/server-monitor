@@ -59,3 +59,11 @@ export async function deleteServer(id) {
         method: 'delete'
     })
 }
+
+
+export async function checkUpdate(id) {
+    return request({
+        url: '/admin-api/v1/server/check_update/' + id,
+        method: 'put'
+    })
+}

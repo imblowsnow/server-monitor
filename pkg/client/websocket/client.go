@@ -3,6 +3,7 @@ package websocket
 import (
 	"fmt"
 	"github.com/gorilla/websocket"
+	_ "server-monitor/pkg/client/task"
 	"server-monitor/pkg/client/websocket/event"
 	"server-monitor/pkg/common/inner_websocket"
 )

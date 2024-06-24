@@ -5,6 +5,12 @@ import (
 	"server-monitor/pkg/common/entity/dto/websocket_message"
 )
 
-func SendWebsocketMessage(conn *websocket.Conn, success int, message any) error {
-	return conn.WriteJSON(websocket_message.BuildWebsocketMessage(success, message))
+// 发送消息
+func SendWebsocketMessage(conn *websocket.Conn, messageType int, message any) error {
+	return conn.WriteJSON(websocket_message.BuildWebsocketMessage(messageType, message))
+}
+
+// 回复消息
+func ReplyWebsocketMessage(conn *websocket.Conn, messageType int, message any, replyMessageId string) error {
+	return conn.WriteJSON(websocket_message.BuildReplyWebsocketMessage(messageType, message, replyMessageId))
 }

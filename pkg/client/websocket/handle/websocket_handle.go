@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/websocket"
+	"server-monitor/pkg/client/constants"
 	"server-monitor/pkg/client/utils"
 	websocket_message2 "server-monitor/pkg/common/entity/dto/websocket_message"
 	"server-monitor/pkg/common/enum"
@@ -16,8 +17,6 @@ type WebsocketHandle struct {
 	cancel  context.CancelFunc
 }
 
-var Key string
-
 func NewWebsocketHandle() *WebsocketHandle {
 	ctx, cancel := context.WithCancel(context.Background())
 	return &WebsocketHandle{
@@ -28,7 +27,7 @@ func NewWebsocketHandle() *WebsocketHandle {
 func (h WebsocketHandle) OnConnected(conn *websocket.Conn) {
 	// 发送初始化消息
 	message := websocket_message2.MessageServerInitDTO{
-		Key:            Key,
+		Key:            constants.ServerKey,
 		ServerInfoDTO:  utils.GetServerInfo(),
 		ServerStateDTO: utils.GetServerState(),
 	}

@@ -1,7 +1,7 @@
 <script>
 import ServerStatisticsBar from "@/components/server-statistics-bar.vue";
 import MonitorFaults from "@/components/monitor-faults.vue";
-import {deleteServer, getServerInfo, getServerStatisticsList} from "@/api/backend/server.js";
+import {deleteServer, getServerInfo, getServerStatisticsList, checkUpdate} from "@/api/backend/server.js";
 import help from "@/utils/help";
 import {getSetting} from "@/api/backend/setting.js";
 import {useSettingStore} from "@/stores/setting.js";
@@ -158,6 +158,20 @@ export default {
         message: '复制成功!'
       });
     },
+
+    checkUpdate(){
+      checkUpdate(this.serverId).then(() => {
+        this.$message({
+          type: 'success',
+          message: '推送更新成功!'
+        });
+      }).catch((err) => {
+        this.$message({
+          type: 'error',
+          message: '推送更新失败!' + err
+        });
+      });
+    }
   }
 }
 </script>
@@ -178,6 +192,9 @@ export default {
         <!--        </button>-->
         <button class="btn btn-primary" @click="copyInstallScript" >
           安装脚本
+        </button>
+        <button class="btn btn-primary" @click="checkUpdate" >
+          检查更新
         </button>
         <button class="btn btn-danger" @click="handleDelete(server.id)">
           删除
@@ -215,7 +232,7 @@ export default {
           <div class="col-12 col-sm col row d-flex align-items-center d-sm-block">
             <h4 class="col-4 col-sm-12">IP</h4>
             <p class="col-4 col-sm-12 mb-0 mb-sm-2">
-              当前
+              Ip
             </p>
             <span class="col-4 col-sm-12 num">
             {{ server.ip }}
@@ -224,7 +241,7 @@ export default {
           <div class="col-12 col-sm col row d-flex align-items-center d-sm-block">
             <h4 class="col-4 col-sm-12">系统</h4>
             <p class="col-4 col-sm-12 mb-0 mb-sm-2">
-              os
+              OS
             </p>
             <span class="col-4 col-sm-12 num">
               {{ server.server_info.os }}
@@ -233,10 +250,19 @@ export default {
           <div class="col-12 col-sm col row d-flex align-items-center d-sm-block">
             <h4 class="col-4 col-sm-12">系统型号</h4>
             <p class="col-4 col-sm-12 mb-0 mb-sm-2">
-              platform
+              Platform
             </p>
             <span class="col-4 col-sm-12 num">
               {{ server.server_info.platform }}
+          </span>
+          </div>
+          <div class="col-12 col-sm col row d-flex align-items-center d-sm-block">
+            <h4 class="col-4 col-sm-12">应用版本</h4>
+            <p class="col-4 col-sm-12 mb-0 mb-sm-2">
+              Version
+            </p>
+            <span class="col-4 col-sm-12 num">
+              {{ server.server_info.version }}
           </span>
           </div>
         </div>
@@ -246,7 +272,7 @@ export default {
           <div class="col-12 col-sm col row d-flex align-items-center d-sm-block">
             <h4 class="col-4 col-sm-12">CPU型号</h4>
             <p class="col-4 col-sm-12 mb-0 mb-sm-2">
-              cpu
+              Cpu
             </p>
             <span class="col-4 col-sm-12 num">
                 <el-text line-clamp="1" :title="server.server_info.cpu">
@@ -257,7 +283,7 @@ export default {
           <div class="col-12 col-sm col row d-flex align-items-center d-sm-block">
             <h4 class="col-4 col-sm-12">虚拟化</h4>
             <p class="col-4 col-sm-12 mb-0 mb-sm-2">
-              virtualization
+              Virtualization
             </p>
             <span class="col-4 col-sm-12 num">
                 <span class="">

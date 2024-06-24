@@ -9,7 +9,10 @@ import (
 	"server-monitor/pkg/server/controller/base"
 	"server-monitor/pkg/server/dal/dao"
 	"server-monitor/pkg/server/dal/do"
+	"server-monitor/pkg/server/websocket/event"
 	"strconv"
+
+	commonEnum "server-monitor/pkg/common/enum"
 )
 
 type ServerController struct {
@@ -62,4 +65,13 @@ func (s ServerController) GetServerStatisticsList(context *gin.Context) interfac
 	typeParam, _ := strconv.Atoi(context.Query("type"))
 	monitorDurationEnum := enum.FindMonitorDurationEnumByType(typeParam)
 	return s.serverDao.GetMonitorServerStatisticsList(uint(id), monitorDurationEnum)
+}
+
+func (s ServerController) CheckUpdate(context *gin.Context) interface{} {
+	idParam := context.Param("id")
+	id, _ := strconv.ParseUint(idParam, 10, 64)
+
+	event.ServerWebsocketHandle.NotifyServerEvent(uint(id), commonEnum.ServerMessageUpdate, nil)
+
+	return nil
 }

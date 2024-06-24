@@ -3,6 +3,7 @@ package event
 import (
 	"fmt"
 	"github.com/gorilla/websocket"
+	"server-monitor/pkg/client/task"
 	"server-monitor/pkg/client/websocket/handle"
 	websocket_message2 "server-monitor/pkg/common/entity/dto/websocket_message"
 	"server-monitor/pkg/common/enum"
@@ -40,6 +41,10 @@ func (e WebsocketEvent) OnMessage(conn *websocket.Conn, websocketMessage websock
 			return
 		}
 		e.websocketHandle.OnServerInitSuccess(conn, message)
+		break
+	case enum.ServerMessageUpdate:
+		// 执行更新
+		task.CheckUpdate()
 		break
 	}
 }

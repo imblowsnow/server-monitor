@@ -16,6 +16,8 @@ type WebsocketMessageDTO struct {
 	Message string `json:"message"`
 	// 发送时间
 	Time time.Time `json:"time"`
+	// 回复消息id
+	ReplyMessageId string `json:"reply_message_id"`
 }
 
 func BuildWebsocketMessage(messageType int, message any) WebsocketMessageDTO {
@@ -25,6 +27,18 @@ func BuildWebsocketMessage(messageType int, message any) WebsocketMessageDTO {
 		MessageType: messageType,
 		Message:     string(jsonByte),
 		Time:        time.Now(),
+	}
+	return websocketMessage
+}
+
+func BuildReplyWebsocketMessage(messageType int, message any, replyMessageId string) WebsocketMessageDTO {
+	jsonByte, _ := json.Marshal(message)
+	websocketMessage := WebsocketMessageDTO{
+		Id:             uuid.New().String(),
+		MessageType:    messageType,
+		Message:        string(jsonByte),
+		Time:           time.Now(),
+		ReplyMessageId: replyMessageId,
 	}
 	return websocketMessage
 }

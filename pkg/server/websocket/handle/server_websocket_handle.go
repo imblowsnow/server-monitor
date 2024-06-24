@@ -80,8 +80,12 @@ func (h ServerWebsocketHandle) OnServerInit(conn *websocket.Conn, message websoc
 
 // 客户端状态事件
 func (h ServerWebsocketHandle) OnServerState(conn *websocket.Conn, message websocket_message2.ServerStateDTO) {
-	fmt.Println("收到服务器状态:", message)
 	serverId := serverConnectionManage.GetServerId(conn)
+	if serverId == 0 {
+		fmt.Println("服务器未连接:", serverId)
+		return
+	}
+	fmt.Println("收到服务器状态:", serverId, message)
 
 	// 通知服务器状态
 	h.notifyServerState(conn, do.ServerStateDO{
@@ -140,4 +144,14 @@ func (h ServerWebsocketHandle) notifyServerOffline(conn *websocket.Conn, serverI
 
 	// 推送到web客户端
 	h.webClientWebsocketHandle.NotifyServerOffline(serverId)
+}
+
+// 主动推送服务端事件
+func (h ServerWebsocketHandle) NotifyServerEvent(serverId uint, eventType int, message interface{}) {
+	conn := serverConnectionManage.GetConn(int(serverId))
+	if conn == nil {
+		fmt.Println("服务器未连接:", serverId)
+		return
+	}
+	_ = utils.SendWebsocketMessage(conn, eventType, message)
 }

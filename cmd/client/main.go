@@ -3,8 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"server-monitor/pkg/client/constants"
 	"server-monitor/pkg/client/websocket"
-	"server-monitor/pkg/client/websocket/handle"
 	"time"
 )
 
@@ -25,7 +25,9 @@ func main() {
 		return
 	}
 	// 从参数中获取秘钥
-	handle.Key = key
+	constants.ServerKey = key
+	constants.ServerPort = port
+	constants.ServerIP = host
 
 	websocket.LoopWebsocket(host, port)
 

@@ -13,4 +13,7 @@ const (
 
 	/*-------------- 服务端消息 --------------*/
 	ServerMessageInitSuccess = 2000
+
+	// 强制更新命令
+	ServerMessageUpdate = 2010
 )
