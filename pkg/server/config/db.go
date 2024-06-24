@@ -31,7 +31,7 @@ func init() {
 func initDb() {
 	fmt.Println("数据库初始化开始")
 
-	db, err := gorm.Open(sqlite.Open("data.db"), &gorm.Config{
+	db, err := gorm.Open(sqlite.Open("./data.db"), &gorm.Config{
 		// 开启sql日志
 		//Logger: logger.Default.LogMode(logger.Info),
 		NamingStrategy: schema.NamingStrategy{
