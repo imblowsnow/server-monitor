@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"server-monitor/pkg/common/enum"
 	"server-monitor/pkg/server/common/entity/bo"
+	enum2 "server-monitor/pkg/server/common/enum"
 	"server-monitor/pkg/server/dal/dao"
 )
 
@@ -42,7 +43,7 @@ func (s DashboardController) MonitorGroups(context *gin.Context) interface{} {
 		monitorGroup := bo.MonitorGroupBO{
 			GroupId:   serverGroups[i].ID,
 			GroupName: serverGroups[i].GroupName,
-			Servers:   s.serverDao.GetMonitorServers(serverGroups[i].ID, false),
+			Servers:   s.serverDao.GetMonitorServers(serverGroups[i].ID, false, enum2.MONITOR_DURATION_HOUR),
 		}
 
 		if monitorGroup.Servers != nil {

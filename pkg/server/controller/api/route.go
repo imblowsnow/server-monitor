@@ -20,5 +20,7 @@ func InitRoute(r *gin.Engine) {
 	apiV1Group.GET("/monitor/groups", base.HandleRouteFunc(dashboardController.MonitorGroups))
 
 	//--------------------服务器--------------------
-
+	serverController := v1.NewServerController()
+	apiV1Group.GET("/server/info/:id", base.HandleRouteFunc(serverController.GetServerInfo))
+	apiV1Group.GET("/server/statistics/:id", base.HandleRouteFunc(serverController.GetServerStatisticsList))
 }

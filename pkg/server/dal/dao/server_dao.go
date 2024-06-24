@@ -124,7 +124,7 @@ func (dao ServerDao) GetStatusNum(status enum.ServerStatus, fromIndex bool) int6
 	return count
 }
 
-func (dao ServerDao) GetMonitorServers(groupId uint, fromIndex bool) []*bo.MonitorServerBO {
+func (dao ServerDao) GetMonitorServers(groupId uint, fromIndex bool, monitorDurationEnum enum2.MonitorDurationEnum) []*bo.MonitorServerBO {
 	var list []do.ServerDO
 
 	query := dao.DB().Select("id")
@@ -135,7 +135,7 @@ func (dao ServerDao) GetMonitorServers(groupId uint, fromIndex bool) []*bo.Monit
 
 	var result []*bo.MonitorServerBO
 	for _, v := range list {
-		servers := dao.GetMonitorServer(v.ID, enum2.MONITOR_DURATION_HOUR)
+		servers := dao.GetMonitorServer(v.ID, monitorDurationEnum)
 		result = append(result, servers)
 	}
 	return result

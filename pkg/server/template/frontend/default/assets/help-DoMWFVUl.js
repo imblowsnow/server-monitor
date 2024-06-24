@@ -1,0 +1,1 @@
+function r(t){if(!t)return"0B";var e=Math.floor(Math.log(t)/Math.log(1024)),n=["B","KB","MB","GB","TB","PB","EB","ZB","YB"];return parseFloat((t/Math.pow(1024,e)).toFixed(2))+n[e]}function o(t){const e=r(t);return e!="NaN undefined"?e:"0B"}function a(t,e){return parseInt(e/t*100)||0}const B={readableBytes:r,formatByteSize:o,formatPercent:a};export{B as h};

@@ -342,7 +342,7 @@ export default {
       </template>
       <template v-else>
         <div class="shadow-box">
-          <el-empty description="未安装"/>
+          <el-empty description="无数据"/>
         </div>
       </template>
     </div>
