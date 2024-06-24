@@ -1,5 +1,5 @@
 <script>
-import {pageServerFaults, editServerFaultRemark} from "@/api/server.js";
+import {pageServerFaults, editServerFaultRemark} from "@/api/backend/server.js";
 
 export default {
   name: "monitor-faults",
@@ -63,6 +63,13 @@ export default {
         });
       });
     },
+    goServer(id){
+      this.$router.push({
+        name: "server",
+        params: {id}
+      })
+    }
+
   }
 }
 </script>
@@ -72,7 +79,7 @@ export default {
     <el-table :data="faults" class="table table-borderless table-hover">
       <el-table-column prop="server_name" label="名称">
         <template v-slot:default="scope">
-          <router-link :to="'/server/'+ scope.row.server_id">{{ scope.row.server_name }}</router-link>
+          <router-link to="" @click="goServer(scope.row.server_id)">{{ scope.row.server_name }}</router-link>
         </template>
       </el-table-column>
       <el-table-column prop="start_time" label="开始时间"></el-table-column>

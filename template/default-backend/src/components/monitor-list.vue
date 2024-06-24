@@ -1,6 +1,6 @@
 <script>
 import MonitorItem from '@/components/monitor-item.vue'
-import {monitorGroups} from "@/api/monitor.js";
+import {monitorGroups} from "@/api/backend/monitor.js";
 export default {
   name: "MonitorList",
   components: {

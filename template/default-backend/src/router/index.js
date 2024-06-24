@@ -1,4 +1,4 @@
-import backendRouter from './backend.js'
+import backendRouter from './admin.js'
 import frontendRouter from './frontend.js'
 
 let router = [];

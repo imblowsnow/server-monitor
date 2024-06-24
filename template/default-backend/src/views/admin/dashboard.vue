@@ -1,10 +1,11 @@
 <script>
-import FrontendMonitorList from "@/components/frontend-monitor-list.vue";
-import {apiDashboardTotal} from "@/api/backend/monitor.js";
+import {defineComponent} from 'vue'
+import MonitorFaults from "@/components/monitor-faults.vue";
+import {dashboardTotal} from "@/api/backend/monitor.js";
 
-export default {
-  name: "index",
-  components: {FrontendMonitorList},
+export default defineComponent({
+  name: "dashboard",
+  components: {MonitorFaults},
   data() {
     return {
       total: {
@@ -18,16 +19,16 @@ export default {
   },
   methods: {
     dashboardTotal() {
-      apiDashboardTotal().then(data => {
+      dashboardTotal().then(data => {
         this.total = data
       });
     }
   }
-}
+})
 </script>
 
 <template>
-  <div class="home container mt-3">
+  <div class="dashboard">
     <h1 class="mb-3">状态速览</h1>
     <div class="shadow-box big-padding text-center mb-4">
       <div class="row">
@@ -51,32 +52,20 @@ export default {
         </div>
       </div>
     </div>
-
-    <div class="shadow-box mb-3">
-      <frontend-monitor-list></frontend-monitor-list>
+    <div
+        class="shadow-box table-shadow-box"
+        style="overflow-x: hidden;"
+    >
+      <monitor-faults :limit="5"></monitor-faults>
     </div>
-
-
-    <footer class="text-center m-5">
-      开源：<a href="https://github.com/imblowsnow/server-monitor">server-monitor</a>
-    </footer>
   </div>
-
 </template>
 
-<style>
-.home .num {
+<style scoped>
+.dashboard .num {
   font-size: 30px;
   color: var(--theme-color);
   font-weight: bold;
   display: block;
-}
-.statistics-bar-box{
-  width: 280px!important;
-}
-@media (max-width: 800px) {
-  .statistics-bar-box{
-    width: 140px!important;
-  }
 }
 </style>

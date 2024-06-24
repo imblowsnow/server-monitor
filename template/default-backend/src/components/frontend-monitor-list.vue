@@ -1,6 +1,6 @@
 <script>
 import MonitorItem from '@/components/monitor-item.vue'
-import {apiMonitorGroups} from "@/api/monitor.js";
+import {apiMonitorGroups} from "@/api/backend/monitor.js";
 export default {
   name: "FrontendMonitorList",
   components: {
@@ -47,6 +47,12 @@ export default {
           }
         }
       }
+    },
+    goServer(id){
+      this.$router.push({
+        name: "server",
+        params: {id}
+      })
     }
   }
 }
@@ -54,24 +60,27 @@ export default {
 
 <template>
   <div class="monitor-list">
-    <el-collapse v-model="activeGroupIds">
+    <el-collapse  v-if="groups.length > 0" v-model="activeGroupIds">
       <el-collapse-item v-for="group in groups" :name="group.group_id">
         <template #title>
           {{ group.group_name }}
         </template>
         <div v-for="server in group.servers">
-          <monitor-item
-                        :width="5" :height="16"
-                        :class="{'active': activeServerId == server.server_id}"
-                        :server="server">
-            <template v-slot:statistics-bar-after>
-              <span class="desc" style="float: left;">24小时</span>
-              <span class="desc" style="float: right">now</span>
-            </template>
-          </monitor-item>
+          <router-link @click="goServer(server.server_id)" to="">
+            <monitor-item
+                :width="5" :height="16"
+                :class="{'active': activeServerId == server.server_id}"
+                :server="server">
+              <template v-slot:statistics-bar-after>
+                <span class="desc" style="float: left;">30天</span>
+                <span class="desc" style="float: right">today</span>
+              </template>
+            </monitor-item>
+          </router-link>
         </div>
       </el-collapse-item>
     </el-collapse>
+    <el-empty v-else description="无服务器列表"></el-empty>
   </div>
 </template>
 
@@ -92,5 +101,10 @@ export default {
 .desc{
   font-size: 13px;
   color: #aaa;
+}
+
+.monitor-list a {
+  color: #000;
+  text-decoration: none;
 }
 </style>

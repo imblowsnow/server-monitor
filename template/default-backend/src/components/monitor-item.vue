@@ -34,7 +34,7 @@ export default {
         <div class="small-padding" style="flex: 1">
           <div class="info">
             <span class="badge rounded-pill " :class="{'bg-primary' : server.server_status === 1, 'bg-danger' : server.server_status === 0}"
-                  title="最近24小时">
+                  title="总在线率">
                 {{ server.online_rate }}%
             </span>
             {{ server.server_name }}
