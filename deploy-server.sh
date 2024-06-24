@@ -88,6 +88,13 @@ extracted_file=$(realpath $file_name)
 echo "Setting execute permissions..."
 chmod +x $extracted_file
 
+# 判断服务是否已经存在
+if [ -f $SERVICE_FILE ]; then
+    systemctl stop $SERVICE_NAME
+    systemctl disable $SERVICE_NAME
+    rm -f $SERVICE_FILE
+fi
+
 # 创建 systemd 服务文件
 echo "Creating systemd service file..."
 cat <<EOT > $SERVICE_FILE
