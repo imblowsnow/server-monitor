@@ -102,7 +102,7 @@ export default {
           <td>{{ item.sort }}</td>
           <td style="width: 150px">
             <el-button class="btn btn-primary" type="primary"
-                       size="small" :disabled="item.system === 1"
+                       size="small"
                        @click="handleEdit(item.id)">编辑</el-button>
             <el-button class="btn btn-danger" size="small" type="danger"
                        :disabled="item.system === 1"
