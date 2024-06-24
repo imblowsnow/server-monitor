@@ -9,5 +9,5 @@
 
 ### 启动脚本
 ```shell
-curl https://cdn.jsdelivr.net/gh/imblowsnow/server-monitor@master/deploy-server.sh | bash 
+curl https://cdn.jsdelivr.net/gh/imblowsnow/server-monitor@master/deploy-server.sh | bash -s -- 22251
 ```
