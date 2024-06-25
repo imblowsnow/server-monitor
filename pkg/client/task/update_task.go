@@ -57,10 +57,11 @@ func getLatestVersion() string {
 func CheckUpdate() {
 	// 获取最新版本
 	latestVersion := getLatestVersion()
+	fmt.Println("[更新检测任务] 当前版本", constants.ClientVersion)
+	fmt.Println("[更新检测任务] 最新版本", constants.ClientVersion)
 	if latestVersion == "" {
 		return
 	}
-
 	if latestVersion != constants.ClientVersion {
 		fmt.Println("[更新检测任务] 发现新版本", latestVersion)
 		doUpdate()
