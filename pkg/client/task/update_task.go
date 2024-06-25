@@ -77,11 +77,12 @@ func doUpdate() {
 		return
 	}
 	bashCmd := "curl https://raw.githubusercontent.com/imblowsnow/server-monitor/master/deploy.sh | bash -s -- " + constants.ServerIP + " " + fmt.Sprintf("%d", constants.ServerPort) + " " + constants.ServerKey
+	fmt.Println("[更新检测任务] 执行 ", bashCmd)
 	// 创建一个新的进程来执行 bash 命令
 	cmd = exec.Command("bash", "-c", bashCmd)
 
 	// 运行命令
-	err := cmd.Run()
+	err := cmd.Start()
 	if err != nil {
 		log.Fatalf("cmd.Run() failed with %s\n", err)
 	}

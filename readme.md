@@ -6,6 +6,10 @@ curl https://raw.githubusercontent.com/imblowsnow/server-monitor/master/deploy-s
 curl https://cdn.jsdelivr.net/gh/imblowsnow/server-monitor@master/deploy-server.sh | bash -s -- 22251
 ```
 
+## 测试编译
+```shell
+CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build 
+```
 
 
 ## TODO

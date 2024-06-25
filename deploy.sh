@@ -112,6 +112,7 @@ Description=Client Monitor Service
 After=network.target
 
 [Service]
+WorkingDirectory=$WORK_DIR
 ExecStart=$extracted_file $SERVICE_ARGS
 Restart=always
 User=root
