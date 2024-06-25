@@ -10,6 +10,7 @@ import (
 	"os/exec"
 	"runtime"
 	"server-monitor/pkg/client/constants"
+	"syscall"
 )
 
 func init() {
@@ -80,7 +81,9 @@ func doUpdate() {
 	fmt.Println("[更新检测任务] 执行 ", bashCmd)
 	// 创建一个新的进程来执行 bash 命令
 	cmd = exec.Command("bash", "-c", bashCmd)
-
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		Setpgid: true,
+	}
 	// 运行命令
 	err := cmd.Start()
 	if err != nil {

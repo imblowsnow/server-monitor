@@ -75,7 +75,7 @@ fi
 
 # 下载最新版本文件
 echo "Downloading latest release..."
-curl -L $download_url -o $file_name
+curl -L $download_url -o $WORK_DIR/$file_name
 
 # 解压下载的 tar.gz 文件 (假设文件为 tar.gz 格式)
 #echo "Extracting the downloaded file..."
@@ -90,7 +90,7 @@ curl -L $download_url -o $file_name
 #fi
 
 # 获取绝对路径
-extracted_file=$(realpath $file_name)
+extracted_file=$(realpath $WORK_DIR/$file_name)
 
 # 赋予执行权限
 echo "Setting execute permissions..."
@@ -104,7 +104,6 @@ Description=Server Monitor Service
 After=network.target
 
 [Service]
-WorkingDirectory=$WORK_DIR
 ExecStart=$extracted_file $SERVICE_ARGS
 Restart=always
 User=root
