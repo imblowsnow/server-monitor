@@ -4,4 +4,4 @@ var ServerIP string
 var ServerPort int
 var ServerKey string
 
-var ClientVersion = "0.2.0"
+var ClientVersion = "0.2.1"
