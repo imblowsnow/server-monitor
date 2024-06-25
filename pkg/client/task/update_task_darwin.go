@@ -2,10 +2,6 @@ package task
 
 import (
 	"fmt"
-	"log"
-	"os/exec"
-	"server-monitor/pkg/client/constants"
-	"syscall"
 )
 
 func doUpdate() {
