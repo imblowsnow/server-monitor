@@ -7,10 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"os/exec"
-	"runtime"
 	"server-monitor/pkg/client/constants"
-	"syscall"
 )
 
 func init() {
@@ -67,26 +64,5 @@ func CheckUpdate() {
 	if latestVersion != constants.ClientVersion {
 		fmt.Println("[更新检测任务] 发现新版本", latestVersion)
 		doUpdate()
-	}
-}
-
-func doUpdate() {
-	var cmd *exec.Cmd
-	// 判断是否是  windows
-	if runtime.GOOS == "windows" {
-		fmt.Println("[更新检测任务] windows系统暂不支持自动更新")
-		return
-	}
-	bashCmd := "curl https://raw.githubusercontent.com/imblowsnow/server-monitor/master/deploy.sh | bash -s -- " + constants.ServerIP + " " + fmt.Sprintf("%d", constants.ServerPort) + " " + constants.ServerKey
-	fmt.Println("[更新检测任务] 执行 ", bashCmd)
-	// 创建一个新的进程来执行 bash 命令
-	cmd = exec.Command("bash", "-c", bashCmd)
-	cmd.SysProcAttr = &syscall.SysProcAttr{
-		Setpgid: true,
-	}
-	// 运行命令
-	err := cmd.Start()
-	if err != nil {
-		log.Fatalf("cmd.Run() failed with %s\n", err)
 	}
 }
